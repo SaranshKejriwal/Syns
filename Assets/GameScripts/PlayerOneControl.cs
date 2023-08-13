@@ -10,6 +10,8 @@ public class PlayerOneControl : MonoBehaviour
 
     [SerializeField] private int moveSpeed = 2;//this private field is accessible on Inspector only, not anywhere else outside class
     private int rotationSpeed = 10;
+    private bool isMoving = false; //used by animator to render movement animation if player is moving
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,6 +50,8 @@ public class PlayerOneControl : MonoBehaviour
         //keyInputVector has accepted user input, which can be translated to movement
         //translation will be helpful in managing key rebinding 
         Vector3 directionVector = new Vector3(keyInputVector.x, 0f, keyInputVector.y);
+
+        isMoving = directionVector != Vector3.zero;//if no keyInput, this condition is false 
         
         //move the object position in the direction 
         transform.position += directionVector * Time.deltaTime *moveSpeed;//transform holds the position of the GameObj, apparently
@@ -67,5 +71,11 @@ public class PlayerOneControl : MonoBehaviour
 
         //Debug.Log(keyInputVector);
 
+    }
+
+
+    public bool IsMoving()
+    {
+        return isMoving;
     }
 }

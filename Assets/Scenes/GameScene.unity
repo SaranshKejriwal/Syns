@@ -602,6 +602,12 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &756299004 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: de76d67d0ab88dc439b10b32370775ea,
+    type: 3}
+  m_PrefabInstance: {fileID: 1778757546}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &807182854
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,10 +863,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestCharacterControlVisualObj
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: de76d67d0ab88dc439b10b32370775ea,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: fecf6d756e0aaae41ada7c746eed59b9, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: de76d67d0ab88dc439b10b32370775ea,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1778757548}
   m_SourcePrefab: {fileID: 100100000, guid: de76d67d0ab88dc439b10b32370775ea, type: 3}
 --- !u!4 &1778757547 stripped
 Transform:
@@ -868,6 +883,19 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1778757546}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1778757548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756299004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 384b6f6679b1bcb4da0982c439573c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerOne: {fileID: 111071595}
 --- !u!1001 &2113627967
 PrefabInstance:
   m_ObjectHideFlags: 0

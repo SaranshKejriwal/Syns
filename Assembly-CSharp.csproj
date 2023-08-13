@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Assets\GameScripts\PlayerOneControl.cs" />
     <Compile Include="Assets\Polytope Studio\Lowpoly_Characters\Sources\Scripts\PT_Create_Prefab.cs" />
+    <Compile Include="Assets\GameScripts\PlayerOneAnimation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Polytope Studio\Lowpoly_Characters\Sources\Modular_NPC\Shaders\PT_Modular_NPC_Shader_Toon.shader" />
