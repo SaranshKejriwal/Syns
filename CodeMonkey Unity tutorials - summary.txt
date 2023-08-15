@@ -185,7 +185,14 @@ Recommendation is to have a separate class to handle input only, and a separate 
 Add the new "Input System" package from Package maanger - this will be used in the new InputHandler class.
 New Input system allows you to create an "Input Actions" asset in the project - which allows you to configure different Action Maps and sub-actions by Value (for multiple movements) or button
 
- 
+Now both Old and New input manager can be managed from within the InputHandler classl, without disturbing the PLayer classes.
+New Input system makes it easy to bind gamepads and controllers.
 
+
+Collision Detection_____________
+ 
+ Physics.Raycast() is used for collision detection - ensure that the obstacle is touching the floor, meaning that the parent component has a Y=0 (same for Player) and should have a BoxCollider component.
+
+Note that Raycast will only be from object center, meaning that it may seem like the eadges of the object are pass-through. CapsuleCast works better
 
 
