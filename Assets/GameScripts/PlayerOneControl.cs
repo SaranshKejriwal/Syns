@@ -8,9 +8,10 @@ using Vector3 = UnityEngine.Vector3;
 public class PlayerOneControl : MonoBehaviour
 {
 
-    [SerializeField] private int moveSpeed = 2;//this private field is accessible on Inspector only, not anywhere else outside class
+    [SerializeField] private int moveSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
     private int rotationSpeed = 10;
     private bool isMoving = false; //used by animator to render movement animation if player is moving
+    [SerializeField] private InputHandler inputHandler;
 
     // Start is called before the first frame update
     void Start()
@@ -22,33 +23,7 @@ public class PlayerOneControl : MonoBehaviour
     private void Update()
     {        //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
 
-        Vector2 keyInputVector = new Vector2(0, 0);//Capture keyboard input to define the 2D plane where P1 will move
-        /*
-         * use Input.GetKey() for movement, where you need to keep the key pressed.
-         * use Input.GetKeyDown() for attack/jump, where you'll need to tap it once.
-         */
-
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-        { 
-            keyInputVector.y++;
-        }
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-        {
-            keyInputVector.x--;
-        }
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-        {
-            keyInputVector.y--;
-        }
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-        {
-            keyInputVector.x++;
-        }
-        keyInputVector = keyInputVector.normalized;//this ensures that (1,1) does not cover sqrt(2) distance and make P1 faster. Changes to 1/sqrt(2) in each axis
-
-
-        //keyInputVector has accepted user input, which can be translated to movement
-        //translation will be helpful in managing key rebinding 
+        Vector2 keyInputVector = inputHandler.GetMovementVectorNormalized();
         Vector3 directionVector = new Vector3(keyInputVector.x, 0f, keyInputVector.y);
 
         isMoving = directionVector != Vector3.zero;//if no keyInput, this condition is false 
