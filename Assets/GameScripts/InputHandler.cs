@@ -32,17 +32,18 @@ public class InputHandler : MonoBehaviour
     public Vector2 GetMovementVectorNormalized()
     {
         Vector2 keyInputVector = new Vector2(0, 0);//Capture keyboard input to define the 2D plane where P1 will move
-        /*
-         * use Input.GetKey() for movement, where you need to keep the key pressed.
-         * use Input.GetKeyDown() for attack/jump, where you'll need to tap it once.
-         */
+
 
         //Read from the new Mapping system directly. You won't need to GetKey() manually.
-        //keyInputVector = inputActions.PlayerOne.Move.ReadValue<Vector2>();
-        //keyInputVector = keyInputVector.normalized;
-        //return keyInputVector;
+        keyInputVector = inputActions.PlayerOne.Move.ReadValue<Vector2>();
+        //normalization is already done in the Processor of PlayerInputActions
+        return keyInputVector;
 
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        /*
+        * use Input.GetKey() for movement, where you need to keep the key pressed.
+        * use Input.GetKeyDown() for attack/jump, where you'll need to tap it once.
+        */
+        /*if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             keyInputVector.y++;
         }
@@ -64,6 +65,6 @@ public class InputHandler : MonoBehaviour
         //keyInputVector has accepted user input, which can be translated to movement
         //translation will be helpful in managing key rebinding 
 
-        return keyInputVector;
+        return keyInputVector;*/
     }
 }
