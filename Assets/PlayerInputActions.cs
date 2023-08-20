@@ -35,6 +35,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": ""NormalizeVector2"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Punch"",
+                    ""type"": ""Value"",
+                    ""id"": ""47768aab-e5cc-451a-abe9-ba4e7aa2b974"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -158,6 +167,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2e9614c6-35d9-4391-92fb-9674965f19fa"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Punch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -166,7 +186,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ""id"": ""ef1a0975-b94b-44b3-b3bb-b9f897d3bc13"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""Speed"",
                     ""type"": ""Button"",
                     ""id"": ""053d4300-5de1-4741-96b9-f9c18de0ea87"",
                     ""expectedControlType"": ""Button"",
@@ -183,7 +203,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Speed"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -195,9 +215,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         // PlayerOne
         m_PlayerOne = asset.FindActionMap("PlayerOne", throwIfNotFound: true);
         m_PlayerOne_Move = m_PlayerOne.FindAction("Move", throwIfNotFound: true);
+        m_PlayerOne_Punch = m_PlayerOne.FindAction("Punch", throwIfNotFound: true);
         // PlayerTwo
         m_PlayerTwo = asset.FindActionMap("PlayerTwo", throwIfNotFound: true);
-        m_PlayerTwo_Newaction = m_PlayerTwo.FindAction("New action", throwIfNotFound: true);
+        m_PlayerTwo_Speed = m_PlayerTwo.FindAction("Speed", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -260,11 +281,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PlayerOne;
     private List<IPlayerOneActions> m_PlayerOneActionsCallbackInterfaces = new List<IPlayerOneActions>();
     private readonly InputAction m_PlayerOne_Move;
+    private readonly InputAction m_PlayerOne_Punch;
     public struct PlayerOneActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerOneActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerOne_Move;
+        public InputAction @Punch => m_Wrapper.m_PlayerOne_Punch;
         public InputActionMap Get() { return m_Wrapper.m_PlayerOne; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -277,6 +300,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @Punch.started += instance.OnPunch;
+            @Punch.performed += instance.OnPunch;
+            @Punch.canceled += instance.OnPunch;
         }
 
         private void UnregisterCallbacks(IPlayerOneActions instance)
@@ -284,6 +310,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @Punch.started -= instance.OnPunch;
+            @Punch.performed -= instance.OnPunch;
+            @Punch.canceled -= instance.OnPunch;
         }
 
         public void RemoveCallbacks(IPlayerOneActions instance)
@@ -305,12 +334,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     // PlayerTwo
     private readonly InputActionMap m_PlayerTwo;
     private List<IPlayerTwoActions> m_PlayerTwoActionsCallbackInterfaces = new List<IPlayerTwoActions>();
-    private readonly InputAction m_PlayerTwo_Newaction;
+    private readonly InputAction m_PlayerTwo_Speed;
     public struct PlayerTwoActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerTwoActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_PlayerTwo_Newaction;
+        public InputAction @Speed => m_Wrapper.m_PlayerTwo_Speed;
         public InputActionMap Get() { return m_Wrapper.m_PlayerTwo; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -320,16 +349,16 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_PlayerTwoActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_PlayerTwoActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
+            @Speed.started += instance.OnSpeed;
+            @Speed.performed += instance.OnSpeed;
+            @Speed.canceled += instance.OnSpeed;
         }
 
         private void UnregisterCallbacks(IPlayerTwoActions instance)
         {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
+            @Speed.started -= instance.OnSpeed;
+            @Speed.performed -= instance.OnSpeed;
+            @Speed.canceled -= instance.OnSpeed;
         }
 
         public void RemoveCallbacks(IPlayerTwoActions instance)
@@ -350,9 +379,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     public interface IPlayerOneActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnPunch(InputAction.CallbackContext context);
     }
     public interface IPlayerTwoActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnSpeed(InputAction.CallbackContext context);
     }
 }

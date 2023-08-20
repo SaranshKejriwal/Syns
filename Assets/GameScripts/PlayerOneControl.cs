@@ -26,16 +26,16 @@ public class PlayerOneControl : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {        //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
-        HandleMovement();
+        HandleMovementWithCollision();
         HandleInteractions();
-
+        //HandleAttackAction();
     }
     
 
     private void HandleInteractions()
     {
         //Get separate direction vector, to not interfere with occlusion handling vector
-        Vector2 keyInputVector = inputHandler.GetMovementVectorNormalized();
+        Vector2 keyInputVector = inputHandler.GetPlayerOneMovementVectorNormalized();
         Vector3 movementDirectionVector = new Vector3(keyInputVector.x, 0f, keyInputVector.y);
 
         if(movementDirectionVector != Vector3.zero )
@@ -60,19 +60,19 @@ public class PlayerOneControl : MonoBehaviour
 
     }
 
-
-    private void HandleMovement()
+    public bool IsPlayerOnePunching()
     {
-        Vector2 keyInputVector = inputHandler.GetMovementVectorNormalized();
+       return inputHandler.isPlayerOnePunchPressed();
+    }
+
+    private void HandleMovementWithCollision()
+    {
+        Vector2 keyInputVector = inputHandler.GetPlayerOneMovementVectorNormalized();
         Vector3 directionVector = new Vector3(keyInputVector.x, 0f, keyInputVector.y);
 
         isMoving = directionVector != Vector3.zero;//if no keyInput, this condition is false 
-
-
-        //bool isNotColliding = !Physics.Raycast(transform.position, directionVector, playerSize);//this is needed for collision handling
-        //bool isNotColliding = !Physics.CapsuleCast(transform.position, transform.position+Vector3.up*playerHeightOffset, playerSize, directionVector, Time.deltaTime * moveSpeed);//this is needed for collision handling
-
-
+        //this boolean is used in the animator
+                
         //rotate the object to face the direction
         transform.forward = Vector3.Slerp(transform.forward, directionVector, Time.deltaTime * rotationSpeed);
 
@@ -133,7 +133,7 @@ public class PlayerOneControl : MonoBehaviour
     }
 
 
-    public bool IsMoving()
+    public bool IsPlayerOneMoving()
     {
         return isMoving;
     }

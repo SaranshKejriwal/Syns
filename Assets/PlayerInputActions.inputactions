@@ -13,6 +13,15 @@
                     "processors": "NormalizeVector2",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Punch",
+                    "type": "Value",
+                    "id": "47768aab-e5cc-451a-abe9-ba4e7aa2b974",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -136,6 +145,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2e9614c6-35d9-4391-92fb-9674965f19fa",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Punch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -144,7 +164,7 @@
             "id": "ef1a0975-b94b-44b3-b3bb-b9f897d3bc13",
             "actions": [
                 {
-                    "name": "New action",
+                    "name": "Speed",
                     "type": "Button",
                     "id": "053d4300-5de1-4741-96b9-f9c18de0ea87",
                     "expectedControlType": "Button",
@@ -161,7 +181,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Speed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

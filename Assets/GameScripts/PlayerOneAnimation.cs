@@ -8,6 +8,8 @@ public class PlayerOneAnimation : MonoBehaviour
     private Animator playerOneAnimator;
     // Start is called before the first frame update
     private const string IS_MOVING_PARAM_NAME = "isMoving";//create const to avoid string case match errors
+    private const string IS_PUNCH_PARAM_NAME = "isPunching";
+
 
     [SerializeField] private PlayerOneControl playerOne; // to reference the logic component of PlayerOne
 
@@ -26,6 +28,9 @@ public class PlayerOneAnimation : MonoBehaviour
     void Update()
     {
         //read from Player logic component if it is moving - refer PlayerOneControl.cs
-        playerOneAnimator.SetBool(IS_MOVING_PARAM_NAME, playerOne.IsMoving());//pickup the "isMoving"  parameter from the Animator component of the player
+        playerOneAnimator.SetBool(IS_MOVING_PARAM_NAME, playerOne.IsPlayerOneMoving());//pickup the "isMoving"  parameter from the Animator component of the player
+
+        playerOneAnimator.SetBool(IS_PUNCH_PARAM_NAME, playerOne.IsPlayerOnePunching());//pickup the "isMoving"  parameter from the Animator component of the player
+
     }
 }
