@@ -15,7 +15,8 @@ public class PlayerOneControl : MonoBehaviour
     [SerializeField] private float playerSize = 0.5f; //needed for collision handling in Raycast function.
     private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
-
+    private int playerOneInteractionDistance = 2;
+    private Vector3 lastInteractionDirecctionVector = Vector3.zero;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +26,43 @@ public class PlayerOneControl : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {        //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
+        HandleMovement();
+        HandleInteractions();
 
+    }
+    
+
+    private void HandleInteractions()
+    {
+        //Get separate direction vector, to not interfere with occlusion handling vector
+        Vector2 keyInputVector = inputHandler.GetMovementVectorNormalized();
+        Vector3 movementDirectionVector = new Vector3(keyInputVector.x, 0f, keyInputVector.y);
+
+        if(movementDirectionVector != Vector3.zero )
+        {
+            lastInteractionDirecctionVector = movementDirectionVector;
+            //this ensures that interaction is saved even when movement isn't happening - interaction continues even if movement stops.
+        }
+
+        if(Physics.Raycast(transform.position, lastInteractionDirecctionVector, out RaycastHit rayCastHit,  playerOneInteractionDistance))
+        //tells us if something is in front and returns its object parameter in rayCastHit object
+        {
+            //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.
+
+            //tries to confirm if interacted component is of a specific type.
+            if(rayCastHit.transform.TryGetComponent(out TestInteractionLogic testInteract))
+            {
+                testInteract.Interact();
+            }
+
+
+        }
+
+    }
+
+
+    private void HandleMovement()
+    {
         Vector2 keyInputVector = inputHandler.GetMovementVectorNormalized();
         Vector3 directionVector = new Vector3(keyInputVector.x, 0f, keyInputVector.y);
 
@@ -52,7 +89,7 @@ public class PlayerOneControl : MonoBehaviour
         Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
 
 
-        
+
         /*
          * Tip - use transform.lookAt function to have object change line of sight to a point. Useful for enemies facing P2
             transform.up or transform.right can work for 2D games to change direction.
@@ -60,11 +97,9 @@ public class PlayerOneControl : MonoBehaviour
             Slerp() function makes the direction change from prev pos smoother, by adding smoothing to not make the direction change instantaneous.
          */
 
-        //Debug.Log(keyInputVector);
-
     }
-    
-    
+
+
     //use - while moving diagonally and obstructed, playerOne should move in at least 1 feasible direction
     private Vector3 GetMovementDirectionAfterCollision(Vector3 currentDirectionVector)
     {

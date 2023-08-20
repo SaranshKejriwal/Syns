@@ -195,4 +195,23 @@ Collision Detection_____________
 
 Note that Raycast will only be from object center, meaning that it may seem like the eadges of the object are pass-through. CapsuleCast works better
 
+Ensure that the size in the Box Collider is the same as the size in the visual child object.
+
+Adding Interactions________________________________
+
+"Magic numbers" - when you hardcode a number in a function argument, come back a month later, and forget what that number represents.
+
+If you want multiple copies of an object, create a "prefab" rather than copying the object - changes to prefab apply across the board. 
+
+Create a Prefab folder and drop the logic GameObj into the folder. The GameObj now has a blue icon.
+(useful for enemy spawn)
+Ensure that Interaction logic applies to the prefab, not just to one instance of it.
+
+Tip - NEVER use Unity tags to determine the type of object that was interacted with.
+
+
+
+Interaction Action________________________________
+
+
 

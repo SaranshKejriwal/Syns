@@ -60,19 +60,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameScripts\InputHandler.cs" />
+    <Compile Include="Assets\GameScripts\TestInteractionLogic.cs" />
     <Compile Include="Assets\GameScripts\PlayerOneControl.cs" />
     <Compile Include="Assets\PlayerInputActions.cs" />
-    <Compile Include="Assets\Polytope Studio\Lowpoly_Characters\Sources\Scripts\PT_Create_Prefab.cs" />
     <Compile Include="Assets\GameScripts\PlayerOneAnimation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Polytope Studio\Lowpoly_Characters\Sources\Modular_NPC\Shaders\PT_Modular_NPC_Shader_Toon.shader" />
-    <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Plants_Shader.shader" />
-    <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Opaque_Shader.shader" />
-    <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Foliage_Shader.shader" />
-    <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Flowers_Shader.shader" />
     <None Include="Assets\Stylized NPC - Peasant Nolant\README.txt" />
-    <None Include="Assets\Polytope Studio\Lowpoly_Characters\Sources\Modular_NPC\Shaders\PT_Modular_NPC_Shader_PBR.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
