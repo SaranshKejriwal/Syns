@@ -19,6 +19,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: HM_Body_T4
     second: {fileID: 2100000, guid: 9136449bef2d2c942a08e20a7809c2dc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HM_InnerEye_T1
+    second: {fileID: 2100000, guid: 2e1f4f8b4e5215f4890a4e42d3914941, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HM_OuterEye_T1
+    second: {fileID: 2100000, guid: 9136449bef2d2c942a08e20a7809c2dc, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
