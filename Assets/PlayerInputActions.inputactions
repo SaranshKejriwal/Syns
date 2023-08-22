@@ -164,9 +164,18 @@
             "id": "ef1a0975-b94b-44b3-b3bb-b9f897d3bc13",
             "actions": [
                 {
-                    "name": "Speed",
+                    "name": "Faster",
                     "type": "Button",
                     "id": "053d4300-5de1-4741-96b9-f9c18de0ea87",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Slower",
+                    "type": "Button",
+                    "id": "9e348627-97a8-41fd-8615-ada85e57a658",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -177,11 +186,22 @@
                 {
                     "name": "",
                     "id": "300bbb5e-8478-442e-9590-e3443ba51e23",
-                    "path": "",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Speed",
+                    "action": "Faster",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7a03953a-1d9f-445e-af21-981ee397227a",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slower",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

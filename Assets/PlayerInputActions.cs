@@ -186,9 +186,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ""id"": ""ef1a0975-b94b-44b3-b3bb-b9f897d3bc13"",
             ""actions"": [
                 {
-                    ""name"": ""Speed"",
+                    ""name"": ""Faster"",
                     ""type"": ""Button"",
                     ""id"": ""053d4300-5de1-4741-96b9-f9c18de0ea87"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Slower"",
+                    ""type"": ""Button"",
+                    ""id"": ""9e348627-97a8-41fd-8615-ada85e57a658"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -199,11 +208,22 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""300bbb5e-8478-442e-9590-e3443ba51e23"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Speed"",
+                    ""action"": ""Faster"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7a03953a-1d9f-445e-af21-981ee397227a"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slower"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -218,7 +238,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_PlayerOne_Punch = m_PlayerOne.FindAction("Punch", throwIfNotFound: true);
         // PlayerTwo
         m_PlayerTwo = asset.FindActionMap("PlayerTwo", throwIfNotFound: true);
-        m_PlayerTwo_Speed = m_PlayerTwo.FindAction("Speed", throwIfNotFound: true);
+        m_PlayerTwo_Faster = m_PlayerTwo.FindAction("Faster", throwIfNotFound: true);
+        m_PlayerTwo_Slower = m_PlayerTwo.FindAction("Slower", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -334,12 +355,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     // PlayerTwo
     private readonly InputActionMap m_PlayerTwo;
     private List<IPlayerTwoActions> m_PlayerTwoActionsCallbackInterfaces = new List<IPlayerTwoActions>();
-    private readonly InputAction m_PlayerTwo_Speed;
+    private readonly InputAction m_PlayerTwo_Faster;
+    private readonly InputAction m_PlayerTwo_Slower;
     public struct PlayerTwoActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerTwoActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Speed => m_Wrapper.m_PlayerTwo_Speed;
+        public InputAction @Faster => m_Wrapper.m_PlayerTwo_Faster;
+        public InputAction @Slower => m_Wrapper.m_PlayerTwo_Slower;
         public InputActionMap Get() { return m_Wrapper.m_PlayerTwo; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -349,16 +372,22 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_PlayerTwoActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_PlayerTwoActionsCallbackInterfaces.Add(instance);
-            @Speed.started += instance.OnSpeed;
-            @Speed.performed += instance.OnSpeed;
-            @Speed.canceled += instance.OnSpeed;
+            @Faster.started += instance.OnFaster;
+            @Faster.performed += instance.OnFaster;
+            @Faster.canceled += instance.OnFaster;
+            @Slower.started += instance.OnSlower;
+            @Slower.performed += instance.OnSlower;
+            @Slower.canceled += instance.OnSlower;
         }
 
         private void UnregisterCallbacks(IPlayerTwoActions instance)
         {
-            @Speed.started -= instance.OnSpeed;
-            @Speed.performed -= instance.OnSpeed;
-            @Speed.canceled -= instance.OnSpeed;
+            @Faster.started -= instance.OnFaster;
+            @Faster.performed -= instance.OnFaster;
+            @Faster.canceled -= instance.OnFaster;
+            @Slower.started -= instance.OnSlower;
+            @Slower.performed -= instance.OnSlower;
+            @Slower.canceled -= instance.OnSlower;
         }
 
         public void RemoveCallbacks(IPlayerTwoActions instance)
@@ -383,6 +412,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     }
     public interface IPlayerTwoActions
     {
-        void OnSpeed(InputAction.CallbackContext context);
+        void OnFaster(InputAction.CallbackContext context);
+        void OnSlower(InputAction.CallbackContext context);
     }
 }

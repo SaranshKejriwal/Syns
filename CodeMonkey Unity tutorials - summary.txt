@@ -211,7 +211,8 @@ Tip - NEVER use Unity tags to determine the type of object that was interacted w
 
 
 
-Interaction Action________________________________
+EventHandler - Interaction Action________________________________
 
+Useful for configuring actions based on player input.
 
 

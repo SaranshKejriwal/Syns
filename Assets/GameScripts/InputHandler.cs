@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 
 public class InputHandler : MonoBehaviour
@@ -26,6 +27,7 @@ public class InputHandler : MonoBehaviour
         //Read the new input Manager in our custom input class.
         inputActions = new PlayerInputActions();
         inputActions.PlayerOne.Enable();//PlayerOne and PlayerTwo maps were created by me.
+        inputActions.PlayerTwo.Enable();
 
     }
 
@@ -44,9 +46,28 @@ public class InputHandler : MonoBehaviour
 
     }
 
-    public bool isPlayerOnePunchPressed()
+    public bool IsPlayerOnePunchPressed()
     {
         return inputActions.PlayerOne.Punch.IsPressed();
         
+    }
+
+    //Update Player Two speed if Faster or Slower key binding is pressed.
+    public int GetCurrentPlayerTwoMovementSpeed(int currentSpeed, int maxSpeed, int minSpeed)
+    {
+        if(inputActions.PlayerTwo.Faster.IsPressed() && currentSpeed < maxSpeed)
+        {
+            //increase current Speed as long as it is under upper limit
+            currentSpeed++;
+            Debug.Log("increasing Player Two speed");
+        }
+        if(inputActions.PlayerTwo.Slower.IsPressed() && currentSpeed > minSpeed)
+        {
+            //reduce current Speed as long as it is above lower limit
+            currentSpeed--;
+            Debug.Log("decreasing Player Two speed");
+        }
+        Debug.Log("current Player Two speed = "+ currentSpeed);
+        return currentSpeed;
     }
 }
