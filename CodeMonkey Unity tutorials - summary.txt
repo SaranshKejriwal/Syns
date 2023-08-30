@@ -213,6 +213,26 @@ Tip - NEVER use Unity tags to determine the type of object that was interacted w
 
 EventHandler - Interaction Action________________________________
 
-Useful for configuring actions based on player input.
+Useful for configuring actions based on player input. Meaning that interact will only happen if player presses a key - like attack
+Alternative is to keep checking the rayCastHit on every single update call, despite dependency on playerInput. This will be needed for PlayerTwo, not PlayerOne
 
+You don't need to call it on EVERY Update call, which optimizes performance;
+
+Events have publishers which fire events, and subscribers, that respond to them;
+Eg. playerOne can listen to the event hosted in inputhandler about M key being pressed. PlayerOne class does not have to care about the binding at all.
+
+Every Event should always have a subscriber, else you'll get a nullReferenceException
+
+listen to events in Start(), not Awake()
+
+
+Singleton Pattern____________________________
+
+Using to add a visual to a selecteed object. Ideally, the code to change an object's visual should reside within that object only.
+Create a new sub visual object in the prefab next to the current visual object - this will be the object for the interacted and will be in disabled state by default
+Make a small increase in size of the interacted object (1 -> 1.01) - prevents some unknown unity bugs.
+
+Singleton class needs multiple instances of an object class to listen to the same event.
+
+May need to revise this section as I'm not going ahead with singleton approach.
 

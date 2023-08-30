@@ -21,4 +21,11 @@ public class TestInteractionLogic : MonoBehaviour
         //function is public because it will be called for the Player class interaction handler
         Debug.Log("Interaction Test Capsule Object - Interact function called.");
     }
+
+    public void RespondToPlayerOnePunch()
+    {
+        //function is public because it will be called for the Player class interaction handler
+        Debug.Log("Interaction Test Capsule Object - Interact function called Because of P1 Punch.");
+    }
+
 }

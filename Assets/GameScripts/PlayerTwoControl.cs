@@ -62,7 +62,7 @@ public class PlayerTwoControl : MonoBehaviour
             //tries to confirm if interacted component is of a specific type.
             if (rayCastHit.transform.TryGetComponent(out TestInteractionLogic testInteract))
             {
-                testInteract.Interact();
+                testInteract.Interact();//this will be needed because PLayerTwo is automatic
             }
 
 

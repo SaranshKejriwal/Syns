@@ -15,11 +15,31 @@ public class PlayerOneControl : MonoBehaviour
     [SerializeField] private float playerSize = 0.5f; //needed for collision handling in Raycast function.
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
-    private int playerOneInteractionDistance = 2;
+    private int playerOneInteractionDistance = 4;
     private Vector3 lastInteractionDirecctionVector = Vector3.zero;
     // Start is called before the first frame update
+
+    private TestInteractionLogic approachedTestInteractObject;//to be replaced by Enemy logic object later
+
+
     void Start()
     {
+        //listen to events on Start(), not Awake()
+        inputHandler.OnPunchAction += InputHandler_OnPunchAction;
+        
+    }
+
+    private void InputHandler_OnPunchAction(object sender, System.EventArgs e)
+    {
+        //What will this object do when PunchAction is pressed?
+
+        //if Raycast hits Test counter in HandleInteractions() and PlayerOne punches, what to do?
+        if (approachedTestInteractObject != null)
+        {
+            approachedTestInteractObject.RespondToPlayerOnePunch();//straightforward non-singleton approach.
+            //call function in Test object to respond to event. Needed for enemy.
+
+        }
         
     }
 
@@ -52,12 +72,23 @@ public class PlayerOneControl : MonoBehaviour
             //tries to confirm if interacted component is of a specific type.
             if(rayCastHit.transform.TryGetComponent(out TestInteractionLogic testInteract))
             {
-                testInteract.Interact();
+                //testInteract.Interact();//Call Interact function inside TestInteraction object
+                approachedTestInteractObject = testInteract;
+            }
+            else
+            {
+                //raycast has not hit the test object. Reset all selected/interacted objects to null
+                approachedTestInteractObject = null;
             }
 
 
         }
-
+        else
+        {
+            //raycast has not hit anything. Reset all selected/interacted objects to null
+            approachedTestInteractObject = null;
+        }
+        //Debug.Log(approachedTestInteractObject);
     }
 
     public bool IsPlayerOnePunching()
