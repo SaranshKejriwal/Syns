@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 7538878489516024013}
   - component: {fileID: 8540866375346584050}
   - component: {fileID: -5334896697334793785}
+  - component: {fileID: 6401421312880261760}
   m_Layer: 0
   m_Name: InteractionTestLogicObj
   m_TagString: Untagged
@@ -175,6 +176,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11bcc71922a199b41be8d13c3cc2ec18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6401421312880261760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5005842277818928545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85e63e913c1d55e44be1def0b44dc3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactedObject: {fileID: 0}
 --- !u!1 &5535369171641458985
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,6 +201,7 @@ GameObject:
   - component: {fileID: 6934798600636014738}
   - component: {fileID: 3997864345431867892}
   - component: {fileID: 4884580023094671101}
+  - component: {fileID: 4878385548761499297}
   m_Layer: 0
   m_Name: InteractedTestVisualObj
   m_TagString: Untagged
@@ -282,3 +297,16 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4878385548761499297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5535369171641458985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85e63e913c1d55e44be1def0b44dc3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactedObject: {fileID: -5334896697334793785}

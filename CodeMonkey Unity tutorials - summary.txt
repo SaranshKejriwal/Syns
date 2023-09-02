@@ -223,7 +223,7 @@ Eg. playerOne can listen to the event hosted in inputhandler about M key being p
 
 Every Event should always have a subscriber, else you'll get a nullReferenceException
 
-listen to events in Start(), not Awake()
+listen to events in Start(), not Awake() - Awake() functions are called together and may not be in the expected order. Start() function is ALWAYS called after Awake() function calls for each class.
 
 
 Singleton Pattern____________________________
@@ -234,5 +234,5 @@ Make a small increase in size of the interacted object (1 -> 1.01) - prevents so
 
 Singleton class needs multiple instances of an object class to listen to the same event.
 
-May need to revise this section as I'm not going ahead with singleton approach.
+May need to revise this section as I'm not going ahead with singleton approach. He used it to ensure that only 1 instance of PlayerOne exists, which is worthwhile.
 

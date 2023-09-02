@@ -12,7 +12,7 @@ public class PlayerOneControl : MonoBehaviour
     private int rotationSpeed = 10;
     private bool isMoving = false; //used by animator to render movement animation if player is moving
     [SerializeField] private InputHandler inputHandler;
-    [SerializeField] private float playerSize = 0.5f; //needed for collision handling in Raycast function.
+    [SerializeField] private float playerOneInteractionSize = 0.5f; //needed for collision handling in Raycast function.
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
     private int playerOneInteractionDistance = 4;
@@ -109,7 +109,7 @@ public class PlayerOneControl : MonoBehaviour
 
 
         //needed for collision handling - if player movement is obstructed, try x or z axis movement only
-        directionVector = GetMovementDirectionAfterCollision(directionVector);
+        directionVector = GetMovementDirectionAlongObstruction(directionVector);
         //Note - transform.forward is called before collision handling to ensure direction is always based on key input only.
 
         //move the object position in the direction 
@@ -132,9 +132,9 @@ public class PlayerOneControl : MonoBehaviour
 
 
     //use - while moving diagonally and obstructed, playerOne should move in at least 1 feasible direction
-    private Vector3 GetMovementDirectionAfterCollision(Vector3 currentDirectionVector)
+    private Vector3 GetMovementDirectionAlongObstruction(Vector3 currentDirectionVector)
     {
-        bool isNotColliding = !Physics.Raycast(transform.position, currentDirectionVector, playerSize);//this is needed for collision handling
+        bool isNotColliding = !Physics.Raycast(transform.position, currentDirectionVector, playerOneInteractionSize);//this is needed for collision handling
         //bool isNotColliding = !Physics.CapsuleCast(transform.position, transform.position+Vector3.up*playerHeightOffset, playerSize, directionVector, Time.deltaTime * moveSpeed);//this is needed for collision handling
 
         if (isNotColliding)
@@ -146,7 +146,7 @@ public class PlayerOneControl : MonoBehaviour
             //attempt seprate x-direction or z-direction movement - normalized vectors ensure consistent speed by changing to unit magnitude vectors
             Vector3 directionXAxis = new Vector3(currentDirectionVector.x, 0, 0).normalized;
             Vector3 directionZAxis = new Vector3(0,0, currentDirectionVector.z).normalized;
-            bool isNotCollidingX = !Physics.Raycast(transform.position, directionXAxis, playerSize);//check x axis block only
+            bool isNotCollidingX = !Physics.Raycast(transform.position, directionXAxis, playerOneInteractionSize);//check x axis block only
             //bool isNotCollidingX = !Physics.CapsuleCast(transform.position, transform.position+Vector3.up*playerHeightOffset, playerSize, directionXAxis, Time.deltaTime * moveSpeed);//this is needed for collision handling
 
             if (isNotCollidingX) {
