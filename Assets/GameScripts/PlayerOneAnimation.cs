@@ -13,6 +13,7 @@ public class PlayerOneAnimation : MonoBehaviour
 
     [SerializeField] private PlayerOneControl playerOne; // to reference the logic component of PlayerOne
 
+    //Awake is called before Start()
     private void Awake()//inherited method
     {
         //get the animator reference

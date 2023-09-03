@@ -15,11 +15,11 @@ public class PlayerOneControl : MonoBehaviour
     [SerializeField] private float playerOneInteractionSize = 0.5f; //needed for collision handling in Raycast function.
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
-    private int playerOneInteractionDistance = 4;
+    private int playerOneInteractionDistance = 1;
     private Vector3 lastInteractionDirecctionVector = Vector3.zero;
     // Start is called before the first frame update
 
-    private TestInteractionLogic approachedTestInteractObject;//to be replaced by Enemy logic object later
+    private EnemyControlObject approachedEnemy;//to be replaced by Enemy logic object later
 
 
     void Start()
@@ -33,11 +33,11 @@ public class PlayerOneControl : MonoBehaviour
     {
         //What will this object do when PunchAction is pressed?
 
-        //if Raycast hits Test counter in HandleInteractions() and PlayerOne punches, what to do?
-        if (approachedTestInteractObject != null)
+        //if Raycast hits Enemy in HandleInteractions(), approachedEnemy is updated. When PlayerOne punches, Enemy reaction is called
+        if (approachedEnemy != null)
         {
-            approachedTestInteractObject.RespondToPlayerOnePunch();//straightforward non-singleton approach.
-            //call function in Test object to respond to event. Needed for enemy.
+            //only nearest enemy responds, ONLY when Player One Punches
+            approachedEnemy.RespondToPlayerOnePunch();//straightforward non-singleton approach.
 
         }
         
@@ -70,15 +70,14 @@ public class PlayerOneControl : MonoBehaviour
             //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.
 
             //tries to confirm if interacted component is of a specific type.
-            if(rayCastHit.transform.TryGetComponent(out TestInteractionLogic testInteract))
-            {
-                //testInteract.Interact();//Call Interact function inside TestInteraction object
-                approachedTestInteractObject = testInteract;
+            if(rayCastHit.transform.TryGetComponent(out EnemyControlObject interactedEnemy))
+            {               
+                approachedEnemy = interactedEnemy;//assign this nearest Enemy to interacted Enemy objecct for P1.
             }
             else
             {
-                //raycast has not hit the test object. Reset all selected/interacted objects to null
-                approachedTestInteractObject = null;
+                //raycast is no longer hitting enemy. Reset all previously selected/interacted objects to null
+                approachedEnemy = null;
             }
 
 
@@ -86,7 +85,7 @@ public class PlayerOneControl : MonoBehaviour
         else
         {
             //raycast has not hit anything. Reset all selected/interacted objects to null
-            approachedTestInteractObject = null;
+            approachedEnemy = null;
         }
         //Debug.Log(approachedTestInteractObject);
     }

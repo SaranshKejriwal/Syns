@@ -20,7 +20,7 @@ public class PlayerTwoControl : MonoBehaviour
     [SerializeField] private float playerTwoInteractionSize = 0.5f; //needed for collision handling in Raycast function.
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
-    private int playerTwoInteractionDistance = 2;
+    private float playerTwoInteractionDistance = 2f;
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;
 
@@ -53,9 +53,10 @@ public class PlayerTwoControl : MonoBehaviour
             //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.
 
             //tries to confirm if interacted component is of a specific type.
-            if (rayCastHit.transform.TryGetComponent(out TestInteractionLogic testInteract))
+            if (rayCastHit.transform.TryGetComponent(out EnemyControlObject approachingEnemy))
             {
-                testInteract.Interact();//this will be needed because PLayerTwo is automatic
+                Debug.Log(approachingEnemy);
+                approachingEnemy.RespondToPlayerTwoInteraction();
             }
 
 
@@ -72,7 +73,6 @@ public class PlayerTwoControl : MonoBehaviour
 
         //needed for collision handling - if player movement is obstructed, try x or z axis movement only
         currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
-
 
         //rotate the object to face the updated direction of movement
         transform.forward = Vector3.Slerp(transform.forward, currentPlayerTwoDirectionVector, Time.deltaTime * rotationSpeed);

@@ -203,6 +203,8 @@ Adding Interactions________________________________
 
 If you want multiple copies of an object, create a "prefab" rather than copying the object - changes to prefab apply across the board. 
 
+This is useful for setting up Enemy logic and animations as a central prefab and then spawn all enemies with base logic configured.
+
 Create a Prefab folder and drop the logic GameObj into the folder. The GameObj now has a blue icon.
 (useful for enemy spawn)
 Ensure that Interaction logic applies to the prefab, not just to one instance of it.
