@@ -7,6 +7,14 @@ using Vector3 = UnityEngine.Vector3;
 
 public class PlayerTwoControl : MonoBehaviour
 {
+    //create Singleton object of this class which ALL other entities will refer to - PlayerOne or Enemies.
+    private static PlayerTwoControl instance;
+    public static PlayerTwoControl Instance
+    //this instance "Property" will be tracked by ALL enemies, while keeping actual PlayerTwo object private
+    { 
+        get { return instance; }//not very different from getters and setters
+        private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
+    }
 
     [SerializeField] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
     [SerializeField] private int maxPlayerTwoMovementSpeed = 7;
@@ -23,6 +31,19 @@ public class PlayerTwoControl : MonoBehaviour
     private float playerTwoInteractionDistance = 2f;
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;
+
+    //Awake will be called before Start()
+    private void Awake()
+    {
+        if (instance == null) 
+        { 
+            instance = this;//start by setting the Singleton instance 
+        }
+        else
+        {
+            Debug.Log("Fatal Error: Cannot have a predefined instance of PlayerTwo");
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -95,5 +116,10 @@ public class PlayerTwoControl : MonoBehaviour
     public bool IsPlayerTwoMoving()
     {
         return isMoving;
+    }
+
+    public Vector3 GetPlayerTwoLocation()
+    {
+        return transform.position;
     }
 }

@@ -66,7 +66,9 @@ public class EnemyControlObject : MonoBehaviour
 
     private void CheckPlayerTwoVicinity()
     {
-        //RespondToPlayerTwoInteraction();
+        //RespondToPlayerTwoInteraction();//this has to be a conditional call when Enemy is in Proximity of P2
+        Debug.Log("Enemy object identity: " + this);
+        Debug.Log("Player 2 Location: " + PlayerTwoControl.Instance.GetPlayerTwoLocation());
     }
 
     private int GetEnemyMovementSpeed()

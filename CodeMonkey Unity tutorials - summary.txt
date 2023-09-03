@@ -236,5 +236,4 @@ Make a small increase in size of the interacted object (1 -> 1.01) - prevents so
 
 Singleton class needs multiple instances of an object class to listen to the same event.
 
-May need to revise this section as I'm not going ahead with singleton approach. He used it to ensure that only 1 instance of PlayerOne exists, which is worthwhile.
-
+Singleton is useful when multiple objects of one class need to refer the same object of another class - eg. All enemies need to target only 1 instance of PlayerTwo - Need not configure PLayerTwo reference in inspector everytime.
