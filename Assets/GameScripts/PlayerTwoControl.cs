@@ -112,6 +112,21 @@ public class PlayerTwoControl : MonoBehaviour
         Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
     }
 
+    public void RespondToEnemyHunt(object sender, System.EventArgs e)
+    {
+        Debug.Log("PlayerTwo responding to Enemy Event.");
+    }
+
+    public void EvadeEnemyPosition(Vector3 EnemyPosition)
+    {
+        Debug.Log("PlayerTwo evading Enemy Position " + EnemyPosition);
+        Vector3 enemyEvasionPlayerTwoDirectionVector = (transform.position - EnemyPosition).normalized;
+
+        //separate enemy Evasion vector is created to ensure that PlayerTwo doesn't break through walls
+        currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(enemyEvasionPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
+        transform.position += currentPlayerTwoDirectionVector * Time.deltaTime * maxPlayerTwoMovementSpeed;
+
+    }
 
     public bool IsPlayerTwoMoving()
     {

@@ -1,5 +1,7 @@
+using System; //for enemy events.
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyControlObject : MonoBehaviour
@@ -11,7 +13,7 @@ public class EnemyControlObject : MonoBehaviour
     //Note - Hunting speed should be same as the max movement speed of playerTwo, else enemy will never catch up.
 
     [SerializeField] private float enemyInteractionSize = 1.5f; //needed for collision handling in Raycast function.
-    [SerializeField] private float playerTwoDetectionDistance = 5;//distance under which Enemy will start hunting Player Two
+    [SerializeField] private float enemyDetectionRadiusOfPlayerTwo = 10f;//distance under which Enemy will start hunting Player Two
 
 
     private int rotationSpeed = 10;
@@ -22,6 +24,10 @@ public class EnemyControlObject : MonoBehaviour
     private bool isEnemyHit = false;
 
     private Vector3 currentEnemyDirectionVector = Vector3.zero;
+    private float currentDistanceFromPlayerTwo = 1000f;//initialize distance from player2 at very high value
+    private float enemyAttackRadius = 1f;//radius at which enemy can attack playerTwo
+
+    public event EventHandler onHuntingPlayerTwo;//will be listened by PlayerTwo
 
     void Start()
     {
@@ -31,22 +37,16 @@ public class EnemyControlObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ResetEnemyInteractionAnimators();//Reset all animator booleans on Enemy
         HandleNormalEnemyMovementWithCollision();
-        CheckPlayerTwoVicinity();
+        ReactToPlayerTwo();
     }
 
 
     private void HandleNormalEnemyMovementWithCollision()
     {
 
-        //this will always be true for PlayerTwo since currentPlayerTwoDirection cannot be zero 
-        isEnemyMoving = currentEnemyDirectionVector != Vector3.zero;
-        isEnemyHunting = !isEnemyMoving;//enemy can either move or hunt.
-
         //needed for collision handling - if player movement is obstructed, try x or z axis movement only
         currentEnemyDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentEnemyDirectionVector, transform.position, enemyInteractionSize);
-
         //rotate the object to face the updated direction of movement
         transform.forward = Vector3.Slerp(transform.forward, currentEnemyDirectionVector, Time.deltaTime * rotationSpeed);
         /*
@@ -64,11 +64,27 @@ public class EnemyControlObject : MonoBehaviour
         Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
     }
 
-    private void CheckPlayerTwoVicinity()
+    private void ReactToPlayerTwo()
     {
-        //RespondToPlayerTwoInteraction();//this has to be a conditional call when Enemy is in Proximity of P2
-        Debug.Log("Enemy object identity: " + this);
-        Debug.Log("Player 2 Location: " + PlayerTwoControl.Instance.GetPlayerTwoLocation());
+        //Get current distance from Player 2
+        currentDistanceFromPlayerTwo = Vector3.Distance(transform.position, PlayerTwoControl.Instance.GetPlayerTwoLocation());
+        if (currentDistanceFromPlayerTwo > enemyDetectionRadiusOfPlayerTwo)
+        {
+            //current distance is farther than enemy detection radius. Enemy to continue normal motion and not attack Player 2.
+            ContinueNormalMotion();
+            return;
+        }else if (currentDistanceFromPlayerTwo > enemyAttackRadius)
+        {
+            HuntPlayerTwo();
+        }else if(currentDistanceFromPlayerTwo <= enemyAttackRadius)
+        {
+            //Enemy within reach of Player Two
+            AttackPlayerTwo();
+        }
+
+        //if distance is close, change current Enemy direction to chase player 2
+
+
     }
 
     private int GetEnemyMovementSpeed()
@@ -99,14 +115,52 @@ public class EnemyControlObject : MonoBehaviour
 
     public void RespondToPlayerTwoInteraction()
     {
-        Debug.Log("Enemy spotted Player Two");
-        isEnemyHunting = true;
-        isEnemyMoving = false;//Enemy is now tracking P2, not moving randomly
+        Debug.Log("Enemy Responding to Player Two");
+        //isEnemyHunting = true;
+        //isEnemyMoving = false;//Enemy is now tracking P2, not moving randomly
     }
 
     private void ResetEnemyInteractionAnimators()
     {
         //isEnemyHit = false;//hit is the only interaction animator.
+    }
+
+    //if Enemy is far away from Player2 
+    private void ContinueNormalMotion()
+    {
+        isEnemyMoving = true;
+        isEnemyHunting = false;
+    }
+
+    private void HuntPlayerTwo()
+    {
+        //Note - Buff animation can be added before running.
+        
+        //start running in the direction of PlayerTwo
+        isEnemyHunting = true;
+        isEnemyMoving = false;
+        //get enemy to move towards PlayerTwo, based on positions of both.
+        currentEnemyDirectionVector = (PlayerTwoControl.Instance.GetPlayerTwoLocation() - transform.position).normalized;
+        transform.LookAt(PlayerTwoControl.Instance.GetPlayerTwoLocation());//look at PlayerTwo
+
+        //fire an event here, which would prompt PlayerTwo to run away from enemy position.
+        //onHuntingPlayerTwo += PlayerTwoControl.Instance.RespondToEnemyHunt;
+        PlayerTwoControl.Instance.EvadeEnemyPosition(transform.position);
+
+
+    }
+
+    private void AttackPlayerTwo()
+    {
+        //does attack need to be stationary?
+        Debug.Log("PlayerTwo in attack vicinity");
+        //fire an event here, which would impact PlayerTwo Health
+    }
+
+    private void AttackPlayerOne()
+    {
+        //Only if PlayerOne attacks enemy, enemy should Attack Player One.
+        //fire an event here, which would impact PlayerOne Health
     }
 
     public bool IsEnemyMoving()
