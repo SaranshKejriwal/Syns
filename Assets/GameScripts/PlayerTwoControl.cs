@@ -74,7 +74,7 @@ public class PlayerTwoControl : MonoBehaviour
             //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.
 
             //tries to confirm if interacted component is of a specific type.
-            if (rayCastHit.transform.TryGetComponent(out EnemyControlObject approachingEnemy))
+            if (rayCastHit.transform.TryGetComponent(out EnemyController approachingEnemy))
             {
                 Debug.Log(approachingEnemy);
                 approachingEnemy.RespondToPlayerTwoInteraction();

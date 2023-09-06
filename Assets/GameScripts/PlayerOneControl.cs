@@ -19,7 +19,7 @@ public class PlayerOneControl : MonoBehaviour
     private Vector3 lastInteractionDirecctionVector = Vector3.zero;
     // Start is called before the first frame update
 
-    private EnemyControlObject approachedEnemy;//to be replaced by Enemy logic object later
+    private EnemyController approachedEnemy;//to be replaced by Enemy logic object later
 
 
     void Start()
@@ -70,7 +70,7 @@ public class PlayerOneControl : MonoBehaviour
             //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.
 
             //tries to confirm if interacted component is of a specific type.
-            if(rayCastHit.transform.TryGetComponent(out EnemyControlObject interactedEnemy))
+            if(rayCastHit.transform.TryGetComponent(out EnemyController interactedEnemy))
             {               
                 approachedEnemy = interactedEnemy;//assign this nearest Enemy to interacted Enemy objecct for P1.
             }

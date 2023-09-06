@@ -227,6 +227,7 @@ Every Event should always have a subscriber, else you'll get a nullReferenceExce
 
 listen to events in Start(), not Awake() - Awake() functions are called together and may not be in the expected order. Start() function is ALWAYS called after Awake() function calls for each class.
 
+Use Awake() for initializing that script, and Start for initializing any external references
 
 Singleton Pattern____________________________
 
@@ -237,3 +238,19 @@ Make a small increase in size of the interacted object (1 -> 1.01) - prevents so
 Singleton class needs multiple instances of an object class to listen to the same event.
 
 Singleton is useful when multiple objects of one class need to refer the same object of another class - eg. All enemies need to target only 1 instance of PlayerTwo - Need not configure PLayerTwo reference in inspector everytime.
+
+Other classes can also listen to the Events OF the player singleton.
+
+
+Scriptable Objects______________________________
+
+Objects that player can pickup and drop - useful for the Key to Exit.
+Also useful for creating spawning object, like enemies, after a set duration.
+
+such Prefabs can be used as "Transform"s or "GameObject"s
+
+
+
+
+
+https://gamedev.stackexchange.com/questions/126427/draw-circle-around-gameobject-to-indicate-radius

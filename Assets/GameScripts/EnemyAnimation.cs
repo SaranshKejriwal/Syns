@@ -12,7 +12,7 @@ public class EnemyAnimation : MonoBehaviour
     private const string IS_HIT_PARAM_NAME = "isEnemyHit";
     private const string IS_ATTACKING_PARAM_NAME = "isEnemyAttacking";
 
-    [SerializeField] private EnemyControlObject enemyLogicObject; // to reference the logic component of Enemy, in the Prefab itself
+    [SerializeField] private EnemyController enemyLogicObject; // to reference the logic component of Enemy, in the Prefab itself
 
     //Awake is called before Start
     private void Awake()//inherited method
@@ -35,5 +35,6 @@ public class EnemyAnimation : MonoBehaviour
         enemyAnimator.SetBool(IS_HUNTING_PARAM_NAME, enemyLogicObject.IsEnemyHunting());//pickup the "isMoving"  parameter from the Animator component of the player
         enemyAnimator.SetBool(IS_ATTACKING_PARAM_NAME, enemyLogicObject.IsEnemyAttacking());//pickup the "isMoving"  parameter from the Animator component of the player
         enemyAnimator.SetBool(IS_HIT_PARAM_NAME, enemyLogicObject.IsEnemyHit());
+
     }
 }

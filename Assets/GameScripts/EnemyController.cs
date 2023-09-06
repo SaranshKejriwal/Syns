@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyControlObject : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
     // Start is called before the first frame update
 
@@ -14,7 +14,7 @@ public class EnemyControlObject : MonoBehaviour
 
     [SerializeField] private float enemyInteractionSize = 1.5f; //needed for collision handling in Raycast function.
     [SerializeField] private float enemyDetectionRadiusOfPlayerTwo = 10f;//distance under which Enemy will start hunting Player Two
-
+    //Note - Scale of Detection circle visual is 2x this Detection radius - should be controlled by logic.
 
     private int rotationSpeed = 10;
     private bool isEnemyMoving = true; //used by animator to render movement animation if enemy is moving normally
@@ -63,6 +63,7 @@ public class EnemyControlObject : MonoBehaviour
         Time.deltaTime ensures that perceived change in position is independent of system framerate.
         Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
     }
+
 
     private void ReactToPlayerTwo()
     {
@@ -178,5 +179,16 @@ public class EnemyControlObject : MonoBehaviour
     public bool IsEnemyHit()
     {
         return isEnemyHit;
+    }
+
+    //Needed to configure the radius of the visible circle.
+    public float GetEnemyDetectionRadiusOfPlayerTwo()
+    {
+        return enemyDetectionRadiusOfPlayerTwo;
+    }
+
+    public void SetEnemyDetectionRadiusOfPlayerTwo(float NewDetectionRadius)
+    {
+        enemyDetectionRadiusOfPlayerTwo = NewDetectionRadius;
     }
 }
