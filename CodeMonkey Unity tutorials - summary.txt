@@ -247,10 +247,26 @@ Scriptable Objects______________________________
 Objects that player can pickup and drop - useful for the Key to Exit.
 Also useful for creating spawning object, like enemies, after a set duration.
 
-such Prefabs can be used as "Transform"s or "GameObject"s
+such Prefabs can be used as "Transform"s or "GameObject"s - Don't know the difference.
+
+Scriptable Objects are useful for creating multiple instances of one type - like weapons, enemies;
+
+This will be useful to define the 7 types of enemies and bosses, I guess.
+
+Scriptable objects extend ScriptableObject, not MonoBehaviour. These need CreateAssetMenu() for creating an object - this would allow you to create an object of this type from within the Project window itself.
+
+Not sure if we need them for our use-case - EnemyBuff can be applied consistently. This would be useful if you had a variable set of objects at once.
+<Skipping this...>
+
+
+Object Parent_______________
+
+Useful for defining where an object belongs - eg. Picking up stuff. Each object will be attached to a parent, either its spawn location, or Player - useful for the Key, and the Player buffs.
+
+Gold etc can disappear when in vicinity.
+
+Player Tools can have 4 parents - Shop, Sack, P1, P2.
+Key can have 2 parent - spawn location (meh) and P2.
 
 
 
-
-
-https://gamedev.stackexchange.com/questions/126427/draw-circle-around-gameobject-to-indicate-radius
