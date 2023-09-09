@@ -5,9 +5,8 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerTwoControl : PlayerParentController
+public class PlayerTwoControl : GenericPlayerControl
 {
-    private int playerTwoHealth = 15;
 
     //create Singleton object of this class which ALL other entities will refer to - PlayerOne or Enemies.
     private static PlayerTwoControl instance;
@@ -18,13 +17,14 @@ public class PlayerTwoControl : PlayerParentController
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
-    [SerializeField] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
+
+    [SerializeField][Range(1,8)] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
     [SerializeField] private int maxPlayerTwoMovementSpeed = 7;
     [SerializeField] private int minPlayerTwoMovementSpeed = 1;
 
     private int rotationSpeed = 10;
     private bool isMoving = true; //used by animator to render movement animation if player is moving
-    private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
+    //private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
 
     [SerializeField] private InputHandler inputHandler;
     [SerializeField] private float playerTwoInteractionSize = 0.5f; //needed for collision handling in Raycast function.
@@ -34,12 +34,11 @@ public class PlayerTwoControl : PlayerParentController
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;
 
-    //ExitKey mechanics
-    private float exitKeyDetectionRadius = 5f;
-
+    
     //Awake will be called before Start()
     private void Awake()
     {
+        int playerTwoHealth = 15;
         this.SetPlayerMaxHealth(playerTwoHealth);
         if (instance == null) 
         { 

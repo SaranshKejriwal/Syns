@@ -268,5 +268,12 @@ Gold etc can disappear when in vicinity.
 Player Tools can have 4 parents - Shop, Sack, P1, P2.
 Key can have 2 parent - spawn location (meh) and P2.
 
+No rocket science - just getters and setters -> setParentOfChildObject(this);
 
 
+
+
+
+Used https://www.youtube.com/watch?v=ya1HyptE5uc for Maze construction.
+
+[SerializeField][Range(1,8)] allows serialized field to only move in that range,

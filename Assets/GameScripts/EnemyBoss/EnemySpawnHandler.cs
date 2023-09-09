@@ -28,7 +28,13 @@ public class EnemySpawnHandler : MonoBehaviour
     {
         Debug.Log("Starting Enemy Spawn Handler...");  
         
+        //one-fourth maze length from either side of origin should define the inner limit of enemy spawn
+        minSpawnDistanceFromOrigin = MazeBuilder.Instance.GetMazeTotalSideLength()/4;
+        //less than one-half maze length from either side of origin should define the outer limit of enemy spawn
+        maxSpawnDistanceFromOrigin = MazeBuilder.Instance.GetMazeTotalSideLength()/2.5f;
+
         SpawnNewEnemy();//Start the game with One Enemy.
+
     }
 
     // Update is called once per frame
@@ -59,10 +65,11 @@ public class EnemySpawnHandler : MonoBehaviour
             Debug.Log("Spawn Timer inactive. Enemy spawning stopped.");
             return; //extra check to not spawn anything if counter is inactive
         }
-        Debug.Log("Spawning New Enemy...");
+
         Transform newEnemy = Instantiate(enemyPrefab);
         newEnemy.localPosition = GetRandomFarAwaySpawnPoint();//always modify localPosition with respect to parent.
         enemySpawnCount++;
+        Debug.Log("Spawning New Enemy at "+ newEnemy.localPosition);
     }
 
     private Vector3 GetRandomFarAwaySpawnPoint()
@@ -75,8 +82,9 @@ public class EnemySpawnHandler : MonoBehaviour
 
     private int GetRandomSpawnSide()
     {
-        //Returns 1 or -1 randomly.
-        return Random.Range(0,1)==1?1:-1; //shorthand if-else
+        //CoinToss to Return 1 or -1 randomly - there is equal probability of getting a number >1 or <1
+        int CoinToss = (int)Random.Range(0, 2);
+        return CoinToss == 1?1:-1; //shorthand if-else
     }
 
   

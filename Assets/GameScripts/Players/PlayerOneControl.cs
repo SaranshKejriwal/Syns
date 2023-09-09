@@ -5,10 +5,8 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerOneControl : PlayerParentController
+public class PlayerOneControl : GenericPlayerControl
 {
-
-    private int playerOneHealth = 25;
 
     [SerializeField] private int moveSpeed = 5;//this private field is accessible on Inspector only, not anywhere else outside class
     private int rotationSpeed = 10;
@@ -25,6 +23,7 @@ public class PlayerOneControl : PlayerParentController
 
     private void Awake()
     {
+        int playerOneHealth = 25;
         this.SetPlayerMaxHealth(playerOneHealth);
     }
 

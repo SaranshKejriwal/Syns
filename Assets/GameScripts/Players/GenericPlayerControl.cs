@@ -4,7 +4,7 @@ using UnityEngine;
 
 //This Generic Controller PlayerClass will be the Parent of P1 and P2
 //It can be used to apply generic buff items, health setters etc.
-public class PlayerParentController : MonoBehaviour
+public class GenericPlayerControl : MonoBehaviour
 {
     private int playerHealth = 10;
     // Start is called before the first frame update

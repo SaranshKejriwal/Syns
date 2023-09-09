@@ -4,6 +4,15 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+enum enemyStates 
+{
+    isMoving,//moving randomly
+    isHunting,//chasing PlayerTwo
+    isAttacking,//attacking PlayerOne or PlayerTwo
+    isHit //attacked by PlayerOne
+
+}
+
 public class EnemyController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -16,11 +25,10 @@ public class EnemyController : MonoBehaviour
     //Note - Scale of Detection circle visual is 2x this Detection radius - should be controlled by logic.
 
     private int rotationSpeed = 10;
-    private bool isEnemyMoving = true; //used by animator to render movement animation if enemy is moving normally
-    private bool isEnemyHunting = false;//used by animator to render running animation if enemy is hunting playerTwo
-    //Enemy will either move or hunt, not both.
-    private bool isEnemyAttacking = false;//used by animator to render attacking animation if enemy is attacking playerTwo
-    private bool isEnemyHit = false;
+
+    //instead of having multiple booleans to represent mutually exclusive states, we can use a single Enum
+    //this way, we won't have to toggle 3 booleans to set one state.
+    private enemyStates currentEnemyState = enemyStates.isMoving;
 
     private Vector3 currentEnemyDirectionVector = Vector3.zero;
 
@@ -92,18 +100,13 @@ public class EnemyController : MonoBehaviour
 
     private int GetEnemyMovementSpeed()
     {
-        if (isEnemyMoving && !isEnemyHunting)
+        if (IsEnemyMoving())
         {
             return enemyWalkingMovementSpeed;
         }
-        else if(isEnemyHunting && !isEnemyMoving)
+        else if(IsEnemyHunting())
         {
             return enemyHuntingMovementSpeed;
-        }
-        else if(isEnemyMoving && isEnemyHunting)
-        {
-            Debug.Log("Error: Enemy cannot be moving and hunting simultaneously. Defaulting to Walk speed");
-            return enemyWalkingMovementSpeed;
         }
         return enemyWalkingMovementSpeed;
     }
@@ -113,7 +116,7 @@ public class EnemyController : MonoBehaviour
     {
         //function is public because it will be called for the Player class interaction handler
         Debug.Log("Player One Punched Enemy.");
-        isEnemyHit = true;
+        currentEnemyState = enemyStates.isHit;
     }
 
     public void RespondToPlayerTwoInteraction()
@@ -131,8 +134,7 @@ public class EnemyController : MonoBehaviour
     //if Enemy is far away from Player2 
     private void ContinueNormalMotion()
     {
-        isEnemyMoving = true;
-        isEnemyHunting = false;
+        currentEnemyState = enemyStates.isMoving;
     }
 
     private void HuntPlayerTwo()
@@ -140,8 +142,8 @@ public class EnemyController : MonoBehaviour
         //Note - Buff animation can be added before running.
         
         //start running in the direction of PlayerTwo
-        isEnemyHunting = true;
-        isEnemyMoving = false;
+        currentEnemyState = enemyStates.isHunting;
+
         //get enemy to move towards PlayerTwo, based on positions of both.
         currentEnemyDirectionVector = (PlayerTwoControl.Instance.GetPlayerTwoLocation() - transform.position).normalized;
         transform.LookAt(PlayerTwoControl.Instance.GetPlayerTwoLocation());//look at PlayerTwo
@@ -168,19 +170,19 @@ public class EnemyController : MonoBehaviour
 
     public bool IsEnemyMoving()
     {
-        return isEnemyMoving;
+        return currentEnemyState == enemyStates.isMoving;
     }
     public bool IsEnemyHunting()
     {
-        return isEnemyHunting;
+        return currentEnemyState == enemyStates.isHunting;
     }
     public bool IsEnemyAttacking()
     {
-        return isEnemyAttacking;
+        return currentEnemyState == enemyStates.isAttacking;
     }
     public bool IsEnemyHit()
     {
-        return isEnemyHit;
+        return currentEnemyState == enemyStates.isHit;
     }
 
     //Needed to configure the radius of the visible circle.
