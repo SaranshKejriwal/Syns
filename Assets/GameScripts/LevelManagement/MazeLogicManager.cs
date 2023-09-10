@@ -1,23 +1,53 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
+
+//This class uses Depth-First-Search or Recursive BackTracking to Construct a maze
+//Difficulty can vary based on width of this maze
+
+//Each node corresponds to a bit-square in a maze
+[Flags]
+public enum cellWallState
+{
+    //0000 = No walls on this node
+    //1111 = All walls on this node are untouched - Up,Dn,Rt,Lf,
+    Left = 1, Right = 2, Bottom = 4, Top = 8,
+    //0001, 0010, 0100,1000
+
+    Visited = 128 //tracks which nodes have been touched
+}
+/*Flags attribute allows us to have multiple true states for this Enum, not just one, using | operator
+//eg. newWallState = nodeWallState.Left | nodeWallState.Right; equiv to 0011
+
+Add a state:- newWallState |= nodeWallState.Up; 1011
+Remove a state:- newWallState &= ~nodeWallState.Right; 0101
+Check state:- HasFlags(nodeWallState.Right)
+
+*/
+
+
+public struct PositionInMaze
+{
+    public int x;//track our current position in the recursive backtrack, using this structure
+    public int z;
+}
+
+public struct MazeCellNeighbour
+{
+    public PositionInMaze neighbourPosition; //we traverse from our pos to neighbour pos, and break the common wall
+    public cellWallState wallSharedWithNeighbour;
+}
 
 /*This class uses Depth-First-Search or Recursive BackTracking to 
  * first create a maze from a cell-grid, and then get PlayerTwo to Solve the same maze 
  * with the same technique*/
 
-public static class MazeTraverser 
+public static class MazeLogicManager 
 {
-    public static cellWallState[,] CreateMazeFromGrid(cellWallState[,] fullCellGrid, uint numCells)
-    {
-        cellWallState[,] finalMaze = new cellWallState[numCells, numCells]; 
-        finalMaze = fullCellGrid;//initialize with fully walled grid.
-
-
-        return finalMaze;
-    }
 
     //this will return a list of 4 neighbours at max
     private static List<MazeCellNeighbour> GetUnvisitedNeighbours(PositionInMaze P, cellWallState[,] mazeInProgress, uint numCells)
@@ -95,10 +125,9 @@ public static class MazeTraverser
     }
 
 
-    public static cellWallState[,] ApplyRecursiveBacktracker(cellWallState[,] initialFullGrid, uint numCells)
+    public static cellWallState[,] ApplyRecursiveBacktracker(uint numCells)
     {
-        cellWallState[,] finalMaze = new cellWallState[numCells, numCells];
-        finalMaze = initialFullGrid;//initialize with fully walled grid.
+        cellWallState[,] finalMaze = CreateStartingGrid(numCells);//initialize with fully walled grid.
 
         Stack<PositionInMaze> visitedPositionStack = new Stack<PositionInMaze>();//Stack = LIFO Queue
 
@@ -163,5 +192,21 @@ public static class MazeTraverser
         }
     }
 
+    //return a 2D array which corresponds to the maze
+    private static cellWallState[,] CreateStartingGrid(uint numCells)
+    {
+        //numCells indicates the number of cells on width and height; lesser numCells means bigger cells.
+        cellWallState[,] gameMaze = new cellWallState[numCells, numCells];
+        cellWallState initialCellState = cellWallState.Top | cellWallState.Bottom | cellWallState.Right | cellWallState.Left;//1111
+        for (int i = 0; i < numCells; i++)
+        {
+            for (int j = 0; j < numCells; j++)
+            {
+                //construct all walls of the cell, to have a solid matrix at first.
+                gameMaze[i, j] = initialCellState;
+            }
+        }
 
+        return gameMaze;
+    }
 }

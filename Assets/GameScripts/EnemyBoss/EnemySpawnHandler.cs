@@ -29,9 +29,9 @@ public class EnemySpawnHandler : MonoBehaviour
         Debug.Log("Starting Enemy Spawn Handler...");  
         
         //one-fourth maze length from either side of origin should define the inner limit of enemy spawn
-        minSpawnDistanceFromOrigin = MazeBuilder.Instance.GetMazeTotalSideLength()/4;
+        minSpawnDistanceFromOrigin = LevelBuilder.Instance.GetMazeTotalSideLength()/4;
         //less than one-half maze length from either side of origin should define the outer limit of enemy spawn
-        maxSpawnDistanceFromOrigin = MazeBuilder.Instance.GetMazeTotalSideLength()/2.5f;
+        maxSpawnDistanceFromOrigin = LevelBuilder.Instance.GetMazeTotalSideLength()/2.5f;
 
         SpawnNewEnemy();//Start the game with One Enemy.
 
