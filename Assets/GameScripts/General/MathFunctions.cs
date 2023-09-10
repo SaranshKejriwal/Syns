@@ -48,4 +48,16 @@ public static class MathFunctions
         return GetRandomSpawnPointOnFarSideMap(0);//minimum distance from origin is set to 0; Same as all over Map      
     }
 
+    //Spawn away from walls - use Maze center points as reference.
+    public static Vector3 GetRandomMazeCellCenterSpawnWithOffset(float xOffsetFromCellCenter, float zOffsetFromCellCenter)
+    {
+        int xIndex = GetRandomIntInRange(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());
+        int zIndex = GetRandomIntInRange(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());
+
+        //get MazeCell Center point at this random index
+        Vector3 MazeCellCenter = LevelBuilder.Instance.GetPositionOfMazeCellAtIndex(xIndex, zIndex);
+        //return final vector after adding offset
+        return MazeCellCenter + new Vector3(xOffsetFromCellCenter, 0, zOffsetFromCellCenter);
+    }
+
 }

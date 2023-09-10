@@ -78,7 +78,7 @@ public class EnemyController : MonoBehaviour
     private void ReactToPlayerTwo()
     {
         //Get current distance from Player 2
-        currentDistanceFromPlayerTwo = Vector3.Distance(transform.position, PlayerTwoController.Instance.GetPlayerTwoLocation());
+        currentDistanceFromPlayerTwo = Vector3.Distance(transform.position, PlayerTwoController.Instance.GetPlayerPosition());
         if (currentDistanceFromPlayerTwo > enemyDetectionRadiusOfPlayerTwo)
         {
             //current distance is farther than enemy detection radius. Enemy to continue normal motion and not attack Player 2.
@@ -145,8 +145,8 @@ public class EnemyController : MonoBehaviour
         currentEnemyState = enemyStates.isHunting;
 
         //get enemy to move towards PlayerTwo, based on positions of both.
-        currentEnemyDirectionVector = (PlayerTwoController.Instance.GetPlayerTwoLocation() - transform.position).normalized;
-        transform.LookAt(PlayerTwoController.Instance.GetPlayerTwoLocation());//look at PlayerTwo
+        currentEnemyDirectionVector = (PlayerTwoController.Instance.GetPlayerPosition() - transform.position).normalized;
+        transform.LookAt(PlayerTwoController.Instance.GetPlayerPosition());//look at PlayerTwo
 
         //fire an event here, which would prompt PlayerTwo to run away from enemy position.
         //onHuntingPlayerTwo += PlayerTwoControl.Instance.RespondToEnemyHunt;

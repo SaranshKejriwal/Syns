@@ -34,31 +34,47 @@ public class LevelBuilder : MonoBehaviour
         }
         else
         {
-            Debug.Log("Fatal Error: Cannot have a predefined instance of Level Builder");
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of Level Builder");
         }
 
         singleCellSideLength = (float)totalMazeSideLength / numCellsOnSide;
         Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
         gameMaze = MazeLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
-        MazeRenderer.Instance.DrawMazeOnGame(gameMaze,totalMazeSideLength,numCellsOnSide,singleCellSideLength);
+        
     }
     // Start is called before the first frame update
     void Start()
     {
-
+        //Always put external GameObject references in Start(), not Awake
+        MazeRenderer.Instance.DrawMazeOnGame(gameMaze, totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+        //AutoMazeTraverser.Instance.SetLevelMazeReference(gameMaze);//for PlayerTwo MazeSolver logic.
 
     }
 
+    //this will be used to spawn collectible items away from, or at walls.
+    public Vector3 GetPositionOfMazeCellAtIndex(int x, int z)
+    {
+        if (x >= numCellsOnSide)
+        {
+            Debug.Log("Specified x index is out of Maze bounds. Capping at topMost row");
+            x = (int)numCellsOnSide - 1;
+        }else if(x < 0)
+        {
+            Debug.Log("Specified x index cannot be negative. Capping at bottomMost row");
+            x = 0;
+        }
+        if (z >= numCellsOnSide)
+        {
+            Debug.Log("Specified z index is out of Maze bounds. Capping at rightMost column");
+            z = (int)numCellsOnSide - 1;
+        }else if (z < 0)
+        {
+            Debug.Log("Specified z index cannot be negative. Capping at leftMost row");
+            z = 0;
+        }
 
-
-
-
-
-
-
-
-
-
+        return gameMaze[x, z].cellPositionOnMap;
+    }
 
 
 
@@ -67,7 +83,7 @@ public class LevelBuilder : MonoBehaviour
         return totalMazeSideLength;//uint because these cannot be negative.
     }
 
-    public uint GetMazeNumCells()
+    public uint GetMazeNumCellsOnSide()
     {
         return numCellsOnSide;
     }

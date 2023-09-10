@@ -23,7 +23,7 @@ public class MazeRenderer : MonoBehaviour
         }
         else
         {
-            Debug.Log("Fatal Error: Cannot have a predefined instance of Maze Renderer");
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of Maze Renderer");
         }
     }
 

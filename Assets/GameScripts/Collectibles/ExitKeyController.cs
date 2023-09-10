@@ -8,15 +8,15 @@ public class ExitKeyController : GenericCollectibleItem
     //create Singleton object of this class.
     private static ExitKeyController instance;
     public static ExitKeyController Instance
-    //this instance "Property" will be tracked by PlayerTwo Only
     {
         get { return instance; }//not very different from getters and setters
-        private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
+        private set { instance = value; }
     }
 
 
     // Start is called before the first frame update
     private int hoverGapAbovePlayerTwoVisual = 2;
+    private bool keyAlreadyCollected = false;
 
     private void Awake()
     {
@@ -26,37 +26,53 @@ public class ExitKeyController : GenericCollectibleItem
         }
         else
         {
-            Debug.Log("Fatal Error: Cannot have a predefined instance of PlayerTwo");
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of Exit Key");
+            Destroy(this);
         }
         instance.destroyObjectOnCollect = false;//key should not be destroyed on collection
         instance.isObjectMovable = true;
-        instance.itemCollectionStatus = isCollectableBy.playerTwoOnly;//Key cannot be collected by PlayerOne
+        instance.correctCollectingPlayer = isCollectableBy.playerTwoOnly;//Key cannot be collected by PlayerOne
 
     }
 
     void Start()
-    {
+    {        
         
-        setParentAsPlayerTwo();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (!keyAlreadyCollected)
+        //As soon as setKeyParentAsPlayerTwo() is called once, this will be true and Update() will do nothing.
+        {            
+            base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance);
+            //ExitKey is not interested in PlayerOne
+
+            setKeyParentAsPlayerTwo();
+        }
     }
 
-    public void setParentAsPlayerTwo()
+    
+    public void setKeyParentAsPlayerTwo()
     {
+        if (!isObjectCollected)
+        {
+            return;//Key has to be in vicinity of Player Two
+        }
+
         //this will directly make the Key move relative to PlayerTwo, without calling in Update each time.
         transform.parent = PlayerTwoController.Instance.transform;
         transform.position = GetHoverLocationAbovePlayerTwoVisual();
-        
+        PlayerTwoController.Instance.SetHasCollectedExitKey(true);
+        keyAlreadyCollected= true;
+        //we're maintaining this separate bool so that
+        //the above setter doesn't keep getting called infinitely.
     }
 
     private Vector3 GetHoverLocationAbovePlayerTwoVisual()
     {
         //this inefficient method is acceptable because it will be called only once, whenever playerTwo is in ExitKey vicinity
-        return new Vector3(PlayerTwoController.Instance.GetPlayerTwoLocation().x, PlayerTwoController.Instance.GetPlayerTwoLocation().y+hoverGapAbovePlayerTwoVisual, PlayerTwoController.Instance.GetPlayerTwoLocation().z);
+        return new Vector3(PlayerTwoController.Instance.GetPlayerPosition().x, PlayerTwoController.Instance.GetPlayerPosition().y+hoverGapAbovePlayerTwoVisual, PlayerTwoController.Instance.GetPlayerPosition().z);
     }
 }

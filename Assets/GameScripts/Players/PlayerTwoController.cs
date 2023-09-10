@@ -5,7 +5,7 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerTwoController : GenericPlayerControl
+public class PlayerTwoController : GenericPlayerController
 {
 
     //create Singleton object of this class which ALL other entities will refer to - PlayerOne or Enemies.
@@ -16,7 +16,6 @@ public class PlayerTwoController : GenericPlayerControl
         get { return instance; }//not very different from getters and setters
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
-
 
     [SerializeField][Range(1,8)] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
     [SerializeField] private int maxPlayerTwoMovementSpeed = 7;
@@ -34,6 +33,9 @@ public class PlayerTwoController : GenericPlayerControl
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;
 
+    //ExitKey and Door related objects
+    private bool hasCollectedExitKey = false;//will be set in the ExitKeyController.
+
     
     //Awake will be called before Start()
     private void Awake()
@@ -44,10 +46,11 @@ public class PlayerTwoController : GenericPlayerControl
         }
         else
         {
-            Debug.Log("Fatal Error: Cannot have a predefined instance of PlayerTwo");
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerTwo");
         }
         instance.playerHealth = 15;
         instance.isActive = true;
+        instance.playerType = PlayerType.PlayerTwo;
     }
 
     // Start is called before the first frame update
@@ -136,7 +139,7 @@ public class PlayerTwoController : GenericPlayerControl
 
         //separate enemy Evasion vector is created to ensure that PlayerTwo doesn't break through walls
         currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(enemyEvasionPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
-        transform.position += currentPlayerTwoDirectionVector * Time.deltaTime * maxPlayerTwoMovementSpeed;
+        transform.position += currentPlayerTwoDirectionVector * Time.deltaTime * maxPlayerTwoMovementSpeed;//playerTwo is running
 
     }
 
@@ -145,8 +148,21 @@ public class PlayerTwoController : GenericPlayerControl
         return isMoving;
     }
 
-    public Vector3 GetPlayerTwoLocation()
+    public override Vector3 GetPlayerPosition()
     {
         return transform.position;
     }
+
+    public bool HasCollectedExitKey()
+    {
+        return instance.hasCollectedExitKey;
+    }
+
+    public void SetHasCollectedExitKey(bool hasCollectedExitKey)
+    {
+        instance.hasCollectedExitKey = hasCollectedExitKey;
+        ExitDoorController.Instance.EnableExitDoorForPlayerTwo();
+        //update ExitDoor status to be correctly collectable by PlayerTwo.
+    }
+
 }

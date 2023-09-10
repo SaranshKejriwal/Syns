@@ -5,7 +5,7 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerOneController : GenericPlayerControl
+public class PlayerOneController : GenericPlayerController
 {
     private static PlayerOneController instance;
     public static PlayerOneController Instance
@@ -36,10 +36,11 @@ public class PlayerOneController : GenericPlayerControl
         }
         else
         {
-            Debug.Log("Fatal Error: Cannot have a predefined instance of PlayerOne");
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerOne");
         }
         instance.playerHealth = 35;//Much higher than PlayerTwo
         instance.isActive = true;//player is Active.
+        instance.playerType = PlayerType.PlayerOne;//set PlayerType of its parent class member
     }
 
     void Start()
@@ -182,6 +183,10 @@ public class PlayerOneController : GenericPlayerControl
         
     }
 
+    public override Vector3 GetPlayerPosition()
+    {
+        return transform.position;
+    }
 
     public bool IsPlayerOneMoving()
     {
