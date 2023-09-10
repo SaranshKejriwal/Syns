@@ -20,7 +20,7 @@ public static class MazeTraverser
     }
 
     //this will return a list of 4 neighbours at max
-    private static List<MazeCellNeighbour> GetUnvisitedNeighbours(PositionInMaze P, cellWallState[,] maze, uint numCells)
+    private static List<MazeCellNeighbour> GetUnvisitedNeighbours(PositionInMaze P, cellWallState[,] mazeInProgress, uint numCells)
     {
         // we are assuming that the maze will be square at all times, for simplicity.
  
@@ -28,7 +28,7 @@ public static class MazeTraverser
 
         if (P.x > 0)//left side
         {
-            if (!maze[P.x -1, P.z].HasFlag(cellWallState.Visited))
+            if (!mazeInProgress[P.x -1, P.z].HasFlag(cellWallState.Visited))
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
@@ -44,7 +44,7 @@ public static class MazeTraverser
 
         if (P.x < numCells -1)//right side
         {
-            if (!maze[P.x + 1, P.z].HasFlag(cellWallState.Visited))
+            if (!mazeInProgress[P.x + 1, P.z].HasFlag(cellWallState.Visited))
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
@@ -60,7 +60,7 @@ public static class MazeTraverser
 
         if (P.z > 0)//bottom side
         {
-            if (!maze[P.x, P.z - 1].HasFlag(cellWallState.Visited))
+            if (!mazeInProgress[P.x, P.z - 1].HasFlag(cellWallState.Visited))
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
@@ -76,7 +76,7 @@ public static class MazeTraverser
 
         if (P.z < numCells -1)//top side
         {
-            if (!maze[P.x, P.z + 1].HasFlag(cellWallState.Visited))
+            if (!mazeInProgress[P.x, P.z + 1].HasFlag(cellWallState.Visited))
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
@@ -106,7 +106,7 @@ public static class MazeTraverser
         int randomStartingX = (int)Random.Range(0, numCells);
         int randomStartingZ = (int)Random.Range(0, numCells);
         PositionInMaze randomStartingPosition = new PositionInMaze {x=randomStartingX,z=randomStartingZ};
-        Debug.Log("Building the maze, starting at "+randomStartingX+","+randomStartingZ);
+        Debug.Log("Building the maze with Recursive Backtracker, starting at "+randomStartingX+","+randomStartingZ);
 
         finalMaze[randomStartingPosition.x, randomStartingPosition.z] |= cellWallState.Visited;//starting position is now visited -> 1000 1111 on the Enum
 
@@ -116,17 +116,17 @@ public static class MazeTraverser
 
         //Step 2 - iterate over positionStack till it is empty.
 
-        while(visitedPositionStack.Count > 0 && debugIteratorCount <10000000)
+        while(visitedPositionStack.Count > 0 && debugIteratorCount <1000)
         {
             debugIteratorCount++;//break after a set number of iterations. Prevent infinite loop
 
-            PositionInMaze currentPositionInStack = visitedPositionStack.Pop();
-            List<MazeCellNeighbour> unvisitedCurrentCelNeighbours = GetUnvisitedNeighbours(currentPositionInStack,finalMaze,numCells);
+            PositionInMaze currentPositionInMaze = visitedPositionStack.Pop();
+            List<MazeCellNeighbour> unvisitedCurrentCelNeighbours = GetUnvisitedNeighbours(currentPositionInMaze,finalMaze,numCells);
 
             if(unvisitedCurrentCelNeighbours.Count > 0 )
             {
                 //we have not reached a dead-end yet. Put currentPosition back in the Stack
-                visitedPositionStack.Push(currentPositionInStack);
+                visitedPositionStack.Push(currentPositionInMaze);
 
                 int randomIndexOfNeighbour = (int)Random.Range(0, unvisitedCurrentCelNeighbours.Count);
                 MazeCellNeighbour randomNeighbour = unvisitedCurrentCelNeighbours[randomIndexOfNeighbour];
@@ -138,16 +138,18 @@ public static class MazeTraverser
                 //remove neighbour's wall
                 finalMaze[randomNeighbourPosition.x, randomNeighbourPosition.z] &= ~GetNeighboursOppositeWall(randomNeighbour.wallSharedWithNeighbour);
                 //remove our wall
-                finalMaze[currentPositionInStack.x, currentPositionInStack.z] &= ~randomNeighbour.wallSharedWithNeighbour;
+                finalMaze[currentPositionInMaze.x, currentPositionInMaze.z] &= ~randomNeighbour.wallSharedWithNeighbour;
 
                 //Step 3 - Mark neighbour as visited and Push visited Neighbour's position on the stack.
-                finalMaze[currentPositionInStack.x, currentPositionInStack.z] |= cellWallState.Visited;
+                finalMaze[randomNeighbourPosition.x, randomNeighbourPosition.z] |= cellWallState.Visited;
                 visitedPositionStack.Push(randomNeighbourPosition);
             }
         }
 
+        Debug.Log("Maze generation completed in " + debugIteratorCount + " iterations");
         return finalMaze;
     }
+
 
     private static cellWallState GetNeighboursOppositeWall(cellWallState currentPositionWall)
     {

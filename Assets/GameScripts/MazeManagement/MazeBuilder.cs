@@ -49,8 +49,8 @@ public class MazeBuilder : MonoBehaviour
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
     
-    private uint numCellsOnSide = 10;
-    private const uint totalMazeSideLength = 50;
+    [SerializeField] private uint numCellsOnSide = 10;
+    [SerializeField] private uint totalMazeSideLength = 50;
     [SerializeField] private Transform mazeWallLogicPrefab = null;//needs wall prefab to create instances of the walls
 
     private float singleCellSideLength = 5f;
