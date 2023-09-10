@@ -39,7 +39,7 @@ public class MazeRenderer : MonoBehaviour
         
     }
 
-    public void DrawMazeOnGame(cellWallState[,] gameMaze, uint totalMazeSideLength, uint numCellsOnSide, float singleCellSideLength)
+    public void DrawMazeOnGame(MazeCell[,] gameMaze, uint totalMazeSideLength, uint numCellsOnSide, float singleCellSideLength)
     {
         if (gameMaze == null)
         {
@@ -51,16 +51,17 @@ public class MazeRenderer : MonoBehaviour
         {
             for (int j = 0; j < numCellsOnSide; j++)
             {
-                cellWallState cell = gameMaze[i, j];
+                cellWallState mazeCell = gameMaze[i, j].cellWallState;
                 //center of the maze should be (0,0,0), hence starting in -x, -z plane
-                Vector3 cellPosition = new Vector3(-totalOffset + i * singleCellSideLength, 0, -totalOffset + j * singleCellSideLength);
+                Vector3 mazeCellPosition = gameMaze[i, j].cellPositionOnMap;
+                //Vector3 mazeCellPosition = new Vector3(-totalOffset + i * singleCellSideLength, 0, -totalOffset + j * singleCellSideLength);
                 //Multiplying by cellSideLength ensure that position accounts for the length offset.
                 //Note -> numCellsOnSide is uint, so numCellsOnSide/2 = 0 is numCellsOnSide=1
 
-                DrawTopWall(cell, cellPosition, singleCellSideLength);
-                DrawLeftWall(cell, cellPosition, singleCellSideLength);
-                DrawRightWall(cell, cellPosition, singleCellSideLength);//redundant, because top and left should suffice, but the if-statements below weren't working
-                DrawBottomWall(cell, cellPosition, singleCellSideLength);//redundant, because top and left should suffice, but the if-statements below weren't working
+                DrawTopWall(mazeCell, mazeCellPosition, singleCellSideLength);
+                DrawLeftWall(mazeCell, mazeCellPosition, singleCellSideLength);
+                DrawRightWall(mazeCell, mazeCellPosition, singleCellSideLength);//redundant, because top and left should suffice, but the if-statements below weren't working
+                DrawBottomWall(mazeCell, mazeCellPosition, singleCellSideLength);//redundant, because top and left should suffice, but the if-statements below weren't working
                 //Note - This iteration starts from bottom-left to top right, with i controlling x
 
 

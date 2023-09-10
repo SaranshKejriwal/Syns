@@ -17,8 +17,7 @@ public class EnemySpawnHandler : MonoBehaviour
 
     //Current values are too small - need to expand for the full map
     private float minSpawnDistanceFromOrigin = 5f;//to get min distance from (0,0), to not spawn on top of players
-    private float maxSpawnDistanceFromOrigin = 10f;//to get max distance from (0,0), to not spawn outside map
-
+   
     private void Awake()
     {
         
@@ -30,8 +29,7 @@ public class EnemySpawnHandler : MonoBehaviour
         
         //one-fourth maze length from either side of origin should define the inner limit of enemy spawn
         minSpawnDistanceFromOrigin = LevelBuilder.Instance.GetMazeTotalSideLength()/4;
-        //less than one-half maze length from either side of origin should define the outer limit of enemy spawn
-        maxSpawnDistanceFromOrigin = LevelBuilder.Instance.GetMazeTotalSideLength()/2.5f;
+ 
 
         SpawnNewEnemy();//Start the game with One Enemy.
 
@@ -67,27 +65,11 @@ public class EnemySpawnHandler : MonoBehaviour
         }
 
         Transform newEnemy = Instantiate(enemyPrefab);
-        newEnemy.localPosition = GetRandomFarAwaySpawnPoint();//always modify localPosition with respect to parent.
+        newEnemy.localPosition = MathFunctions.GetRandomSpawnPointOnFarSideMap(minSpawnDistanceFromOrigin);//always modify localPosition with respect to parent.
         enemySpawnCount++;
         Debug.Log("Spawning New Enemy at "+ newEnemy.localPosition);
     }
 
-    private Vector3 GetRandomFarAwaySpawnPoint()
-    {
-        //Get random spawning point between x=[-20,20] and z=[-20,20], excluding the [-10,10] square in the middle
-        Vector3 randomSpawnPoint = new Vector3(Random.Range(minSpawnDistanceFromOrigin,maxSpawnDistanceFromOrigin)*GetRandomSpawnSide(),0, Random.Range(minSpawnDistanceFromOrigin, maxSpawnDistanceFromOrigin) * GetRandomSpawnSide());
-
-        return randomSpawnPoint;
-    }
-
-    private int GetRandomSpawnSide()
-    {
-        //CoinToss to Return 1 or -1 randomly - there is equal probability of getting a number >1 or <1
-        int CoinToss = (int)Random.Range(0, 2);
-        return CoinToss == 1?1:-1; //shorthand if-else
-    }
-
-  
 
     public void StopEnemySpawnTimer()
     {

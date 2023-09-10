@@ -7,13 +7,13 @@ public static class AutoMovementHandler
 {
     public static Vector3 GetRandomDirectionVector()
     {
-        //Random.Range(-1f,1f) will return any random direction in 0 to 360 degree angle from starting point
-        Vector3 randomDirectionVector = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+        //Get any random direction in 0 to 360 degree angle from starting point
+        Vector3 randomDirectionVector = new Vector3(MathFunctions.GetRandomFloatInRange(-1f, 1f), 0, MathFunctions.GetRandomFloatInRange(-1f, 1f));
            
         //run a while loop to ensure that you don't randomly get a zero vector from above step
         while (randomDirectionVector == Vector3.zero)
         {
-            randomDirectionVector = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+            randomDirectionVector = new Vector3(MathFunctions.GetRandomFloatInRange(-1f, 1f), 0, MathFunctions.GetRandomFloatInRange(-1f, 1f));
         }
         return randomDirectionVector.normalized;
     }

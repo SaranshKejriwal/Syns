@@ -11,7 +11,7 @@ public class PlayerOneAnimation : MonoBehaviour
     private const string IS_PUNCH_PARAM_NAME = "isPunching";
 
 
-    [SerializeField] private PlayerOneControl playerOne; // to reference the logic component of PlayerOne
+    [SerializeField] private PlayerOneController playerOne; // to reference the logic component of PlayerOne
 
     //Awake is called before Start()
     private void Awake()//inherited method

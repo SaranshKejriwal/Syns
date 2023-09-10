@@ -23,7 +23,7 @@ public class LevelBuilder : MonoBehaviour
     [SerializeField] private uint totalMazeSideLength = 50;
     
     private float singleCellSideLength = 5f;
-    private cellWallState[,] gameMaze;
+    private MazeCell[,] gameMaze;
 
     private void Awake()
     {
@@ -39,7 +39,7 @@ public class LevelBuilder : MonoBehaviour
 
         singleCellSideLength = (float)totalMazeSideLength / numCellsOnSide;
         Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
-        gameMaze = MazeLogicManager.ApplyRecursiveBacktracker(numCellsOnSide);
+        gameMaze = MazeLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
         MazeRenderer.Instance.DrawMazeOnGame(gameMaze,totalMazeSideLength,numCellsOnSide,singleCellSideLength);
     }
     // Start is called before the first frame update

@@ -6,7 +6,9 @@ using UnityEngine;
 //It can be used to apply generic buff items, health setters etc.
 public class GenericPlayerControl : MonoBehaviour
 {
-    private int playerHealth = 10;
+    protected int playerHealth = 10;
+    protected bool isActive = false; //true for playerOne and PlayerTwo only. False for Shop and Sack.
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,11 @@ public class GenericPlayerControl : MonoBehaviour
     public void SetPlayerMaxHealth(int playerHealth)
     {
         this.playerHealth = playerHealth;
+    }
+
+    public bool isActivePlayer()
+    {
+        return isActive;
     }
 
 }

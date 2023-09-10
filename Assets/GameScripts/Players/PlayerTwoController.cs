@@ -5,12 +5,12 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerTwoControl : GenericPlayerControl
+public class PlayerTwoController : GenericPlayerControl
 {
 
     //create Singleton object of this class which ALL other entities will refer to - PlayerOne or Enemies.
-    private static PlayerTwoControl instance;
-    public static PlayerTwoControl Instance
+    private static PlayerTwoController instance;
+    public static PlayerTwoController Instance
     //this instance "Property" will be tracked by ALL enemies, while keeping actual PlayerTwo object private
     { 
         get { return instance; }//not very different from getters and setters
@@ -38,8 +38,6 @@ public class PlayerTwoControl : GenericPlayerControl
     //Awake will be called before Start()
     private void Awake()
     {
-        int playerTwoHealth = 15;
-        this.SetPlayerMaxHealth(playerTwoHealth);
         if (instance == null) 
         { 
             instance = this;//start by setting the Singleton instance 
@@ -48,6 +46,8 @@ public class PlayerTwoControl : GenericPlayerControl
         {
             Debug.Log("Fatal Error: Cannot have a predefined instance of PlayerTwo");
         }
+        instance.playerHealth = 15;
+        instance.isActive = true;
     }
 
     // Start is called before the first frame update
@@ -87,7 +87,7 @@ public class PlayerTwoControl : GenericPlayerControl
                 Debug.Log(approachingEnemy);
                 approachingEnemy.RespondToPlayerTwoInteraction();
             }
-            if (rayCastHit.transform.TryGetComponent(out ExitKeyControl exitKey))
+            if (rayCastHit.transform.TryGetComponent(out ExitKeyController exitKey))
             {
                 Debug.Log(exitKey);
             }
@@ -131,7 +131,7 @@ public class PlayerTwoControl : GenericPlayerControl
 
     public void EvadeEnemyPosition(Vector3 EnemyPosition)
     {
-        Debug.Log("PlayerTwo evading Enemy Position " + EnemyPosition);
+        //Debug.Log("PlayerTwo evading Enemy Position " + EnemyPosition);
         Vector3 enemyEvasionPlayerTwoDirectionVector = (transform.position - EnemyPosition).normalized;
 
         //separate enemy Evasion vector is created to ensure that PlayerTwo doesn't break through walls

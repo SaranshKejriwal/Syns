@@ -9,8 +9,8 @@ enum enemyStates
     isMoving,//moving randomly
     isHunting,//chasing PlayerTwo
     isAttacking,//attacking PlayerOne or PlayerTwo
-    isHit //attacked by PlayerOne
-
+    isHit, //attacked by PlayerOne
+    isDead //killed by PlayerOne
 }
 
 public class EnemyController : MonoBehaviour
@@ -78,7 +78,7 @@ public class EnemyController : MonoBehaviour
     private void ReactToPlayerTwo()
     {
         //Get current distance from Player 2
-        currentDistanceFromPlayerTwo = Vector3.Distance(transform.position, PlayerTwoControl.Instance.GetPlayerTwoLocation());
+        currentDistanceFromPlayerTwo = Vector3.Distance(transform.position, PlayerTwoController.Instance.GetPlayerTwoLocation());
         if (currentDistanceFromPlayerTwo > enemyDetectionRadiusOfPlayerTwo)
         {
             //current distance is farther than enemy detection radius. Enemy to continue normal motion and not attack Player 2.
@@ -145,12 +145,12 @@ public class EnemyController : MonoBehaviour
         currentEnemyState = enemyStates.isHunting;
 
         //get enemy to move towards PlayerTwo, based on positions of both.
-        currentEnemyDirectionVector = (PlayerTwoControl.Instance.GetPlayerTwoLocation() - transform.position).normalized;
-        transform.LookAt(PlayerTwoControl.Instance.GetPlayerTwoLocation());//look at PlayerTwo
+        currentEnemyDirectionVector = (PlayerTwoController.Instance.GetPlayerTwoLocation() - transform.position).normalized;
+        transform.LookAt(PlayerTwoController.Instance.GetPlayerTwoLocation());//look at PlayerTwo
 
         //fire an event here, which would prompt PlayerTwo to run away from enemy position.
         //onHuntingPlayerTwo += PlayerTwoControl.Instance.RespondToEnemyHunt;
-        PlayerTwoControl.Instance.EvadeEnemyPosition(transform.position);
+        PlayerTwoController.Instance.EvadeEnemyPosition(transform.position);
 
 
     }
@@ -183,6 +183,11 @@ public class EnemyController : MonoBehaviour
     public bool IsEnemyHit()
     {
         return currentEnemyState == enemyStates.isHit;
+    }
+
+    public bool IsEnemyDead()
+    {
+        return currentEnemyState == enemyStates.isDead;
     }
 
     //Needed to configure the radius of the visible circle.

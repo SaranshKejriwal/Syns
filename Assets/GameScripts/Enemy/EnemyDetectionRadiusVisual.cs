@@ -20,6 +20,10 @@ public class EnemyDetectionRadiusVisual : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //if Enemy is dead, drop enemy detection radius to 0, else do nothing
+        if (parentEnemyController.IsEnemyDead()) 
+        {
+            transform.localScale = new Vector3(0, 0.1f, 0);
+        }
     }
 }

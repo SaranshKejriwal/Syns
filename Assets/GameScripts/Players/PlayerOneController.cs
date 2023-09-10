@@ -5,8 +5,15 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerOneControl : GenericPlayerControl
+public class PlayerOneController : GenericPlayerControl
 {
+    private static PlayerOneController instance;
+    public static PlayerOneController Instance
+    //this instance "Property" will be tracked by ALL enemies, while keeping actual PlayerTwo object private
+    {
+        get { return instance; }//not very different from getters and setters
+        private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
+    }
 
     [SerializeField] private int moveSpeed = 5;//this private field is accessible on Inspector only, not anywhere else outside class
     private int rotationSpeed = 10;
@@ -23,8 +30,16 @@ public class PlayerOneControl : GenericPlayerControl
 
     private void Awake()
     {
-        int playerOneHealth = 25;
-        this.SetPlayerMaxHealth(playerOneHealth);
+        if (instance == null)
+        {
+            instance = this;//start by setting the Singleton instance 
+        }
+        else
+        {
+            Debug.Log("Fatal Error: Cannot have a predefined instance of PlayerOne");
+        }
+        instance.playerHealth = 35;//Much higher than PlayerTwo
+        instance.isActive = true;//player is Active.
     }
 
     void Start()
