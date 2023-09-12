@@ -31,7 +31,8 @@ public class PlayerTwoController : GenericPlayerController
 
     private float playerTwoInteractionDistance = 2f;
     
-    private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;
+    private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;//direction where it is heading
+    private Vector3 currentIntendedMazeCellDestination = Vector3.zero;//next maze cell that PlayerTwo needs to reach
 
     //ExitKey and Door related objects
     private bool hasCollectedExitKey = false;//will be set in the ExitKeyController.
@@ -59,8 +60,10 @@ public class PlayerTwoController : GenericPlayerController
         //choose a random starting direction to start moving
         currentPlayerTwoDirectionVector = AutoMovementHandler.GetRandomDirectionVector();
 
-        /*Player Two movement should not be random. It should mmap out all the collectible items on the map
+        /*Player Two movement should not be random. It should mmap out all the maze cells on the map
          and then go for the nearest one.*/
+
+        RecursiveMazeTraverser.Instance.GetNearestMazeCellCenterToStart();
     }
 
     // Update is called once per frame
@@ -73,6 +76,11 @@ public class PlayerTwoController : GenericPlayerController
         HandleMovementWithCollision();
         HandleAllInteractions();
         //HandleAttackAction();
+        if(transform.position == currentIntendedMazeCellDestination)
+        {
+            //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
+            RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit();
+        }
     }
 
 
@@ -90,11 +98,6 @@ public class PlayerTwoController : GenericPlayerController
                 Debug.Log(approachingEnemy);
                 approachingEnemy.RespondToPlayerTwoInteraction();
             }
-            if (rayCastHit.transform.TryGetComponent(out ExitKeyController exitKey))
-            {
-                Debug.Log(exitKey);
-            }
-
 
         }
 
@@ -135,7 +138,7 @@ public class PlayerTwoController : GenericPlayerController
     public void EvadeEnemyPosition(Vector3 EnemyPosition)
     {
         //Debug.Log("PlayerTwo evading Enemy Position " + EnemyPosition);
-        Vector3 enemyEvasionPlayerTwoDirectionVector = (transform.position - EnemyPosition).normalized;
+        Vector3 enemyEvasionPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionAwayFromLocationToEvade(EnemyPosition,transform.position);
 
         //separate enemy Evasion vector is created to ensure that PlayerTwo doesn't break through walls
         currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(enemyEvasionPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);

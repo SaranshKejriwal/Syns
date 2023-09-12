@@ -51,4 +51,20 @@ public static class AutoMovementHandler
 
     }
 
+    //this returns the direction vector needed to head towards a known point.
+    //We assume that there are no obstructions between that point and moving object.
+    public static Vector3 GetDirectionTowardsUnobstructedDestination(Vector3 intendedDestination, Vector3 currentPosition)
+    {
+        Vector3 resultantDirectionVectorTowardsDestination = (intendedDestination - currentPosition).normalized;
+        //needs to be normalized because direction vector is a unit vector.
+        return resultantDirectionVectorTowardsDestination;
+    }
+
+    public static Vector3 GetDirectionAwayFromLocationToEvade(Vector3 locationToEvade, Vector3 currentPosition)
+    {
+        Vector3 resultantDirectionVectorAwayFromLocation = (currentPosition - locationToEvade).normalized;
+        return resultantDirectionVectorAwayFromLocation;
+    }
+
+
 }

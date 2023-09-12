@@ -41,11 +41,14 @@ public class ExitDoorController : GenericCollectibleItem
     // Update is called once per frame
     void Update()
     {
-        base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance);
-        CheckExitDoorOpenStatus();
+        if (base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
+        {
+            CheckExitDoorCollectedStatus();
+        }
+
     }
 
-    private void CheckExitDoorOpenStatus()
+    private void CheckExitDoorCollectedStatus()
     {
         if (!isObjectCollected)
         {

@@ -39,7 +39,7 @@ public class LevelBuilder : MonoBehaviour
 
         singleCellSideLength = (float)totalMazeSideLength / numCellsOnSide;
         Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
-        gameMaze = MazeLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+        gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
         
     }
     // Start is called before the first frame update
@@ -47,8 +47,7 @@ public class LevelBuilder : MonoBehaviour
     {
         //Always put external GameObject references in Start(), not Awake
         MazeRenderer.Instance.DrawMazeOnGame(gameMaze, totalMazeSideLength, numCellsOnSide, singleCellSideLength);
-        //AutoMazeTraverser.Instance.SetLevelMazeReference(gameMaze);//for PlayerTwo MazeSolver logic.
-
+        RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
     }
 
     //this will be used to spawn collectible items away from, or at walls.
@@ -91,6 +90,11 @@ public class LevelBuilder : MonoBehaviour
     public float GetCellSideLength()
     {
         return singleCellSideLength;
+    }
+
+    public MazeCell[,] GetLevelMaze()
+    {
+        return gameMaze;
     }
 
 }

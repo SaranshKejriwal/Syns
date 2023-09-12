@@ -37,8 +37,8 @@ public class CollectiblesSpawnHandler : MonoBehaviour
         Vector3 randomExitDoorPosition = MathFunctions.GetRandomMazeCellCenterSpawnWithOffset(0, LevelBuilder.Instance.GetCellSideLength() / 2.1f);
         SpawnSingleObject(ExitDoorPrefab, this.isExitDoorSpawnedAlready, randomExitDoorPosition);
 
-        //spawn Exit Key. Ensure that ExitKey is not spawned too close, else it's too easy
-        Vector3 randomExitKeyPosition = MathFunctions.GetRandomSpawnPointOnFarSideMap(LevelBuilder.Instance.GetMazeTotalSideLength() / 4.1f);
+        //spawn Exit Key. Ensure that ExitKey is spawned on a cell at the edges only
+        Vector3 randomExitKeyPosition = MathFunctions.GetRandomMazeEdgeCellCenterSpawnWithOffset(0,LevelBuilder.Instance.GetCellSideLength() / 4f);
         SpawnSingleObject(ExitKeyPrefab,this.isExitKeySpawnedAlready, randomExitKeyPosition);
 
         //update checkers

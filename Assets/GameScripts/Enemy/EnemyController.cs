@@ -145,7 +145,7 @@ public class EnemyController : MonoBehaviour
         currentEnemyState = enemyStates.isHunting;
 
         //get enemy to move towards PlayerTwo, based on positions of both.
-        currentEnemyDirectionVector = (PlayerTwoController.Instance.GetPlayerPosition() - transform.position).normalized;
+        currentEnemyDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(PlayerTwoController.Instance.GetPlayerPosition(), transform.position);
         transform.LookAt(PlayerTwoController.Instance.GetPlayerPosition());//look at PlayerTwo
 
         //fire an event here, which would prompt PlayerTwo to run away from enemy position.
