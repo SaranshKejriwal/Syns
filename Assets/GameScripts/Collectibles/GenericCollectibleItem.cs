@@ -73,8 +73,13 @@ public class GenericCollectibleItem : MonoBehaviour
         }
         else
         {
-            //can consider a call to move PlayerTwo to the exit door.
+            //Debug.Log("Player should go to immovable collectible");
+            //player should move to position of object. Applies to ExitDoor and PlayerTwo only
+            //player.SetNextIntendedDestination(transform.position);
+            //Custom handling added for ExitDoor to prevent PlayerTwo from coming from behind Exit door.
+
         }
+
         if(distanceFromPlayer <= itemCollectionDistance)
         {
             isObjectCollected = true; //item is now collected. Check if it needs to be destroyed.
@@ -108,4 +113,8 @@ public class GenericCollectibleItem : MonoBehaviour
         return isObjectMovable;
     }
 
+    public bool IsCollected()
+    {
+        return isObjectCollected;
+    }
 }

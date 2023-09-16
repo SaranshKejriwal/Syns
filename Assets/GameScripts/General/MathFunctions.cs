@@ -55,26 +55,39 @@ public static class MathFunctions
         return GetRandomSpawnPointOnFarSideMap(0);//minimum distance from origin is set to 0; Same as all over Map      
     }
 
-    //Spawn away from walls - use Maze center points as reference.
-    public static Vector3 GetRandomMazeCellCenterSpawnWithOffset(float xOffsetFromCellCenter, float zOffsetFromCellCenter)
+    //Spawn Door away from walls - use Maze center points as reference.
+    public static MazeCell GetRandomMazeCellWithTopWall()
     {
+        //this function is to return a random cell as long as it has a top Wall on it. 
+        //This is needed for Exit Door spawning so that Player can't enter from Behind the Door.
         int xIndex = GetRandomIntInRange(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());//note Maze numCells is Excluded in Random function
         int zIndex = GetRandomIntInRange(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());
 
         //get MazeCell Center point at this random index
-        Vector3 MazeCellCenter = LevelBuilder.Instance.GetPositionOfMazeCellAtIndex(xIndex, zIndex);
+        MazeCell mazeCell = LevelBuilder.Instance.GetMazeCellAtIndex(xIndex, zIndex);
+
+        //iterate until a MazeCell with a TopWall is found.
+        int debugIteratorCounter = 0;
+        int maxLoopIterations = 100;
+        while(!mazeCell.cellWallState.HasFlag(cellWallState.Top) && debugIteratorCounter < maxLoopIterations)
+        {
+            xIndex = GetRandomIntInRange(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());//note: numCells is Excluded in Random function
+            zIndex = GetRandomIntInRange(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());
+            mazeCell = LevelBuilder.Instance.GetMazeCellAtIndex(xIndex, zIndex);
+        }
+
         //return final vector after adding offset
-        return MazeCellCenter + new Vector3(xOffsetFromCellCenter, 0, zOffsetFromCellCenter);
+        return mazeCell;
     }
 
     public static Vector3 GetRandomMazeEdgeCellCenterSpawnWithOffset(float xOffsetFromCellCenter, float zOffsetFromCellCenter)
     {
         //This cointoss will ensure that you always get a cell on the edge of the map only...any edge.
-        int xIndex = GetCoinToss(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());//note Maze numCells is Excluded in Random function
-        int zIndex = GetCoinToss(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());
+        int xIndex = GetCoinToss(0, LevelBuilder.Instance.GetMazeNumCellsOnSide()-1);
+        int zIndex = GetCoinToss(0, LevelBuilder.Instance.GetMazeNumCellsOnSide()-1);
 
         //get MazeCell Center point at this random index
-        Vector3 MazeCellCenter = LevelBuilder.Instance.GetPositionOfMazeCellAtIndex(xIndex, zIndex);
+        Vector3 MazeCellCenter = LevelBuilder.Instance.GetMazeCellAtIndex(xIndex, zIndex).cellPositionOnMap;
         //return final vector after adding offset
         return MazeCellCenter + new Vector3(xOffsetFromCellCenter, 0, zOffsetFromCellCenter);
     }

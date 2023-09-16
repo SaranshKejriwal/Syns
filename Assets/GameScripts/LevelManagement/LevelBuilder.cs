@@ -50,29 +50,34 @@ public class LevelBuilder : MonoBehaviour
         RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
     }
 
+    public void LevelVictory()
+    {
+
+    }
+
     //this will be used to spawn collectible items away from, or at walls.
-    public Vector3 GetPositionOfMazeCellAtIndex(int x, int z)
+    public MazeCell GetMazeCellAtIndex(int x, int z)
     {
         if (x >= numCellsOnSide)
         {
-            Debug.Log("Specified x index is out of Maze bounds. Capping at topMost row");
+            Debug.Log("Specified x index is out of Maze bounds. Capping at rightMost row");
             x = (int)numCellsOnSide - 1;
         }else if(x < 0)
         {
-            Debug.Log("Specified x index cannot be negative. Capping at bottomMost row");
+            Debug.Log("Specified x index cannot be negative. Capping at leftMost row");
             x = 0;
         }
         if (z >= numCellsOnSide)
         {
-            Debug.Log("Specified z index is out of Maze bounds. Capping at rightMost column");
+            Debug.Log("Specified z index is out of Maze bounds. Capping at topMost column");
             z = (int)numCellsOnSide - 1;
         }else if (z < 0)
         {
-            Debug.Log("Specified z index cannot be negative. Capping at leftMost row");
+            Debug.Log("Specified z index cannot be negative. Capping at bottomMost row");
             z = 0;
         }
 
-        return gameMaze[x, z].cellPositionOnMap;
+        return gameMaze[x, z];
     }
 
 

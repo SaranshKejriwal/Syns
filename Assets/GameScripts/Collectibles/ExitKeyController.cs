@@ -15,7 +15,7 @@ public class ExitKeyController : GenericCollectibleItem
 
 
     // Start is called before the first frame update
-    private int hoverGapAbovePlayerTwoVisual = 2;
+    private float hoverGapAbovePlayerTwoVisual = 1.5f;
     private bool keyAlreadyCollected = false;
 
     private void Awake()
@@ -36,8 +36,9 @@ public class ExitKeyController : GenericCollectibleItem
     }
 
     void Start()
-    {        
-        
+    {
+        instance.itemDetectionDistance = 1000;//for testing only
+        instance.itemCollectionDistance = 1000;//for testing only
     }
 
     // Update is called once per frame

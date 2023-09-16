@@ -48,7 +48,7 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         HandleNormalEnemyMovementWithCollision();
-        ReactToPlayerTwo();
+        //ReactToPlayerTwo();
     }
 
 
@@ -77,6 +77,10 @@ public class EnemyController : MonoBehaviour
 
     private void ReactToPlayerTwo()
     {
+        if(!PlayerTwoController.Instance.CanBeAttacked())
+        {
+            return;//Enemy need not react to PlayerTwo if PlayerTwo cannot be attacked after reaching exit.
+        }
         //Get current distance from Player 2
         currentDistanceFromPlayerTwo = Vector3.Distance(transform.position, PlayerTwoController.Instance.GetPlayerPosition());
         if (currentDistanceFromPlayerTwo > enemyDetectionRadiusOfPlayerTwo)
@@ -157,6 +161,7 @@ public class EnemyController : MonoBehaviour
 
     private void AttackPlayerTwo()
     {
+        currentEnemyState = enemyStates.isAttacking;
         //does attack need to be stationary?
         Debug.Log("PlayerTwo in attack vicinity");
         //fire an event here, which would impact PlayerTwo Health
@@ -164,6 +169,7 @@ public class EnemyController : MonoBehaviour
 
     private void AttackPlayerOne()
     {
+        currentEnemyState = enemyStates.isAttacking;
         //Only if PlayerOne attacks enemy, enemy should Attack Player One.
         //fire an event here, which would impact PlayerOne Health
     }

@@ -20,6 +20,10 @@ public class GenericPlayerController : MonoBehaviour
     protected bool isActive = false; //true for playerOne and PlayerTwo only. False for Shop and Sack.
     protected PlayerType playerType = PlayerType.Generic;
     // Start is called before the first frame update
+
+    protected Vector3 nextIntendedDestination = Vector3.zero;
+    //this will be used to dictate the target for PlayerTwo only
+
     void Start()
     {
         
@@ -60,6 +64,11 @@ public class GenericPlayerController : MonoBehaviour
     public PlayerType GetPlayerType()
     {
         return playerType;
+    }
+
+    public void SetNextIntendedDestination(Vector3 destination)
+    {
+        nextIntendedDestination = destination;
     }
 
 }

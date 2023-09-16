@@ -34,6 +34,7 @@ public struct MazeCell
 {
     public cellWallState cellWallState;
     public Vector3 cellPositionOnMap;
+    public PositionInMaze indexInMazeCellArray;
 }
 
 public struct PositionInMaze
@@ -42,10 +43,11 @@ public struct PositionInMaze
     public int z;
 }
 
+//we should consider removing this struct. MazeCell struct covers this and then some.
 public struct MazeCellNeighbour
 {
-    public PositionInMaze neighbourPosition; //we traverse from our pos to neighbour pos, and break the common wall
-    public cellWallState wallSharedWithNeighbour;
+    public PositionInMaze indexInMazeCellArray; //we traverse from our pos to neighbour pos, and break the common wall
+    public cellWallState cellWallState;
 }
 
 /*This class uses Depth-First-Search or Recursive BackTracking to 
@@ -68,12 +70,12 @@ public static class MazeBuildLogicManager
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
-                    neighbourPosition =  new PositionInMaze
+                    indexInMazeCellArray =  new PositionInMaze
                     {
                         x = P.x -1,
                         z = P.z
                     },
-                    wallSharedWithNeighbour = cellWallState.Left //because We checked the left side
+                    cellWallState = cellWallState.Left //because We checked the left side
                 });
             }
         }
@@ -84,12 +86,12 @@ public static class MazeBuildLogicManager
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
-                    neighbourPosition = new PositionInMaze
+                    indexInMazeCellArray = new PositionInMaze
                     {
                         x = P.x + 1,
                         z = P.z
                     },
-                    wallSharedWithNeighbour = cellWallState.Right //because We checked the left side
+                    cellWallState = cellWallState.Right //because We checked the right side
                 });
             }
         }
@@ -100,12 +102,12 @@ public static class MazeBuildLogicManager
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
-                    neighbourPosition = new PositionInMaze
+                    indexInMazeCellArray = new PositionInMaze
                     {
                         x = P.x,
                         z = P.z - 1,
                     },
-                    wallSharedWithNeighbour = cellWallState.Bottom 
+                    cellWallState = cellWallState.Bottom 
                 });
             }
         }
@@ -116,12 +118,12 @@ public static class MazeBuildLogicManager
             {
                 unvisitedNeighbourList.Add(new MazeCellNeighbour
                 {
-                    neighbourPosition = new PositionInMaze
+                    indexInMazeCellArray = new PositionInMaze
                     {
                         x = P.x,
                         z = P.z + 1,
                     },
-                    wallSharedWithNeighbour = cellWallState.Top
+                    cellWallState = cellWallState.Top
                 });
             }
         }
@@ -147,13 +149,14 @@ public static class MazeBuildLogicManager
 
         lastVisitedPositionStack.Push(randomStartingPosition);
 
-        uint debugIteratorCount = 0;//creating this to prevent this while loop from going on infinitely.
+        uint debugLoopIteratorCount = 0;//creating this to prevent this while loop from going on infinitely.
+        uint maxLoopCount = 1000;
 
         //Step 2 - iterate over positionStack till it is empty.
 
-        while(lastVisitedPositionStack.Count > 0 && debugIteratorCount <1000)
+        while(lastVisitedPositionStack.Count > 0 && debugLoopIteratorCount < maxLoopCount)
         {
-            debugIteratorCount++;//break after a set number of iterations. Prevent infinite loop
+            debugLoopIteratorCount++;//break after a set number of iterations. Prevent infinite loop
 
             PositionInMaze currentPositionInMaze = lastVisitedPositionStack.Pop();
             List<MazeCellNeighbour> unvisitedCurrentCellNeighbours = GetUnvisitedNeighbours(currentPositionInMaze,finalMaze,numCellsOnSide);
@@ -166,14 +169,14 @@ public static class MazeBuildLogicManager
                 int randomIndexOfNeighbour = MathFunctions.GetRandomIntInRange(0, unvisitedCurrentCellNeighbours.Count);
                 MazeCellNeighbour randomNeighbour = unvisitedCurrentCellNeighbours[randomIndexOfNeighbour];
 
-                PositionInMaze randomNeighbourPosition = randomNeighbour.neighbourPosition;
+                PositionInMaze randomNeighbourPosition = randomNeighbour.indexInMazeCellArray;
 
                 //remove shared walls between current position and selected Neighbour.
 
                 //remove neighbour's wall
-                finalMaze[randomNeighbourPosition.x, randomNeighbourPosition.z].cellWallState &= ~GetNeighboursOppositeWall(randomNeighbour.wallSharedWithNeighbour);
+                finalMaze[randomNeighbourPosition.x, randomNeighbourPosition.z].cellWallState &= ~GetNeighboursOppositeWall(randomNeighbour.cellWallState);
                 //remove our wall
-                finalMaze[currentPositionInMaze.x, currentPositionInMaze.z].cellWallState &= ~randomNeighbour.wallSharedWithNeighbour;
+                finalMaze[currentPositionInMaze.x, currentPositionInMaze.z].cellWallState &= ~randomNeighbour.cellWallState;
 
                 //Step 3 - Mark neighbour as visited and Push visited Neighbour's position on the stack.
                 finalMaze[randomNeighbourPosition.x, randomNeighbourPosition.z].cellWallState |= cellWallState.VisitedByMazeBuilder;
@@ -184,12 +187,12 @@ public static class MazeBuildLogicManager
                 /* 
                  * This is the elegant part, because this is where the backtracking actually happens.
                  * If a cell has no unvisited neighbours, then its position is popped and the cell that was visited before this one is checked.
-                 * If that one has any unvisited neighbour, then 
+                 * If that one has any unvisited neighbour, then it gets added to the stack
                  */
             }
         }
 
-        Debug.Log("Maze generation completed in " + debugIteratorCount + " iterations");
+        Debug.Log("Maze generation completed in " + debugLoopIteratorCount + " iterations");
         return finalMaze;
     }
 
@@ -221,6 +224,9 @@ public static class MazeBuildLogicManager
                 //construct all walls of the cell, to have a solid matrix at first.
                 gameMaze[i, j].cellWallState = initialCellState;
                 gameMaze[i, j].cellPositionOnMap = new Vector3(-totalOffset + i * singleCellSideLength, 0, -totalOffset + j * singleCellSideLength);
+
+                //this is important as it captures the array index of the Maze within the object itself. 
+                gameMaze[i, j].indexInMazeCellArray = new PositionInMaze { x = i, z = j };
             }
         }
 

@@ -15,6 +15,8 @@ public class ExitDoorController : GenericCollectibleItem
     //ExitDoor specific objects
     private bool isExitDoorOpen = false;
 
+    private MazeCell containerCell;//this stored the cell in which Exit Door is spawned
+
     private void Awake()
     {
         if (instance == null)
@@ -35,7 +37,9 @@ public class ExitDoorController : GenericCollectibleItem
     // Start is called before the first frame update
     void Start()
     {
-        
+        //containerCell = GetRandomMazeCellWithTopWall();
+        //float zOffset = LevelBuilder.Instance.GetCellSideLength() / 2.2f;//move door to top of Cell
+        //instance.transform.localPosition = containerCell.cellPositionOnMap + new Vector3(0, 0, zOffset);
     }
 
     // Update is called once per frame
@@ -53,10 +57,13 @@ public class ExitDoorController : GenericCollectibleItem
         if (!isObjectCollected)
         {
             return;//collected in this case means that PlayerTwo reached the door with the key.
+            //Exit Door will not be marked Collected without key, since its status updates from NoPlayer only after Key Collection.
         }
         //if PlayerTwo has reached ExitDoor with Key, then it should be open and accessible to PlayerOne also.
         instance.isExitDoorOpen = true;
         instance.correctCollectingPlayer = isCollectableBy.BothActivePlayers;
+        Debug.Log("Exit Door can now be entered");
+        //PlayerTwoController.Instance.EnterOpenExit();
 
         //fire an event here for victory.
     }
@@ -73,4 +80,26 @@ public class ExitDoorController : GenericCollectibleItem
         //this will be called when playerTwo collects the Key.
         //Only PlayerTwo can access it until he reaches the door.
     }
+
+    public Vector3 GetExitDoorPosition()
+    {
+        return instance.transform.position;
+    }
+
+    public void RevealExitDoor()
+    {
+        //this method can be used to show the visual for Exit Door once PlayerTwo has collected the Key.
+        //hiding exit door until exit key is retrieved, warrants PlayerTwo to retraverse the Maze.
+    }
+
+    public MazeCell GetExitDoorContainerCell()
+    {
+        return instance.containerCell;
+    }
+
+    public void SetExitDoorContainerCell(MazeCell cell)
+    {
+        instance.containerCell = cell;
+    }
+
 }
