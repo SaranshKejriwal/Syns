@@ -146,12 +146,12 @@ public class PlayerTwoController : GenericPlayerController
     private void CheckStopOnEnteringOpenExit()
     {
         MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
-        if (!hasCollectedExitKey || exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
+        if (!hasCollectedExitKey || exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
         {
+            
             return;//do nothing if Player hasn't collected the key
                    //or if PlayerTwo won't step into Exit Door container cell.
-        }   
- 
+        }        
         Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1f);//this offset is for making PlayerTwo disappear inside Exit door
         Vector3 exitDoorEntryLocation = ExitDoorController.Instance.GetExitDoorPosition() + disappearanceOffsetAfterEntry;
 

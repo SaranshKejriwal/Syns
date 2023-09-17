@@ -35,7 +35,7 @@ public class CollectiblesSpawnHandler : MonoBehaviour
 
         //spawn Exit Door.Ensure that ExitDoor is spawned close to a TopWall
         MazeCell exitDoorContainerCell = MathFunctions.GetRandomMazeCellWithTopWall();
-        Vector3 randomExitDoorPosition = exitDoorContainerCell.cellPositionOnMap + new Vector3(0,0, LevelBuilder.Instance.GetCellSideLength() / 2.1f);
+        Vector3 randomExitDoorPosition = exitDoorContainerCell.cellPositionOnMap + new Vector3(0,0, LevelBuilder.Instance.GetCellSideLength() / 1.7f);
         SpawnSingleObject(ExitDoorPrefab, this.isExitDoorSpawnedAlready, randomExitDoorPosition);
         ExitDoorController.Instance.SetExitDoorContainerCell(exitDoorContainerCell);
 

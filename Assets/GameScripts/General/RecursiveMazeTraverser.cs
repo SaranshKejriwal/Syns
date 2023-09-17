@@ -100,9 +100,7 @@ private void Awake()
     {
         if (PlayerTwoController.Instance.CanEnterExitDoorInVicinity())
             //this is better than checking if ExitDoor collected flag is true, because this will only work if PlayerTwo is in the same cell as Exit Door.
-        {
-
-            Debug.Log("Need not Recurse further. Exit Door is now accesible");
+        {            
             return ExitDoorController.Instance.GetExitDoorPosition();
             //This means that PlayerTwo should only go to Exit Door if it has the key and is in range of door.
         }
