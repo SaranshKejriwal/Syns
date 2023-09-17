@@ -39,7 +39,7 @@ public class PlayerTwoController : GenericPlayerController
     //ExitKey and Door related objects
     private bool hasCollectedExitKey = false;//will be set in the ExitKeyController.
     private bool canEnterExitDoorInVicinity = false;//this will be true when PlayerTwo is in the same cell as 
-
+    private bool retraversalRequiredAfterKeyCollect = false;//this will be true in case Player Two reaches Exit before the Key
     
     //Awake will be called before Start()
     private void Awake()
@@ -64,9 +64,11 @@ public class PlayerTwoController : GenericPlayerController
         //currentPlayerTwoDirectionVector = AutoMovementHandler.GetRandomDirectionVector();
 
         /*Player Two movement should not be random. It should mmap out all the maze cells on the map
-         and then go for the nearest one.*/
-        nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNearestMazeCellCenterToStart(transform.position);
-        currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
+         and then spawn at the nearest one.*/
+        //nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNearestMazeCellCenterToStart(transform.position);
+        transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
+        MoveToNextCell();
+        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
     }
 
     // Update is called once per frame
@@ -79,11 +81,7 @@ public class PlayerTwoController : GenericPlayerController
         //using Vector3.Distance to ensure some margin of error.
         if(Vector3.Distance(nextIntendedDestination, transform.position) <= mazeCellCenterErrorMargin)
         {
-            //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
-            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
-            
-            //move Player Two to next destination
-            currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
+            MoveToNextCell();
         }
         CheckStopOnEnteringOpenExit();
         HandleMovementWithCollision();//returns same vector unless obstructed.
@@ -91,6 +89,15 @@ public class PlayerTwoController : GenericPlayerController
 
     }
 
+    private void MoveToNextCell()
+    {
+        //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
+        nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
+
+        //move Player Two to next destination
+        currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
+
+    }
 
     private void HandleAllInteractions()
     {
@@ -116,7 +123,8 @@ public class PlayerTwoController : GenericPlayerController
     {               
 
         //needed for collision handling - if player movement is obstructed, try x or z axis movement only
-        currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
+        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
+        //removing this since PlayerTwo will never be colliding with any obstacles, and will move in cell centers only.
 
         //rotate the object to face the updated direction of movement
         transform.forward = Vector3.Slerp(transform.forward, currentPlayerTwoDirectionVector, Time.deltaTime * rotationSpeed);
@@ -146,18 +154,24 @@ public class PlayerTwoController : GenericPlayerController
     private void CheckStopOnEnteringOpenExit()
     {
         MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
-        if (!hasCollectedExitKey || exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
+
+        if (exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
+        {            
+            return;//do nothing if PlayerTwo hasn't stepped into Exit Door container cell.
+        }
+        if(!hasCollectedExitKey && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
-            
-            return;//do nothing if Player hasn't collected the key
-                   //or if PlayerTwo won't step into Exit Door container cell.
-        }        
-        Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1f);//this offset is for making PlayerTwo disappear inside Exit door
+            //this means that PlayerTwo reached Exit Door cell before getting the Key; retraversal will be required
+            retraversalRequiredAfterKeyCollect = true;
+            //Debug.Log("PlayerTwo reached Exit Door before Exit Key. Will need to retraverse full maze");
+            return;//do nothing if Player hasn't collected the key                   
+        }
+        Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1.5f);//this offset is for making PlayerTwo disappear inside Exit door
         Vector3 exitDoorEntryLocation = ExitDoorController.Instance.GetExitDoorPosition() + disappearanceOffsetAfterEntry;
 
         if (exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
-            Debug.Log("PlayerTwo should be in Opened Exit Door");
+            //Debug.Log("PlayerTwo should be in Opened Exit Door");
             canEnterExitDoorInVicinity = true;
             //Go towards Exit if it is in the same Cell.
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(exitDoorEntryLocation, transform.position);
@@ -182,7 +196,7 @@ public class PlayerTwoController : GenericPlayerController
         Vector3 enemyEvasionPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionAwayFromLocationToEvade(EnemyPosition,transform.position);
 
         //separate enemy Evasion vector is created to ensure that PlayerTwo doesn't break through walls
-        currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(enemyEvasionPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
+        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(enemyEvasionPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
         transform.position += currentPlayerTwoDirectionVector * Time.deltaTime * maxPlayerTwoMovementSpeed;//playerTwo is running
 
     }

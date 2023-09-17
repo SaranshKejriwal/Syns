@@ -25,6 +25,8 @@ public class LevelBuilder : MonoBehaviour
     private float singleCellSideLength = 5f;
     private MazeCell[,] gameMaze;
 
+    private MazeCell startingCell;//playerOne and playerTwo will be spawned here.
+
     private void Awake()
     {
         //define Gamefloor area, node size based on difficulty level
@@ -40,14 +42,29 @@ public class LevelBuilder : MonoBehaviour
         singleCellSideLength = (float)totalMazeSideLength / numCellsOnSide;
         Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
         gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
-        
+        SetupStartingCell();//needed before Player Start is called.
+
     }
     // Start is called before the first frame update
     void Start()
     {
+        RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
         //Always put external GameObject references in Start(), not Awake
         MazeRenderer.Instance.DrawMazeOnGame(gameMaze, totalMazeSideLength, numCellsOnSide, singleCellSideLength);
-        RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
+
+
+    }
+
+    private void SetupStartingCell()
+    {
+        uint midIndex = numCellsOnSide / 2;
+        startingCell = gameMaze[midIndex,midIndex];
+
+    }
+
+    public MazeCell GetGameStartingCell()
+    {
+        return startingCell;
     }
 
     public void LevelVictory()

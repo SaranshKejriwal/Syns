@@ -56,8 +56,9 @@ private void Awake()
 
     //this method will be called only once at the start, to get PlayerTwo to closest Maze Cell
     //This is computationally heavier than most
-    public Vector3 GetNearestMazeCellCenterToStart(Vector3 currentPlayerTwoPosition)
+    public Vector3 GetStartingCellCenter()
     {
+        //this function is called first to initialise this stack
         mazeCellLastVisitedByPlayerTwoStack = new Stack<MazeCell>();//initialize stack here just before PlayerTwo calls this method.
 
         if (levelMazeReference == null)
@@ -65,34 +66,14 @@ private void Awake()
             Debug.LogError("Maze Reference is Null in Maze Traverser. Cannot find starting point.");
             return Vector3.zero;//nothing to check if the Maze itself is null
         }
-        float closestCellCenterDistance = Mathf.Infinity;//using min number algo to find closest point
-        Vector3 closestCellCenter = Vector3.zero;
-        float rayCastOffset = LevelBuilder.Instance.GetCellSideLength() / 2f;
-        int closestX = -5;//initializing the closest index values to update the array visited flag and the stack.
-        int closestZ = -5;
-        for (int i = 0; i < numCellsOnMazeSide; i++)
-        {
-            for (int j = 0; j< numCellsOnMazeSide; j++)
-            {
-                float currentPointDistance = Vector3.Distance(levelMazeReference[i, j].cellPositionOnMap, currentPlayerTwoPosition);
-                Vector3 directionToTake = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(levelMazeReference[i, j].cellPositionOnMap, currentPlayerTwoPosition);
-                bool isNotObstructed = !Physics.Raycast(currentPlayerTwoPosition, directionToTake, rayCastOffset);//this is needed for collision handling
-                if (currentPointDistance < closestCellCenterDistance && isNotObstructed)
-                {
-                    closestCellCenter = levelMazeReference[i, j].cellPositionOnMap;
-                    closestCellCenterDistance = currentPointDistance;
-                    closestX = i;
-                    closestZ = j;
-                }
-            }
-        }
+        MazeCell startingCell = LevelBuilder.Instance.GetGameStartingCell();
 
         //add this starting cell as visited.
-        levelMazeReference[closestX, closestZ].cellWallState |= cellWallState.VisitedByPlayerTwo;
-        mazeCellLastVisitedByPlayerTwoStack.Push(levelMazeReference[closestX, closestZ]);
+        levelMazeReference[startingCell.indexInMazeCellArray.x, startingCell.indexInMazeCellArray.z].cellWallState |= cellWallState.VisitedByPlayerTwo;
+        mazeCellLastVisitedByPlayerTwoStack.Push(levelMazeReference[startingCell.indexInMazeCellArray.x, startingCell.indexInMazeCellArray.z]);
 
-        Debug.Log("Maze Traversal started at " + closestCellCenter);
-        return closestCellCenter;
+        Debug.Log("Maze Traversal started at " + startingCell.cellPositionOnMap);
+        return startingCell.cellPositionOnMap;
 
     }
 

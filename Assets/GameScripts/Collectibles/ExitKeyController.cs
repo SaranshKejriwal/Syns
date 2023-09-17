@@ -37,8 +37,8 @@ public class ExitKeyController : GenericCollectibleItem
 
     void Start()
     {
-        instance.itemDetectionDistance = 1000;//for testing only
-        instance.itemCollectionDistance = 1000;//for testing only
+        //instance.itemDetectionDistance = 1000;//for testing only
+        //instance.itemCollectionDistance = 1000;//for testing only
     }
 
     // Update is called once per frame

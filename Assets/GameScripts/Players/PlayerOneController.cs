@@ -45,6 +45,12 @@ public class PlayerOneController : GenericPlayerController
 
     void Start()
     {
+        //Move PlayerOne slightly left of starting Cell
+        float cellLength = LevelBuilder.Instance.GetCellSideLength();
+        Vector3 startingSpawnOffset = new Vector3(-cellLength / 5f, 0, 0);
+        transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter() +startingSpawnOffset ;
+
+
         //listen to events on Start(), not Awake()
         inputHandler.OnPunchAction += InputHandler_OnPunchAction;
         
