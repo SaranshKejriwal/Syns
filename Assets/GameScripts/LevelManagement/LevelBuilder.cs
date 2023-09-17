@@ -97,6 +97,56 @@ public class LevelBuilder : MonoBehaviour
         return gameMaze[x, z];
     }
 
+    public MazeCell GetDeadEndCellForBossSpawn()
+    {
+        MazeCell deadEndMazeCellForBoss = gameMaze[numCellsOnSide - 1, numCellsOnSide - 1];//initialize at top right corner
+        //for(int i=0; i<numCellsOnSide;i++)
+        for(int i = 0; i < numCellsOnSide; i++)
+        {
+            for(int j = 0; j < numCellsOnSide; j++)
+            {
+                //we run a reverse for-loop so that boss is hidden behind the walls for PlayerOne
+                MazeCell cell = gameMaze[i, j];
+
+                if (!cell.cellWallState.HasFlag(cellWallState.Top))
+                {
+                    continue;//Top wall should not be the only wall open
+                }
+                if(GetNumWallsInCell(cell) == 3)
+                {
+                    
+                    deadEndMazeCellForBoss = cell;
+                    Debug.Log("Boss Spawn point Found at " + deadEndMazeCellForBoss.cellPositionOnMap);
+                    return deadEndMazeCellForBoss;
+                }
+
+            }
+        }
+        return deadEndMazeCellForBoss;
+    }
+
+    private int GetNumWallsInCell(MazeCell cell)
+    {
+        int numWalls = 4;//rather than incrementing, we decrement from 4
+        if (!cell.cellWallState.HasFlag(cellWallState.Top))
+        {
+            numWalls--;
+        }
+        if (!cell.cellWallState.HasFlag(cellWallState.Bottom))
+        {
+            numWalls--;
+        }
+        if (!cell.cellWallState.HasFlag(cellWallState.Left))
+        {
+            numWalls--;
+        }
+        if (!cell.cellWallState.HasFlag(cellWallState.Right))
+        {
+            numWalls--;
+        }
+
+        return numWalls;
+    }
 
 
     public uint GetMazeTotalSideLength()

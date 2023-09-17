@@ -21,6 +21,13 @@ public static class MathFunctions
         return CoinToss == 1 ? (int)option1 : (int)option2; //shorthand if-else
     }
 
+    public static bool GetCoinToss() //get plain Boolean value
+    {
+        //CoinToss to Return >1 or <1 randomly - there is equal probability of getting either >1 or <1
+        int CoinToss = (int)Random.Range(0, 2);
+        return CoinToss == 1 ? true : false; //shorthand if-else
+    }
+
 
     public static int GetRandomIntInRange(int minValueInclusive, int maxValueExclusive)
     {
@@ -82,9 +89,9 @@ public static class MathFunctions
 
     public static Vector3 GetRandomMazeEdgeCellCenterSpawnWithOffset(float xOffsetFromCellCenter, float zOffsetFromCellCenter)
     {
-        //This cointoss will ensure that you always get a cell on the edge of the map only...any edge.
+        //This cointoss will ensure that you always get a cell on the Left/Right edge of the map only...any edge.
         int xIndex = GetCoinToss(0, LevelBuilder.Instance.GetMazeNumCellsOnSide()-1);
-        int zIndex = GetCoinToss(0, LevelBuilder.Instance.GetMazeNumCellsOnSide()-1);
+        int zIndex = GetRandomIntInRange(0, LevelBuilder.Instance.GetMazeNumCellsOnSide());//to allow spawn in the middle from top-bottom
 
         //get MazeCell Center point at this random index
         Vector3 MazeCellCenter = LevelBuilder.Instance.GetMazeCellAtIndex(xIndex, zIndex).cellPositionOnMap;

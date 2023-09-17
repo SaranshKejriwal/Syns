@@ -23,7 +23,7 @@ public class PlayerOneController : GenericPlayerController
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
     private int playerOneInteractionDistance = 1;
-    private Vector3 lastInteractionDirecctionVector = Vector3.zero;
+    private Vector3 lastInteractionDirectionVector = Vector3.zero;
     // Start is called before the first frame update
 
     private EnemyController approachedEnemy;//to be replaced by Enemy logic object later
@@ -87,11 +87,11 @@ public class PlayerOneController : GenericPlayerController
 
         if(movementDirectionVector != Vector3.zero )
         {
-            lastInteractionDirecctionVector = movementDirectionVector;
+            lastInteractionDirectionVector = movementDirectionVector;
             //this ensures that interaction is saved even when movement isn't happening - interaction continues even if movement stops.
         }
 
-        if(Physics.Raycast(transform.position, lastInteractionDirecctionVector, out RaycastHit rayCastHit,  playerOneInteractionDistance))
+        if(Physics.Raycast(transform.position, lastInteractionDirectionVector, out RaycastHit rayCastHit,  playerOneInteractionDistance))
         //tells us if something is in front and returns its object parameter in rayCastHit object
         {
             //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.

@@ -18,7 +18,7 @@ public class PlayerTwoController : GenericPlayerController
     }
 
     [SerializeField][Range(1,8)] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
-    [SerializeField] private int maxPlayerTwoMovementSpeed = 15;
+    [SerializeField] private int maxPlayerTwoMovementSpeed = 10;
     [SerializeField] private int minPlayerTwoMovementSpeed = 1;
 
     private int rotationSpeed = 10;
@@ -31,7 +31,7 @@ public class PlayerTwoController : GenericPlayerController
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
     private float playerTwoInteractionDistance = 2f;
-    private readonly float mazeCellCenterErrorMargin = 0.5f;
+    private readonly float mazeCellCenterErrorMargin = 1f;
     //this is the distance that PlayerTwo has to reach from cell center, for maze traverser to trigger next cell in Stack
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;//direction where it is heading
@@ -197,7 +197,7 @@ public class PlayerTwoController : GenericPlayerController
             //ExitDoorController.Instance.CheckExitDoorCollectedStatus();
             isPlayerTwoMoving = false;
             currentPlayerTwoMovementSpeed = 0;//stop Player Two.
-            LevelBuilder.Instance.LevelVictory();
+            LevelBuilder.Instance.LevelVictory();//Close Level
         }
     }
 
