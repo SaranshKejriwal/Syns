@@ -69,7 +69,7 @@ public class LevelBuilder : MonoBehaviour
 
     public void LevelVictory()
     {
-
+        Debug.Log("Level Won!");
     }
 
     //this will be used to spawn collectible items away from, or at walls.

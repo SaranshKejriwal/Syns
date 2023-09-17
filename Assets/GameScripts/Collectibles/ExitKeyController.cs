@@ -62,9 +62,12 @@ public class ExitKeyController : GenericCollectibleItem
             return;//Key has to be in vicinity of Player Two
         }
 
+        Vector3 keySizeOnCollect = new Vector3(0.7f, 0.7f, 0.7f);
         //this will directly make the Key move relative to PlayerTwo, without calling in Update each time.
         transform.parent = PlayerTwoController.Instance.transform;
         transform.position = GetHoverLocationAbovePlayerTwoVisual();
+        transform.localScale = keySizeOnCollect;
+
         PlayerTwoController.Instance.SetHasCollectedExitKey(true);
         keyAlreadyCollected= true;
         //we're maintaining this separate bool so that

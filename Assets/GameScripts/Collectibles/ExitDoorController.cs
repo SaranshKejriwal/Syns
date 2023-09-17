@@ -37,31 +37,25 @@ public class ExitDoorController : GenericCollectibleItem
     // Start is called before the first frame update
     void Start()
     {
-        //containerCell = GetRandomMazeCellWithTopWall();
-        //float zOffset = LevelBuilder.Instance.GetCellSideLength() / 2.2f;//move door to top of Cell
-        //instance.transform.localPosition = containerCell.cellPositionOnMap + new Vector3(0, 0, zOffset);
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
-        {
-            CheckExitDoorCollectedStatus();
-        }
 
     }
 
-    private void CheckExitDoorCollectedStatus()
+    public void CheckExitDoorCollectedStatus()
     {
-        if (!isObjectCollected)
+        if (!PlayerTwoController.Instance.HasCollectedExitKey() || !PlayerTwoController.Instance.CanEnterExitDoorInVicinity())
         {
             return;//collected in this case means that PlayerTwo reached the door with the key.
             //Exit Door will not be marked Collected without key, since its status updates from NoPlayer only after Key Collection.
         }
         //if PlayerTwo has reached ExitDoor with Key, then it should be open and accessible to PlayerOne also.
         instance.isExitDoorOpen = true;
-        instance.correctCollectingPlayer = isCollectableBy.BothActivePlayers;
+        instance.correctCollectingPlayer = isCollectableBy.BothActivePlayers;//Allow PlayerOne to Enter
         Debug.Log("Exit Door can now be entered");
         //PlayerTwoController.Instance.EnterOpenExit();
 

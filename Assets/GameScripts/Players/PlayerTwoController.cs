@@ -18,11 +18,11 @@ public class PlayerTwoController : GenericPlayerController
     }
 
     [SerializeField][Range(1,8)] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
-    [SerializeField] private int maxPlayerTwoMovementSpeed = 7;
+    [SerializeField] private int maxPlayerTwoMovementSpeed = 15;
     [SerializeField] private int minPlayerTwoMovementSpeed = 1;
 
     private int rotationSpeed = 10;
-    private bool isMoving = true; //used by animator to render movement animation if player is moving
+    private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving
     //private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
     private bool canBeAttacked = true;//this will always be true except when PlayerTwo reaches Exit.
 
@@ -31,7 +31,7 @@ public class PlayerTwoController : GenericPlayerController
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
     private float playerTwoInteractionDistance = 2f;
-    private float mazeCellCenterErrorMargin = 0.5f;
+    private readonly float mazeCellCenterErrorMargin = 0.5f;
     //this is the distance that PlayerTwo has to reach from cell center, for maze traverser to trigger next cell in Stack
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;//direction where it is heading
@@ -74,7 +74,12 @@ public class PlayerTwoController : GenericPlayerController
     // Update is called once per frame
     private void Update()
     {   //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
-        
+
+        if (!isPlayerTwoMoving)
+        {
+            return;//this will only happen if PlayerTwo Wins.
+        }
+
         //Update speed if Faster or Slower key binding is pressed.
         currentPlayerTwoMovementSpeed = inputHandler.GetCurrentPlayerTwoMovementSpeed(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed, minPlayerTwoMovementSpeed);
 
@@ -136,14 +141,11 @@ public class PlayerTwoController : GenericPlayerController
          */
 
         //move the object position in the direction, if PLayerTwo is supposed to be moving
-        if (isMoving)
+        if (isPlayerTwoMoving)
         {
             transform.position += currentPlayerTwoDirectionVector * Time.deltaTime * currentPlayerTwoMovementSpeed;
         }
-        else
-        {
-            currentPlayerTwoMovementSpeed = 0;
-        }
+
         /*transform holds the position of the GameObj, apparently
         transform.position is a 3D vector.
         Time.deltaTime ensures that perceived change in position is independent of system framerate.
@@ -153,6 +155,10 @@ public class PlayerTwoController : GenericPlayerController
     //This function should stop PlayerTwo when it reaches Exit.
     private void CheckStopOnEnteringOpenExit()
     {
+        if (!isPlayerTwoMoving) 
+        {
+            return;//if PlayerTwo has already entered Exit, need not check.
+        }
         MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
 
         if (exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
@@ -163,25 +169,35 @@ public class PlayerTwoController : GenericPlayerController
         {
             //this means that PlayerTwo reached Exit Door cell before getting the Key; retraversal will be required
             retraversalRequiredAfterKeyCollect = true;
-            //Debug.Log("PlayerTwo reached Exit Door before Exit Key. Will need to retraverse full maze");
             return;//do nothing if Player hasn't collected the key                   
         }
         Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1.5f);//this offset is for making PlayerTwo disappear inside Exit door
-        Vector3 exitDoorEntryLocation = ExitDoorController.Instance.GetExitDoorPosition() + disappearanceOffsetAfterEntry;
+        Vector3 exitDoorEntryLocation = ExitDoorController.Instance.GetExitDoorPosition();
+        Vector3 disappearanceLocationAfterEntry = exitDoorEntryLocation + disappearanceOffsetAfterEntry; 
 
-        if (exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
+        if (!canEnterExitDoorInVicinity && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
             //Debug.Log("PlayerTwo should be in Opened Exit Door");
             canEnterExitDoorInVicinity = true;
             //Go towards Exit if it is in the same Cell.
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(exitDoorEntryLocation, transform.position);
-            canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
+            
         }
 
-        if (Vector3.Distance(exitDoorEntryLocation, transform.position) <= mazeCellCenterErrorMargin)
+        if (canEnterExitDoorInVicinity && Vector3.Distance(exitDoorEntryLocation, transform.position) <= mazeCellCenterErrorMargin)
         {
-            isMoving = false;
+            ExitDoorController.Instance.CheckExitDoorCollectedStatus();
+            currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(disappearanceLocationAfterEntry, transform.position);
+            canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.            
+
+        }
+        //these 2 if conditions are added to show smooth transition between door open and exit.
+        if (Vector3.Distance(disappearanceLocationAfterEntry, transform.position) <= mazeCellCenterErrorMargin)
+        {
+            //ExitDoorController.Instance.CheckExitDoorCollectedStatus();
+            isPlayerTwoMoving = false;
             currentPlayerTwoMovementSpeed = 0;//stop Player Two.
+            LevelBuilder.Instance.LevelVictory();
         }
     }
 
@@ -203,7 +219,7 @@ public class PlayerTwoController : GenericPlayerController
 
     public bool IsPlayerTwoMoving()
     {
-        return isMoving;
+        return isPlayerTwoMoving;
     }
 
     public override Vector3 GetPlayerPosition()
