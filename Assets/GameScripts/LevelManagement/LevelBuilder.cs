@@ -105,7 +105,16 @@ public class LevelBuilder : MonoBehaviour
         {
             for(int j = 0; j < numCellsOnSide; j++)
             {
-                //we run a reverse for-loop so that boss is hidden behind the walls for PlayerOne
+                //these booleans ensure that Boss remains on Map edge and not on top of the head of the player
+                bool xOnEdge = (i==0 || i ==numCellsOnSide - 1);
+                bool zOnEdge = (j == 0 || j == numCellsOnSide - 1);
+
+                if(!xOnEdge && !zOnEdge)
+                {
+                    //this means that neither index is on edge and a middle cell will be selected.
+                    continue;
+                }
+                                
                 MazeCell cell = gameMaze[i, j];
 
                 if (!cell.cellWallState.HasFlag(cellWallState.Top))

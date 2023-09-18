@@ -36,7 +36,7 @@ public class GenericCollectibleItem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //CheckPlayerVicinity();
+
     }
 
     protected bool IsActivePlayerInVicinityForCollection(GenericPlayerController player)

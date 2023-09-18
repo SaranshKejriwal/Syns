@@ -23,16 +23,29 @@ public class EnemyBossController : GenericEnemyController
             Debug.LogError("Fatal Error: Cannot have a predefined instance of Enemy Boss");
         }
         instance.currentEnemyState = enemyStates.isStanding;//Boss should not be moving
+        instance.defaultEnemyState = enemyStates.isStanding;
         instance.enemyWalkingMovementSpeed = 0;
         instance.enemyHuntingMovementSpeed = 0;
         instance.enemyHealth = 75;
+        instance.attackRadius = 4f;
         instance.attackDamage = 10;
+        currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
     }
+    public override void UpdateEnemyRadii()
+    {
+        //this function will update both the radius-lookup dictionaries for each Enemy object.
+        enemyDetectionRadiusReference = new Dictionary<GenericPlayerController, float>()
+        {
+            { PlayerOneController.Instance, 8f }, //boss can detect both players
+            { PlayerTwoController.Instance, 8f } //detection radius is equal to attack radius deliberately.
+        };
 
+        //All values will be 0 for generic class
+    }
     // Start is called before the first frame update
     void Start()
     {
-
+        instance.UpdateEnemyRadii();
         //To Spawn - Find a mazeCell that is in a dead-end for spawning
         //We don't want to see the butt of the Boss, to the cell should have 1 opening except the top one.
         //Dead-end cell should be at the very edge of the level
@@ -49,8 +62,11 @@ public class EnemyBossController : GenericEnemyController
     // Update is called once per frame
     void Update()
     {
-        
+        //instance.currentEnemyState = enemyStates.isStanding;
+        base.ReactToPlayer(PlayerOneController.Instance);
+        //base.ReactToPlayer(PlayerTwoController.Instance);
     }
+
 
     private int GetRotationAngleInCell(MazeCell cell)
     {
@@ -73,5 +89,13 @@ public class EnemyBossController : GenericEnemyController
         }
 
         return 0;
+    }
+
+    //Needed to configure the radius of the visible circle.
+    public float GetEnemyDetectionRadiusOfPlayerTwo()
+    {
+        float playerTwoDetectionRadius = 0f;
+        enemyDetectionRadiusReference.TryGetValue(PlayerTwoController.Instance, out playerTwoDetectionRadius);
+        return playerTwoDetectionRadius;
     }
 }

@@ -24,8 +24,8 @@ public class PlayerTwoController : GenericPlayerController
     private int rotationSpeed = 10;
     private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving
     //private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
-    private bool canBeAttacked = true;//this will always be true except when PlayerTwo reaches Exit.
 
+    
     [SerializeField] private InputHandler inputHandler;
     [SerializeField] private float playerTwoInteractionSize = 0.5f; //needed for collision handling in Raycast function.
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
@@ -172,7 +172,7 @@ public class PlayerTwoController : GenericPlayerController
             return;//do nothing if Player hasn't collected the key                   
         }
         Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1.5f);//this offset is for making PlayerTwo disappear inside Exit door
-        Vector3 exitDoorEntryLocation = ExitDoorController.Instance.GetExitDoorPosition();
+        Vector3 exitDoorEntryLocation = ExitDoorController.Instance.GetExitDoorPosition() + new Vector3(0, 0, -1f);//to make it look like P2 entered the door and didn't go from the side.
         Vector3 disappearanceLocationAfterEntry = exitDoorEntryLocation + disappearanceOffsetAfterEntry; 
 
         if (!canEnterExitDoorInVicinity && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
@@ -217,6 +217,16 @@ public class PlayerTwoController : GenericPlayerController
 
     }
 
+    public override void RespondToEnemyHunt(Vector3 enemyPosition)
+    {
+        //PlayerTwo will automatically evade Enemy position.
+    }
+
+    public override void RespondToEnemyAttack(Vector3 enemyPosition)
+    {
+        Debug.Log("Enemy is attacking Player Two");
+    }
+
     public bool IsPlayerTwoMoving()
     {
         return isPlayerTwoMoving;
@@ -232,11 +242,6 @@ public class PlayerTwoController : GenericPlayerController
         return instance.hasCollectedExitKey;
     }
 
-    public bool CanBeAttacked()
-    {
-        return canBeAttacked;
-    }
-
     public bool CanEnterExitDoorInVicinity()
     {
         return canEnterExitDoorInVicinity;
@@ -248,5 +253,6 @@ public class PlayerTwoController : GenericPlayerController
         ExitDoorController.Instance.EnableExitDoorForPlayerTwo();
         //update ExitDoor status to be correctly collectable by PlayerTwo.
     }
+
 
 }

@@ -40,6 +40,7 @@ public class PlayerOneController : GenericPlayerController
         }
         instance.playerHealth = 35;//Much higher than PlayerTwo
         instance.isActive = true;//player is Active.
+        instance.canBeAttacked = true;
         instance.playerType = PlayerType.PlayerOne;//set PlayerType of its parent class member
     }
 
@@ -115,6 +116,17 @@ public class PlayerOneController : GenericPlayerController
             approachedEnemy = null;
         }
         //Debug.Log(approachedTestInteractObject);
+    }
+
+    public override void RespondToEnemyHunt(Vector3 enemyPosition)
+    {
+        //PlayerOne cennot do anything by itself since it is Human-controlled.
+        return;
+    }
+
+    public override void RespondToEnemyAttack(Vector3 enemyPosition)
+    {
+        Debug.Log("Enemy is attacking Player One");
     }
 
     public bool IsPlayerOnePunching()
