@@ -53,15 +53,15 @@ public abstract class GenericEnemyController : MonoBehaviour
     //this method needs revision. Reaction to PlayerOne is cancelled by subsequent Normal Reaction to far away PlayerTwo.
     protected void ReactToPlayer(GenericPlayerController player)
     {
+
         if(player == null || !player.CanBeAttacked() || !player.isActivePlayer())
         {            
             return;
             //player should not be null and should be attack-able. Ignore Shop and Bag.
         }
 
-        float playerDetectionRadius = 0;
-        bool hasPlayerDetectionRadius = enemyDetectionRadiusReference.TryGetValue(player, out playerDetectionRadius);
-        if(!hasPlayerDetectionRadius )
+        bool hasPlayerDetectionRadius = enemyDetectionRadiusReference.TryGetValue(player, out float playerDetectionRadius);
+        if (!hasPlayerDetectionRadius )
         {
             Debug.LogError("Error - Cannot Get Detection of this enemy");
             return;
@@ -69,21 +69,21 @@ public abstract class GenericEnemyController : MonoBehaviour
 
         float distanceFromPlayer = Vector3.Distance(player.GetPlayerPosition(), transform.position);
 
-        if(distanceFromPlayer > playerDetectionRadius)
-        {
-            ContinueNormalState();
-            return;
-            //player is beyond range. Cannot do anything further
-        }else if(distanceFromPlayer > attackRadius)
+        if(distanceFromPlayer <= playerDetectionRadius && distanceFromPlayer > attackRadius)
         {
             //Bosses cannot move/hunt, so they have to ignore HuntPlayer() call.
             HuntPlayer(player);
+            return;//return here so that one Player doesn't reset the state of enemy against another player
 
         }else if(distanceFromPlayer <= attackRadius)
         {
             AttackPlayer(player);
+            return;//return here so that one Player doesn't reset the state of enemy against another player
         }
-
+        else
+        {
+            ContinueDefaultState();
+        }
 
     }
 
@@ -113,7 +113,7 @@ public abstract class GenericEnemyController : MonoBehaviour
     }
 
     //if Enemy is far away from Player2 
-    protected void ContinueNormalState()
+    protected void ContinueDefaultState()
     {
         currentEnemyState = defaultEnemyState;
     }
@@ -151,7 +151,13 @@ public abstract class GenericEnemyController : MonoBehaviour
     }
 
 
-
+    public float GetEnemyDetectionRadiusOfPlayerTwo()
+    {
+        //Needed to configure the radius of the visible circle.
+        float playerTwoDetectionRadius = 0f;
+        enemyDetectionRadiusReference.TryGetValue(PlayerTwoController.Instance, out playerTwoDetectionRadius);
+        return playerTwoDetectionRadius;
+    }
 
 
     protected int GetEnemyMovementSpeed()

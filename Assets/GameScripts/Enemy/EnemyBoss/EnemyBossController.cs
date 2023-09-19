@@ -62,9 +62,9 @@ public class EnemyBossController : GenericEnemyController
     // Update is called once per frame
     void Update()
     {
-        //instance.currentEnemyState = enemyStates.isStanding;
+        //the order of players is important. Boss will first check PlayerTwo, and then focus on PlayerOne because PlayerTwo will evade anyway
+        base.ReactToPlayer(PlayerTwoController.Instance);
         base.ReactToPlayer(PlayerOneController.Instance);
-        //base.ReactToPlayer(PlayerTwoController.Instance);
     }
 
 
@@ -91,11 +91,4 @@ public class EnemyBossController : GenericEnemyController
         return 0;
     }
 
-    //Needed to configure the radius of the visible circle.
-    public float GetEnemyDetectionRadiusOfPlayerTwo()
-    {
-        float playerTwoDetectionRadius = 0f;
-        enemyDetectionRadiusReference.TryGetValue(PlayerTwoController.Instance, out playerTwoDetectionRadius);
-        return playerTwoDetectionRadius;
-    }
 }

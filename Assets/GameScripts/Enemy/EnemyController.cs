@@ -36,8 +36,10 @@ public class EnemyController : GenericEnemyController
     // Update is called once per frame
     void Update()
     {
+        //the order of players is important. Grunts will first check PlayerOne, and then focus on PlayerTwo
         base.ReactToPlayer(PlayerOneController.Instance);
         base.ReactToPlayer(PlayerTwoController.Instance);
+
         HandleNormalEnemyMovementWithCollision();
     }
 
@@ -91,11 +93,6 @@ public class EnemyController : GenericEnemyController
     }
 
 
-    //Needed to configure the radius of the visible circle.
-    public float GetEnemyDetectionRadiusOfPlayerTwo()
-    {
-        float playerTwoDetectionRadius = 0f;
-        enemyDetectionRadiusReference.TryGetValue(PlayerTwoController.Instance, out playerTwoDetectionRadius);
-        return playerTwoDetectionRadius;
-    }
+
+
 }
