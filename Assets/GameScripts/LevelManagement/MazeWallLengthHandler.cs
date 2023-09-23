@@ -8,16 +8,26 @@ public class MazeWallLengthHandler : MonoBehaviour
 {
     float mazeCellLength;
 
+    private BoxCollider wallBoxCollider;//this is needed 
+
     // Start is called before the first frame update
     void Start()
     {
+        wallBoxCollider = GetComponent<BoxCollider>();
         mazeCellLength = LevelBuilder.Instance.GetCellSideLength();
         //this gets the length of each cell of the maze, based on number of cells of LevelBuilder
         
-        transform.localScale = new Vector3(mazeCellLength/2, 1, 1);//y and z are managed by Prefab, not this class
+
+        //elongate the wall, based on the length of Cell needed
+        transform.localScale = new Vector3(mazeCellLength / 1.85f, 1, 1);//y and z are managed by Prefab, not this class
         //Scale is being corrected in Start() because MazeBuilder will create its instances during Awake().
 
         //mazeCellLength/2 is taken to increase scale on either side, by half of cell Length.
+
+        //elongate the wall Box collider x component, based on the length of Cell needed
+        wallBoxCollider.enabled = true;
+        wallBoxCollider.transform.localScale = new Vector3(mazeCellLength / 1.85f, 1, 1); 
+        //1.8f because box collider has to be slightly larger
     }
 
     private void Update()

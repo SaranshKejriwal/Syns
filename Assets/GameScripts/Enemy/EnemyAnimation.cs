@@ -40,4 +40,9 @@ public class EnemyAnimation : MonoBehaviour
         enemyAnimator.SetBool(IS_STANDING_PARAM_NAME, enemyLogicObject.isEnemyStanding());
         enemyAnimator.SetBool(IS_DEAD_PARAM_NAME, enemyLogicObject.IsEnemyDead());
     }
+
+    public void EnemyAttackCompletion()
+    {
+        Debug.Log("Enemy attack completion called only once?");
+    }
 }

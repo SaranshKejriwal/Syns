@@ -26,7 +26,16 @@ public class EnemyController : GenericEnemyController
         enemyHealth = base.enemyHealth;
         attackDamage = base.attackDamage;
     }
+    public override void UpdateEnemyRadii()
+    {
+        //this function will update both the radius-lookup dictionaries for each Enemy object.
+        enemyDetectionRadiusReference = new Dictionary<GenericPlayerController, float>()
+        {
+            { PlayerOneController.Instance, 10f },//playerOne is less detectable than playerTwo
+            { PlayerTwoController.Instance, 10f }
+        };
 
+    }
     void Start()
     {
         this.UpdateEnemyRadii();
@@ -36,24 +45,10 @@ public class EnemyController : GenericEnemyController
     // Update is called once per frame
     void Update()
     {
-        //the order of players is important. Grunts will first check PlayerOne, and then focus on PlayerTwo
-        base.ReactToPlayer(PlayerOneController.Instance);
-        base.ReactToPlayer(PlayerTwoController.Instance);
-
+        //Get Nearest Player and react to it
+        base.ReactToPlayer(base.GetNearestPlayer());
         HandleNormalEnemyMovementWithCollision();
     }
-
-    public override void UpdateEnemyRadii()
-    {
-        //this function will update both the radius-lookup dictionaries for each Enemy object.
-        enemyDetectionRadiusReference = new Dictionary<GenericPlayerController, float>()
-        {
-            { PlayerOneController.Instance, 2f },
-            { PlayerTwoController.Instance, 10f }
-        };
-
-    }
-
 
     private void HandleNormalEnemyMovementWithCollision()
     {

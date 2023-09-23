@@ -16,7 +16,7 @@ public enum enemyStates
     isDead //killed by PlayerOne. Applies to Grunt and Boss
 }
 
-public abstract class GenericEnemyController : MonoBehaviour
+public class GenericEnemyController : MonoBehaviour
 {
     protected int enemyWalkingMovementSpeed = 3; //when enemy is walking normally
     protected int enemyHuntingMovementSpeed = 7; //when Player 2 is detected by the Enemy and Enemy is chasing Player 2
@@ -28,7 +28,7 @@ public abstract class GenericEnemyController : MonoBehaviour
     protected enemyStates currentEnemyState = enemyStates.isStanding;
     protected enemyStates defaultEnemyState = enemyStates.isStanding;//this is used to restore enemy/boss to normal state
 
-    protected float attackRadius = 1.5f;//radius at which enemy can attack playerTwo
+    protected float attackRadius = 2f;//radius at which enemy can attack playerTwo
     protected int enemyHealth = 25;
     protected int attackDamage = 4;
 
@@ -41,7 +41,10 @@ public abstract class GenericEnemyController : MonoBehaviour
     {
         
     }
-    public abstract void UpdateEnemyRadii();//abstract forces the child classes to add a child implementation.
+    public virtual void UpdateEnemyRadii()
+    {
+
+    }//abstract forces the child classes to add a child implementation.
 
     // Update is called once per frame
     void Update()
@@ -63,17 +66,27 @@ public abstract class GenericEnemyController : MonoBehaviour
         bool hasPlayerDetectionRadius = enemyDetectionRadiusReference.TryGetValue(player, out float playerDetectionRadius);
         if (!hasPlayerDetectionRadius )
         {
-            Debug.LogError("Error - Cannot Get Detection of this enemy");
+            Debug.LogError(this + "Error - Cannot Get Detection of this enemy");
             return;
         }
 
         float distanceFromPlayer = Vector3.Distance(player.GetPlayerPosition(), transform.position);
+        
 
         if(distanceFromPlayer <= playerDetectionRadius && distanceFromPlayer > attackRadius)
         {
-            //Bosses cannot move/hunt, so they have to ignore HuntPlayer() call.
-            HuntPlayer(player);
-            return;//return here so that one Player doesn't reset the state of enemy against another player
+            //check for obstruction only when player is in radius, not all the time.
+            bool isPlayerNotObstructed = IsPlayerRayCastNotObstructed(player, playerDetectionRadius);
+            //Grunts will chase. Boss will Roar. This is configured in the animation
+            if(isPlayerNotObstructed)
+            {
+                HuntPlayer(player);
+                return;//return here so that one Player doesn't reset the state of enemy against another player
+            }
+            else
+            {
+                //Debug.Log("Obstruction in between. Enemy is ignoring player");
+            }
 
         }else if(distanceFromPlayer <= attackRadius)
         {
@@ -82,7 +95,7 @@ public abstract class GenericEnemyController : MonoBehaviour
         }
         else
         {
-            ContinueDefaultState();
+            ContinueDefaultState();//Continue Default state ONLY if none of the 2 players is in vicinity.
         }
 
     }
@@ -90,16 +103,13 @@ public abstract class GenericEnemyController : MonoBehaviour
     protected void HuntPlayer(GenericPlayerController player)
     {
         //this is used by grunts to chase PlayerTwo
-        currentEnemyState = enemyStates.isHunting;
+        currentEnemyState = enemyStates.isHunting;     
 
-        player.RespondToEnemyHunt(transform.position);
+        currentEnemyMovementDirection = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(player.GetPlayerPosition(), transform.position);
+        transform.LookAt(player.GetPlayerPosition());//look at Player
 
-        currentEnemyMovementDirection = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(PlayerTwoController.Instance.GetPlayerPosition(), transform.position);
-        transform.LookAt(player.GetPlayerPosition());//look at PlayerTwo
+        //player.RespondToEnemyHunt(transform.position);
 
-        //fire an event here, which would prompt PlayerTwo to run away from enemy position.
-        //onHuntingPlayerTwo += PlayerTwoControl.Instance.RespondToEnemyHunt;
-        //PlayerTwoController.Instance.EvadeEnemyPosition(transform.position);
 
     }
 
@@ -107,9 +117,11 @@ public abstract class GenericEnemyController : MonoBehaviour
     {
         //this is used by grunts and bosses to attack both Players
         currentEnemyState = enemyStates.isAttacking;
-        Debug.Log("Player in attack vicinity");
+        transform.LookAt(player.GetPlayerPosition());//look at Player
 
+        //Debug.Log("Player in attack vicinity");
         player.RespondToEnemyAttack(transform.position);
+        //ContinueDefaultState();
     }
 
     //if Enemy is far away from Player2 
@@ -150,6 +162,32 @@ public abstract class GenericEnemyController : MonoBehaviour
         return attackDamage;
     }
 
+    protected bool IsPlayerRayCastNotObstructed(GenericPlayerController playerInFocus, float detectionRadius)
+    {
+        //get the direction that enemy needs to take to face the player, regardless of its current movement direction.
+        Vector3 directionToPlayer = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(playerInFocus.GetPlayerPosition(), transform.position);
+
+        //get All the objects that Enemy can see in the direction to Player
+        RaycastHit[] visibleObjects = Physics.RaycastAll(transform.position, directionToPlayer, detectionRadius);
+        //IMPORTANT - Box Collider is needed on Players for this to work
+        //tweak the collider size to be able to correctly ignore players behind walls.
+
+        if (visibleObjects.Length > 0)
+        {
+            //Component test;
+           // bool gotComponent = visibleObjects[0].transform.TryGetComponent(out test);
+           // Debug.Log("First Object Visible to Enemy: " + test);//returns the name of the object that was hit.
+
+            //tries to confirm if the first object is Player
+            if (visibleObjects[0].transform.TryGetComponent(out MazeWallLengthHandler wall))
+            {               
+                //Debug.Log("Player is in Radius, but obstructed.");
+                return false;
+            }
+
+        }
+        return true;
+    }
 
     public float GetEnemyDetectionRadiusOfPlayerTwo()
     {
@@ -157,6 +195,15 @@ public abstract class GenericEnemyController : MonoBehaviour
         float playerTwoDetectionRadius = 0f;
         enemyDetectionRadiusReference.TryGetValue(PlayerTwoController.Instance, out playerTwoDetectionRadius);
         return playerTwoDetectionRadius;
+    }
+
+    //This method returns the player between PlayerOne and PlayerTwo that is nearest to the base object
+    protected GenericPlayerController GetNearestPlayer()
+    {
+        float playerOneDistance = Vector3.Distance(transform.position, PlayerOneController.Instance.GetPlayerPosition());
+        float playerTwoDistance = Vector3.Distance(transform.position, PlayerTwoController.Instance.GetPlayerPosition());
+
+        return playerTwoDistance <= playerOneDistance ? PlayerTwoController.Instance : PlayerOneController.Instance;
     }
 
 

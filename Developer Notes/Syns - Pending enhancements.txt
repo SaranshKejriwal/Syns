@@ -1,0 +1,63 @@
+________________________________________________________________________________________
+Must Haves___________________________________________________________________________
+
+
+PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
+
+Enemy is jaggy when it is just close to player
+
+PlayerTwo to reset past visited cells if Stack is empty.
+
+PlayerOne attack to find the enemy in front and do damage more reliably.
+
+Enemy attack damage to be called only once on animation end, not infinitely while player is in range - Animation Event.
+
+Enemy to stop moving while attacking. Checking if playerTwo evaded the attack.
+
+Create Menus, and level completion
+
+Health buffs to be collected only if Player has less than max health
+
+________________________________________________________________________________________
+Must Haves Phase 2_________________________________________________________________
+
+Have Variants and buffs for each enemy of each syn.
+
+Shop to spend Gold and buy special items
+
+Shared Bag to hold items between P1 and P2.
+
+Create special items to be exchanged between P1 and P2 - eg. cloak etc?
+
+Level selection between Base and 7 level types
+
+Difficulty selection - Easy Med Hard
+
+Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
+________________________________________________________________________________________
+Nice to Haves Phase 3 - Additions___________________________________________________________________________
+
+Multiple attack types on enemy
+
+Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
+
+Adding states to Players like Walking, Evading, Running, to have better animations.
+
+Can Considers____________________________________________________________________________
+
+
+PlayerOne spawns a range attack which damages enemy on proximity
+	Similar range attack on Bosses only
+
+PlayerOne has an auto-sword which rotates/slices or stabs enemies
+
+Enemy visual radius to be cut from the other side of the wall.
+
+
+
+COMPLETED_______________________________
+
+Enemy to ignore Player if it is behind a wall. Enemy to chase PlayerTwo only if there are no obstacles in between.
+tweak the collider size to be able to correctly ignore players behind walls.
+
+BUG - Boss is ignoring PlayerTwo altogether, because PlayerOne seems to be overriding.

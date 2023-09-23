@@ -62,9 +62,8 @@ public class EnemyBossController : GenericEnemyController
     // Update is called once per frame
     void Update()
     {
-        //the order of players is important. Boss will first check PlayerTwo, and then focus on PlayerOne because PlayerTwo will evade anyway
-        base.ReactToPlayer(PlayerTwoController.Instance);
-        base.ReactToPlayer(PlayerOneController.Instance);
+        //Get Nearest Player and react to it
+        base.ReactToPlayer(base.GetNearestPlayer());
     }
 
 

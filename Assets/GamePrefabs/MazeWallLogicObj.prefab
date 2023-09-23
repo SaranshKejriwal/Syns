@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1453814310662154020}
   - component: {fileID: 440090891578250104}
+  - component: {fileID: 1183849279955109192}
   m_Layer: 0
   m_Name: MazeWallLogicObj
   m_TagString: Untagged
@@ -45,6 +46,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d800c59cd48454eb63e57ca14a2939, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &1183849279955109192
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3399796391173182653}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 6, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5843200513579704965
 GameObject:
   m_ObjectHideFlags: 0
@@ -144,39 +166,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 100000, guid: 9c33f225c6ee98243a57390a7235bd50,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7787290701322104124}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c33f225c6ee98243a57390a7235bd50, type: 3}
---- !u!1 &2484162631629354878 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100000, guid: 9c33f225c6ee98243a57390a7235bd50,
-    type: 3}
-  m_PrefabInstance: {fileID: 2484162631629320670}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &7787290701322104124
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2484162631629354878}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2, y: 2.9990404, z: 0.39999998}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &2484162631629712222 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 9c33f225c6ee98243a57390a7235bd50,

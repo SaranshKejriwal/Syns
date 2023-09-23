@@ -22,8 +22,8 @@ public class PlayerTwoController : GenericPlayerController
     [SerializeField] private int minPlayerTwoMovementSpeed = 1;
 
     private int rotationSpeed = 10;
-    private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving
-    //private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
+    private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving. Will always be true anyway
+    private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
 
     
     [SerializeField] private InputHandler inputHandler;
@@ -65,10 +65,9 @@ public class PlayerTwoController : GenericPlayerController
 
         /*Player Two movement should not be random. It should mmap out all the maze cells on the map
          and then spawn at the nearest one.*/
-        //nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNearestMazeCellCenterToStart(transform.position);
         transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
         MoveToNextCell();
-        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
+        
     }
 
     // Update is called once per frame
@@ -86,15 +85,16 @@ public class PlayerTwoController : GenericPlayerController
         //using Vector3.Distance to ensure some margin of error.
         if(Vector3.Distance(nextIntendedDestination, transform.position) <= mazeCellCenterErrorMargin)
         {
-            MoveToNextCell();
+            //only if Player has already reached that destination
+            MoveToNextCell();            
         }
         CheckStopOnEnteringOpenExit();
         HandleMovementWithCollision();//returns same vector unless obstructed.
-        HandleAllInteractions();
+        //HandleAllInteractions();
 
     }
 
-    private void MoveToNextCell()
+    private void MoveToNextCell(bool isEvading = false)
     {
         //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
         nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
@@ -104,8 +104,19 @@ public class PlayerTwoController : GenericPlayerController
 
     }
 
+    private void MoveToNextCellToEvade(Vector3 enemyPosition)
+    {
+        //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
+        nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToEvadeEnemy(transform.position, enemyPosition);
+
+        //move Player Two to next destination
+        currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
+
+    }
+
     private void HandleAllInteractions()
     {
+        //this method is currently useless. Should be removed.
         
         if (Physics.Raycast(transform.position, currentPlayerTwoDirectionVector, out RaycastHit rayCastHit, playerTwoInteractionDistance))
         //tells us if something is in front and returns its object parameter in rayCastHit object
@@ -177,7 +188,6 @@ public class PlayerTwoController : GenericPlayerController
 
         if (!canEnterExitDoorInVicinity && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
-            //Debug.Log("PlayerTwo should be in Opened Exit Door");
             canEnterExitDoorInVicinity = true;
             //Go towards Exit if it is in the same Cell.
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(exitDoorEntryLocation, transform.position);
@@ -201,30 +211,25 @@ public class PlayerTwoController : GenericPlayerController
         }
     }
 
-    public void RespondToEnemyHunt(object sender, System.EventArgs e)
-    {
-        Debug.Log("PlayerTwo responding to Enemy Event.");
-    }
-
-    public void EvadeEnemyPosition(Vector3 EnemyPosition)
-    {
-        //Debug.Log("PlayerTwo evading Enemy Position " + EnemyPosition);
-        Vector3 enemyEvasionPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionAwayFromLocationToEvade(EnemyPosition,transform.position);
-
-        //separate enemy Evasion vector is created to ensure that PlayerTwo doesn't break through walls
-        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(enemyEvasionPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
-        transform.position += currentPlayerTwoDirectionVector * Time.deltaTime * maxPlayerTwoMovementSpeed;//playerTwo is running
-
-    }
+    //public void RespondToEnemyHunt(object sender, System.EventArgs e)
+    //{
+        //Debug.Log("PlayerTwo responding to Enemy Event.");
+    //}
 
     public override void RespondToEnemyHunt(Vector3 enemyPosition)
     {
         //PlayerTwo will automatically evade Enemy position.
+        isEvadingEnemy = true;
+        MoveToNextCellToEvade(enemyPosition);
+        //change nextIntendedDestination if Enemy is hunting, based on farthest accessible cell from the enemy
     }
 
     public override void RespondToEnemyAttack(Vector3 enemyPosition)
     {
+
         Debug.Log("Enemy is attacking Player Two");
+
+        //Add Health drop here AFTER perfecting the Animation Event.
     }
 
     public bool IsPlayerTwoMoving()
