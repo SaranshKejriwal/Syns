@@ -300,4 +300,6 @@ Call a function only when Animation completes. "Animation Event". Video above ex
 You need to duplicate the triangle shaped animation component, not the entire prefab package.
 As soon as you clone that particular triangle animation object, you can "Add Event" from the Animation tab in the inspector, and specify the public function that you want to call, only when the animation ends.
 
-Open Prefab and check "Animation" tab next to console
+Open Prefab and check "Animation" tab next to console.
+
+Note - if you rename a function, Animation Event will not automatically rename it in Unity Inspector. Will need manual change.

@@ -27,6 +27,8 @@ public class LevelBuilder : MonoBehaviour
 
     private MazeCell startingCell;//playerOne and playerTwo will be spawned here.
 
+    private bool isLevelCompleted = false;
+
     private void Awake()
     {
         //define Gamefloor area, node size based on difficulty level
@@ -70,6 +72,7 @@ public class LevelBuilder : MonoBehaviour
     public void LevelVictory()
     {
         Debug.Log("Level Won!");
+        isLevelCompleted = true;
     }
 
     //this will be used to spawn collectible items away from, or at walls.
@@ -176,6 +179,11 @@ public class LevelBuilder : MonoBehaviour
     public MazeCell[,] GetLevelMaze()
     {
         return gameMaze;
+    }
+
+    public bool IsLevelCompleted()
+    {
+        return isLevelCompleted;
     }
 
 }

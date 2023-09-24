@@ -24,7 +24,7 @@ public class EnemyController : GenericEnemyController
         enemyWalkingMovementSpeed = base.enemyWalkingMovementSpeed;
         enemyHuntingMovementSpeed = base.enemyHuntingMovementSpeed;
         enemyHealth = base.enemyHealth;
-        attackDamage = base.attackDamage;
+        IncreaseAttackDamageByMultiplier(1);//same attack damage as base
     }
     public override void UpdateEnemyRadii()
     {
@@ -48,6 +48,9 @@ public class EnemyController : GenericEnemyController
         //Get Nearest Player and react to it
         base.ReactToPlayer(base.GetNearestPlayer());
         HandleNormalEnemyMovementWithCollision();
+
+        //for grunt only. If level is completed, Kill all grunts
+        CheckDeathOnLevelCompletion();
     }
 
     private void HandleNormalEnemyMovementWithCollision()
@@ -87,7 +90,22 @@ public class EnemyController : GenericEnemyController
         //isEnemyMoving = false;//Enemy is now tracking P2, not moving randomly
     }
 
+    private void CheckDeathOnLevelCompletion()
+    {
+        if (!LevelBuilder.Instance.IsLevelCompleted())
+        {
+            return;//stay alive as long as level is not completed.
+        }
+        KillEnemy();
+    }
 
+    private void KillEnemy()
+    {
+        currentEnemyState = enemyStates.isDead;//enemy death animation
+        enemyHealth = 0;
+        attackRadius = 0;
+        IncreaseAttackDamageByMultiplier(0);//all attack damage is zero for dead enemy
+    }
 
 
 }

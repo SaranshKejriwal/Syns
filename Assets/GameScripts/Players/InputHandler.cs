@@ -24,7 +24,8 @@ public class InputHandler : MonoBehaviour
     {
         
     }
-
+    
+    //Awake functions are called before the Start of all Gameobjects
     private void Awake()
     {
         //Read the new input Manager in our custom input class.
@@ -32,22 +33,19 @@ public class InputHandler : MonoBehaviour
         inputActions.PlayerOne.Enable();//PlayerOne and PlayerTwo maps were created by me.
         inputActions.PlayerTwo.Enable();
 
-        //Even to handle player one attack action
+        //Event to trigger player one attack action
         inputActions.PlayerOne.Punch.performed += PlayerOne_Punch_performed;//the function is not called, but passed as a reference.
 
     }
 
     private void PlayerOne_Punch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        //Player One Logic Class will listen to this event
+        //Player One Logic Class will listen to this OnPunchAction event, Not the Punch.performed event
 
         if (OnPunchAction != null) { //check if something is listening to this event
             OnPunchAction(this, EventArgs.Empty);//no additional arguments needed yet
             //sender is the InputHandler Class itself, hence 'this'   
         }
-
-
-        //throw new System.NotImplementedException();
     }
 
     public Vector2 GetPlayerOneMovementVectorNormalized()

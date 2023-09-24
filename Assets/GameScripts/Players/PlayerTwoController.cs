@@ -189,16 +189,19 @@ public class PlayerTwoController : GenericPlayerController
         if (!canEnterExitDoorInVicinity && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
             canEnterExitDoorInVicinity = true;
+            ExitDoorController.Instance.CheckExitDoorCollectedStatus();
             //Go towards Exit if it is in the same Cell.
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(exitDoorEntryLocation, transform.position);
-            
+            Debug.Log("0");
+
         }
 
         if (canEnterExitDoorInVicinity && Vector3.Distance(exitDoorEntryLocation, transform.position) <= mazeCellCenterErrorMargin)
         {
-            ExitDoorController.Instance.CheckExitDoorCollectedStatus();
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(disappearanceLocationAfterEntry, transform.position);
-            canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.            
+            canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
+            LevelBuilder.Instance.LevelVictory();//Close Level
+            Debug.Log("1");
 
         }
         //these 2 if conditions are added to show smooth transition between door open and exit.
@@ -207,7 +210,8 @@ public class PlayerTwoController : GenericPlayerController
             //ExitDoorController.Instance.CheckExitDoorCollectedStatus();
             isPlayerTwoMoving = false;
             currentPlayerTwoMovementSpeed = 0;//stop Player Two.
-            LevelBuilder.Instance.LevelVictory();//Close Level
+            //LevelBuilder.Instance.LevelVictory();//Close Level
+            Debug.Log("2");
         }
     }
 
@@ -227,7 +231,7 @@ public class PlayerTwoController : GenericPlayerController
     public override void RespondToEnemyAttack(Vector3 enemyPosition)
     {
 
-        Debug.Log("Enemy is attacking Player Two");
+       // Debug.Log("Enemy is attacking Player Two");
 
         //Add Health drop here AFTER perfecting the Animation Event.
     }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class EnemyAnimation : MonoBehaviour
 {
@@ -14,6 +16,19 @@ public class EnemyAnimation : MonoBehaviour
     private const string IS_STANDING_PARAM_NAME = "isEnemyStanding";
     private const string IS_DEAD_PARAM_NAME = "isEnemyDead";
 
+    //this parameter will be used to play a random attack animation out of the 4 that we have.
+    private const string ENEMY_ATTACK_NUMBER_PARAM_NAME = "enemyAttackNumber";
+    private const int MIN_INCLUDED_ENEMY_ATTACK_NUMBER = 1;
+    private const int MAX_EXCLUDED_ENEMY_ATTACK_NUMBER = 5;//we have 4 attacks in our animator.
+    /*
+     * Reference - https://assetstore.unity.com/packages/3d/characters/animals/free-stylized-bear-rpg-forest-animal-228910
+     * 
+     * Attack1 - Right Claw
+     * Attack2 - Left Claw
+     * Attack3 - Bite
+     * Attack5 - Stomp
+     */
+
     [SerializeField] private GenericEnemyController enemyLogicObject; // to reference the logic component of Enemy, in the Prefab itself
 
     //Awake is called before Start
@@ -21,7 +36,6 @@ public class EnemyAnimation : MonoBehaviour
     {
         //get the animator reference
         enemyAnimator = GetComponent<Animator>();
-
     }
 
     // Start is called before the first frame update
@@ -39,10 +53,18 @@ public class EnemyAnimation : MonoBehaviour
         enemyAnimator.SetBool(IS_HIT_PARAM_NAME, enemyLogicObject.IsEnemyHit());
         enemyAnimator.SetBool(IS_STANDING_PARAM_NAME, enemyLogicObject.isEnemyStanding());
         enemyAnimator.SetBool(IS_DEAD_PARAM_NAME, enemyLogicObject.IsEnemyDead());
+        
+        //this will set a random attack 
+        enemyAnimator.SetInteger(ENEMY_ATTACK_NUMBER_PARAM_NAME, MathFunctions.GetRandomIntInRange(MIN_INCLUDED_ENEMY_ATTACK_NUMBER, MAX_EXCLUDED_ENEMY_ATTACK_NUMBER));
     }
-
-    public void EnemyAttackCompletion()
+    
+    //this function is set as the Animation Event in the Enemy Prefabs attack animation. It is only called when Attack animation completes.
+    public void EnemyStompAttackAnimationCompletion()
     {
+        //this method seems to be called twice for some unclear reason...but this approach is still better than having the function called infinitely.
+        //Note - Exit Time is needed on transition after Attack Animation Completion.
         Debug.Log("Enemy attack completion called only once?");
+
+        enemyLogicObject.HandleStompAnimationCompletionEvent();//this method will be called once when animation ends.
     }
 }

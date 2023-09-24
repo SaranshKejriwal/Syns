@@ -20,6 +20,7 @@ public class GenericEnemyController : MonoBehaviour
 {
     protected int enemyWalkingMovementSpeed = 3; //when enemy is walking normally
     protected int enemyHuntingMovementSpeed = 7; //when Player 2 is detected by the Enemy and Enemy is chasing Player 2
+    protected int enemyRotationSpeed = 10;
     //Note - Hunting speed should be same as the max movement speed of playerTwo, else enemy will never catch up.
     
     protected Vector3 currentEnemyMovementDirection = Vector3.zero;
@@ -28,10 +29,16 @@ public class GenericEnemyController : MonoBehaviour
     protected enemyStates currentEnemyState = enemyStates.isStanding;
     protected enemyStates defaultEnemyState = enemyStates.isStanding;//this is used to restore enemy/boss to normal state
 
-    protected float attackRadius = 2f;//radius at which enemy can attack playerTwo
+    protected float attackRadius = 2.5f;//radius at which enemy can attack playerTwo
     protected int enemyHealth = 25;
-    protected int attackDamage = 4;
 
+    //We have 4 attack types in the free animator. Each can be assigned its own damage value.
+    protected float leftClawAttackDamage = 3f;
+    protected float rightClawAttackDamage = 3f;
+    protected float biteAttackDamage = 5f;
+    protected float stompAttackDamage = 8f;
+
+    protected GenericPlayerController targetPlayer = null;//this will be used to track which player is being tracked by the enemy.
 
     //these dictionaries will be useful for configuring behaviour of each of the enemy types against each of the player types in one base function.
     protected Dictionary<GenericPlayerController, float> enemyDetectionRadiusReference;
@@ -103,30 +110,34 @@ public class GenericEnemyController : MonoBehaviour
     protected void HuntPlayer(GenericPlayerController player)
     {
         //this is used by grunts to chase PlayerTwo
+        targetPlayer = player;
         currentEnemyState = enemyStates.isHunting;     
 
         currentEnemyMovementDirection = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(player.GetPlayerPosition(), transform.position);
-        transform.LookAt(player.GetPlayerPosition());//look at Player
-
+        //transform.LookAt(player.GetPlayerPosition());//look at Player
+        
         //player.RespondToEnemyHunt(transform.position);
 
 
     }
 
+    //this will only play the Enemy animation. There is an Enemy Animation Event which will fire an event for Enemy to cause damage to targetPlayer
     protected void AttackPlayer(GenericPlayerController player)
     {
         //this is used by grunts and bosses to attack both Players
+        targetPlayer = player;
         currentEnemyState = enemyStates.isAttacking;
         transform.LookAt(player.GetPlayerPosition());//look at Player
 
         //Debug.Log("Player in attack vicinity");
-        player.RespondToEnemyAttack(transform.position);
+        //player.RespondToEnemyAttack(transform.position);
         //ContinueDefaultState();
     }
 
     //if Enemy is far away from Player2 
     protected void ContinueDefaultState()
     {
+        targetPlayer = null;
         currentEnemyState = defaultEnemyState;
     }
 
@@ -157,10 +168,6 @@ public class GenericEnemyController : MonoBehaviour
         return currentEnemyState == enemyStates.isStanding;
     }
 
-    public int GetAttackDamage()
-    {
-        return attackDamage;
-    }
 
     protected bool IsPlayerRayCastNotObstructed(GenericPlayerController playerInFocus, float detectionRadius)
     {
@@ -207,6 +214,15 @@ public class GenericEnemyController : MonoBehaviour
     }
 
 
+    protected void IncreaseAttackDamageByMultiplier(float multiplier)
+    {
+        leftClawAttackDamage = multiplier * leftClawAttackDamage;
+        rightClawAttackDamage = multiplier * rightClawAttackDamage;
+        biteAttackDamage = multiplier * biteAttackDamage;
+        stompAttackDamage = multiplier * stompAttackDamage;
+    }
+
+
     protected int GetEnemyMovementSpeed()
     {
         if (IsEnemyMoving())
@@ -222,5 +238,10 @@ public class GenericEnemyController : MonoBehaviour
             return 0;
         }
         return enemyWalkingMovementSpeed;
+    }
+
+    public void HandleStompAnimationCompletionEvent()
+    {
+        Debug.Log(this + " is acting to animation completion event");
     }
 }

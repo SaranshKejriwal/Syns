@@ -126,7 +126,7 @@ public class PlayerOneController : GenericPlayerController
 
     public override void RespondToEnemyAttack(Vector3 enemyPosition)
     {
-        Debug.Log("Enemy is attacking Player One");
+        //Debug.Log("Enemy is attacking Player One");
     }
 
     public bool IsPlayerOnePunching()

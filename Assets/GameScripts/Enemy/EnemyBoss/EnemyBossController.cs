@@ -28,7 +28,7 @@ public class EnemyBossController : GenericEnemyController
         instance.enemyHuntingMovementSpeed = 0;
         instance.enemyHealth = 75;
         instance.attackRadius = 4f;
-        instance.attackDamage = 10;
+        instance.IncreaseAttackDamageByMultiplier(2.5f);//2.5x damage for boss as a start.
         currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
     }
     public override void UpdateEnemyRadii()
@@ -65,7 +65,6 @@ public class EnemyBossController : GenericEnemyController
         //Get Nearest Player and react to it
         base.ReactToPlayer(base.GetNearestPlayer());
     }
-
 
     private int GetRotationAngleInCell(MazeCell cell)
     {

@@ -1,14 +1,17 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
+BUG - Victory is not called if P2 enters door from the front.  
+
+BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast.
 
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
-
-Enemy is jaggy when it is just close to player
 
 PlayerTwo to reset past visited cells if Stack is empty.
 
 PlayerOne attack to find the enemy in front and do damage more reliably.
+
+Spawn timer should stop when Boss Dies
 
 Enemy attack damage to be called only once on animation end, not infinitely while player is in range - Animation Event.
 
@@ -20,6 +23,8 @@ Health buffs to be collected only if Player has less than max health
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
+
+Allow user to choose enemy buff at start of next level.
 
 Have Variants and buffs for each enemy of each syn.
 
@@ -34,7 +39,9 @@ Level selection between Base and 7 level types
 Difficulty selection - Easy Med Hard
 
 Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
-________________________________________________________________________________________
+
+
+___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
 
 Multiple attack types on enemy
@@ -42,6 +49,8 @@ Multiple attack types on enemy
 Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
 
 Adding states to Players like Walking, Evading, Running, to have better animations.
+
+Players to get Armour upgrades with visible components getting added on.
 
 Can Considers____________________________________________________________________________
 
@@ -57,7 +66,11 @@ Enemy visual radius to be cut from the other side of the wall.
 
 COMPLETED_______________________________
 
-Enemy to ignore Player if it is behind a wall. Enemy to chase PlayerTwo only if there are no obstacles in between.
-tweak the collider size to be able to correctly ignore players behind walls.
+Enemy to ignore Player if it is behind a wall. Enemy to chase PlayerTwo only if there are no obstacles in between. 
+tweak the collider size to be able to correctly ignore players behind walls. Fixed by adding Box Collider to Players and a RaycastAll to Enemy.
 
-BUG - Boss is ignoring PlayerTwo altogether, because PlayerOne seems to be overriding.
+BUG - Boss is ignoring PlayerTwo altogether, because PlayerOne seems to be overriding. Fixed by computing the closest player to enemy/boss
+
+Boss stops moving after one attack unless Player makes a round trip. Fixed by Adding Exit Timed loops to Boss Animator.
+
+Enemy is jaggy when it is just close to player. Fixed by increasing attack radius by 0.5f
