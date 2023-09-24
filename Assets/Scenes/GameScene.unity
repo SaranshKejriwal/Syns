@@ -5139,7 +5139,7 @@ PrefabInstance:
     - target: {fileID: 5888239923019342307, guid: 5ebd9bbb5afe3ba40bae8072b1091782,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 5888239923019342307, guid: 5ebd9bbb5afe3ba40bae8072b1091782,
         type: 3}
@@ -5733,7 +5733,6 @@ MonoBehaviour:
   maxPlayerTwoMovementSpeed: 4
   minPlayerTwoMovementSpeed: 1
   inputHandler: {fileID: 1375179014}
-  playerTwoInteractionSize: 0.5
 --- !u!4 &2019450313
 Transform:
   m_ObjectHideFlags: 0

@@ -11,17 +11,31 @@ public enum PlayerType
     GameShop, CommonSack,//these are identified as inactive players only because they can hold buffs.
     Generic //Parent class
 }
+
+public enum PlayerState
+{
+    isActiveNormal,
+    isRunning,
+    isInjured,
+    isDead,
+    isInactive
+}
+
+
 //This Generic Controller PlayerClass will be the Parent of P1 and P2
 //It can be used to apply generic buff items, health setters etc.
 public abstract class GenericPlayerController : MonoBehaviour
 {
-    protected int playerHealth = 10;
+    protected float playerHealth = 10;
+    protected float playerMaxHealth = 10;
     protected int goldCollectedByPlayer = 0;
     protected bool isActive = false; //true for playerOne and PlayerTwo only. False for Shop and Sack.
     protected bool canBeAttacked = true;//True for Active players, except PlayerTwo while reaching exit.
 
     protected PlayerType playerType = PlayerType.Generic;
     // Start is called before the first frame update
+
+    protected PlayerState playerState = PlayerState.isInactive;
 
     protected Vector3 nextIntendedDestination = Vector3.zero;
     //this will be used to dictate the target for PlayerTwo only
@@ -55,11 +69,6 @@ public abstract class GenericPlayerController : MonoBehaviour
         return goldCollectedByPlayer;
     }
 
-    //common function to manage Max Player health
-    public void SetPlayerMaxHealth(int playerHealth)
-    {
-        this.playerHealth = playerHealth;
-    }
 
     public bool isActivePlayer()
     {
@@ -78,6 +87,43 @@ public abstract class GenericPlayerController : MonoBehaviour
     public void SetNextIntendedDestination(Vector3 destination)
     {
         nextIntendedDestination = destination;
+    }
+
+    public void DamagePlayer(float attackDamage)
+    {
+        this.playerHealth -= attackDamage;
+        Debug.Log(this + " has remaining health: "+this.playerHealth);
+        if (this.playerHealth <= 0)
+        {
+            KillPlayer();
+        }
+
+    }
+
+    protected virtual void KillPlayer()
+    {
+        Debug.Log(this + " is dead.");
+        this.playerState = PlayerState.isDead;
+    }
+
+    public void SetPlayerMaxHealth(int playerHealth)
+    {
+        this.playerMaxHealth = playerHealth;
+    }
+
+    public bool IsAtMaxHealth()
+    {
+        return this.playerHealth == this.playerMaxHealth;
+    }
+
+    public void HealPlayer(float healPercent)
+    {
+        if(this.playerHealth >= this.playerMaxHealth)
+        {
+            return; //can't allow a condition where playerHealth exceeds MaxHealth.
+        }
+        //heal is not constant. The more damaged the player, the more effective the heal.
+        this.playerHealth += healPercent*(this.playerMaxHealth - this.playerHealth);
     }
 
 }

@@ -79,6 +79,7 @@ GameObject:
   - component: {fileID: 5888239923019342307}
   - component: {fileID: 8796481164887158560}
   - component: {fileID: 3337351147813187228}
+  - component: {fileID: 8146497237307326136}
   m_Layer: 0
   m_Name: BaseEnemyBossLogicObj
   m_TagString: Untagged
@@ -128,6 +129,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd5285f6cc56c748b8a9e2e5407fd7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &8146497237307326136
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8143794851799995777}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 6, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &5688939839497172474
 PrefabInstance:
   m_ObjectHideFlags: 0

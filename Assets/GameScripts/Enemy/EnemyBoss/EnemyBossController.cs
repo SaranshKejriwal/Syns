@@ -12,6 +12,8 @@ public class EnemyBossController : GenericEnemyController
         private set { instance = value; }
     }
 
+    private bool isSpawning = true;//Boss will spawn while alive.
+
     private void Awake()
     {
         if (instance == null)
@@ -27,7 +29,7 @@ public class EnemyBossController : GenericEnemyController
         instance.enemyWalkingMovementSpeed = 0;
         instance.enemyHuntingMovementSpeed = 0;
         instance.enemyHealth = 75;
-        instance.attackRadius = 4f;
+        instance.attackRadius = 5f;
         instance.IncreaseAttackDamageByMultiplier(2.5f);//2.5x damage for boss as a start.
         currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
     }
@@ -36,8 +38,8 @@ public class EnemyBossController : GenericEnemyController
         //this function will update both the radius-lookup dictionaries for each Enemy object.
         enemyDetectionRadiusReference = new Dictionary<GenericPlayerController, float>()
         {
-            { PlayerOneController.Instance, 8f }, //boss can detect both players
-            { PlayerTwoController.Instance, 8f } //detection radius is equal to attack radius deliberately.
+            { PlayerOneController.Instance, 9f }, //boss can detect both players
+            { PlayerTwoController.Instance, 9f } //detection radius is equal to attack radius deliberately.
         };
 
         //All values will be 0 for generic class
@@ -64,6 +66,7 @@ public class EnemyBossController : GenericEnemyController
     {
         //Get Nearest Player and react to it
         base.ReactToPlayer(base.GetNearestPlayer());
+        CheckStopSpawnOnDeath();
     }
 
     private int GetRotationAngleInCell(MazeCell cell)
@@ -87,6 +90,20 @@ public class EnemyBossController : GenericEnemyController
         }
 
         return 0;
+    }
+
+    private void CheckStopSpawnOnDeath()
+    {
+        if (currentEnemyState != enemyStates.isDead || isSpawning)
+        {
+            return;//Enemies should spawn as long as boss is alive.
+        }
+        //isSpawning flag ensures that this function is not called infinitely.
+
+        isSpawning = false;
+        Debug.Log("Level Boss Defeated. Stopping Enemy Spawn");
+        EnemySpawnHandler.Instance.StopEnemySpawnTimer();
+        
     }
 
 }

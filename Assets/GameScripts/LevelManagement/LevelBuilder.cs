@@ -75,6 +75,12 @@ public class LevelBuilder : MonoBehaviour
         isLevelCompleted = true;
     }
 
+    public void LevelDefeat()
+    {
+        Debug.Log("Level Lost! :(");
+        isLevelCompleted = false;
+    }
+
     //this will be used to spawn collectible items away from, or at walls.
     public MazeCell GetMazeCellAtIndex(int x, int z)
     {

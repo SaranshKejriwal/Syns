@@ -22,11 +22,14 @@ public class PlayerOneController : GenericPlayerController
     [SerializeField] private float playerOneInteractionSize = 0.5f; //needed for collision handling in Raycast function.
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
-    private int playerOneInteractionDistance = 1;
+    private float playerOnePunchAttackRange = 8f;//determined emperically.
+    private float playerOncePunchAttachDamage = 60f;//instakill for test only.
+
+    //this is used to dictate the direction of playerOne before it stopped moving
     private Vector3 lastInteractionDirectionVector = Vector3.zero;
     // Start is called before the first frame update
 
-    private EnemyController approachedEnemy;//to be replaced by Enemy logic object later
+    private GenericEnemyController approachedEnemy;//to be replaced by Enemy logic object later
 
     private void Awake()
     {
@@ -39,9 +42,11 @@ public class PlayerOneController : GenericPlayerController
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerOne");
         }
         instance.playerHealth = 35;//Much higher than PlayerTwo
+        instance.playerMaxHealth = 35;
         instance.isActive = true;//player is Active.
         instance.canBeAttacked = true;
         instance.playerType = PlayerType.PlayerOne;//set PlayerType of its parent class member
+        instance.playerState = PlayerState.isActiveNormal;
     }
 
     void Start()
@@ -61,11 +66,12 @@ public class PlayerOneController : GenericPlayerController
     {
         //What will this object do when PunchAction is pressed?
 
+        Debug.Log(approachedEnemy);
         //if Raycast hits Enemy in HandleInteractions(), approachedEnemy is updated. When PlayerOne punches, Enemy reaction is called
         if (approachedEnemy != null)
         {
             //only nearest enemy responds, ONLY when Player One Punches
-            approachedEnemy.RespondToPlayerOnePunch();//straightforward non-singleton approach.
+            approachedEnemy.RespondToPlayerOnePunch(playerOncePunchAttachDamage);//straightforward non-singleton approach.
 
         }
         
@@ -92,13 +98,17 @@ public class PlayerOneController : GenericPlayerController
             //this ensures that interaction is saved even when movement isn't happening - interaction continues even if movement stops.
         }
 
-        if(Physics.Raycast(transform.position, lastInteractionDirectionVector, out RaycastHit rayCastHit,  playerOneInteractionDistance))
+        if(Physics.Raycast(transform.position, lastInteractionDirectionVector, out RaycastHit rayCastHit,  playerOnePunchAttackRange))
         //tells us if something is in front and returns its object parameter in rayCastHit object
         {
-            //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.
+            //this only works if the Logic object ITSELF has a BoxCollider component, not its child visual.
+
+            Component test;
+            bool gotComponent = rayCastHit.transform.TryGetComponent(out test);
+            //Debug.Log("First Object Visible to PlayerOne: " + test);//returns the name of the object that was hit.
 
             //tries to confirm if interacted component is of a specific type.
-            if(rayCastHit.transform.TryGetComponent(out EnemyController interactedEnemy))
+            if (rayCastHit.transform.TryGetComponent(out GenericEnemyController interactedEnemy))
             {               
                 approachedEnemy = interactedEnemy;//assign this nearest Enemy to interacted Enemy objecct for P1.
             }
@@ -210,4 +220,6 @@ public class PlayerOneController : GenericPlayerController
     {
         return isMoving;
     }
+
+    
 }

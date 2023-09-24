@@ -1,9 +1,9 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
-BUG - Victory is not called if P2 enters door from the front.  
-
 BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast.
+
+BUG - Boss is not showing Death Animation. Fixed by Adding Hunting transition to Buff animation.
 
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
@@ -19,7 +19,7 @@ Enemy to stop moving while attacking. Checking if playerTwo evaded the attack.
 
 Create Menus, and level completion
 
-Health buffs to be collected only if Player has less than max health
+Health buffs to be collected only if Player has less than max health. 
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
@@ -74,3 +74,7 @@ BUG - Boss is ignoring PlayerTwo altogether, because PlayerOne seems to be overr
 Boss stops moving after one attack unless Player makes a round trip. Fixed by Adding Exit Timed loops to Boss Animator.
 
 Enemy is jaggy when it is just close to player. Fixed by increasing attack radius by 0.5f
+
+BUG - Victory is not called if P2 enters door from the front. Fixed by Calling Victory when PlayerTwo is near door, not after entering it.
+
+Bug - Grunt sometime jitteringly sticks to P1. Fixed by ensuring that if Enemy state is isDead, it doesn't change back to default.

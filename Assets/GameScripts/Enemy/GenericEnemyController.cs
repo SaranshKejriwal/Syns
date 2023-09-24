@@ -30,7 +30,7 @@ public class GenericEnemyController : MonoBehaviour
     protected enemyStates defaultEnemyState = enemyStates.isStanding;//this is used to restore enemy/boss to normal state
 
     protected float attackRadius = 2.5f;//radius at which enemy can attack playerTwo
-    protected int enemyHealth = 25;
+    protected float enemyHealth = 25;
 
     //We have 4 attack types in the free animator. Each can be assigned its own damage value.
     protected float leftClawAttackDamage = 3f;
@@ -68,6 +68,11 @@ public class GenericEnemyController : MonoBehaviour
         {            
             return;
             //player should not be null and should be attack-able. Ignore Shop and Bag.
+        }
+
+        if(currentEnemyState == enemyStates.isDead)
+        {
+            return;//dead enemies can't react to anything.
         }
 
         bool hasPlayerDetectionRadius = enemyDetectionRadiusReference.TryGetValue(player, out float playerDetectionRadius);
@@ -121,7 +126,8 @@ public class GenericEnemyController : MonoBehaviour
 
     }
 
-    //this will only play the Enemy animation. There is an Enemy Animation Event which will fire an event for Enemy to cause damage to targetPlayer
+    //this will only play the Enemy animation.
+    //There is an Enemy Animation Event which will fire an event for Enemy to cause damage to targetPlayer
     protected void AttackPlayer(GenericPlayerController player)
     {
         //this is used by grunts and bosses to attack both Players
@@ -129,9 +135,6 @@ public class GenericEnemyController : MonoBehaviour
         currentEnemyState = enemyStates.isAttacking;
         transform.LookAt(player.GetPlayerPosition());//look at Player
 
-        //Debug.Log("Player in attack vicinity");
-        //player.RespondToEnemyAttack(transform.position);
-        //ContinueDefaultState();
     }
 
     //if Enemy is far away from Player2 
@@ -242,6 +245,46 @@ public class GenericEnemyController : MonoBehaviour
 
     public void HandleStompAnimationCompletionEvent()
     {
-        Debug.Log(this + " is acting to animation completion event");
+        float currentPlayerDistance = Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition());
+        if(currentPlayerDistance <= attackRadius)    
+        {
+            //targetPlayer.DamagePlayer(stompAttackDamage / 2);
+            //half damage becuase Animation event is fired twice for some reason.
+        }
+        else
+        {
+            //player moved out of attack range.
+            Debug.Log(targetPlayer + " evaded attack.");
+        }
+
+
     }
+
+    public void RespondToPlayerOnePunch(float punchDamage)
+    {
+        //function is public because it will be called for the Player class interaction handler
+        Debug.Log("Player One Punched Enemy. " + this);
+        currentEnemyState = enemyStates.isHit;
+        DamageEnemy(punchDamage);
+    }
+
+    public void DamageEnemy(float attackDamage)
+    {
+        this.enemyHealth -= attackDamage;
+        Debug.Log(this + " has remaining health: " + this.enemyHealth);
+        if (this.enemyHealth <= 0)
+        {
+            KillEnemy();
+        }
+
+    }
+
+    protected void KillEnemy()
+    {
+        currentEnemyState = enemyStates.isDead;//enemy death animation
+        enemyHealth = 0;
+        attackRadius = 0;
+        IncreaseAttackDamageByMultiplier(0);//all attack damage is zero for dead enemy
+    }
+
 }

@@ -8,6 +8,14 @@ public class EnemySpawnHandler : MonoBehaviour
     //This class is responsible for running a timer and spawning a new instance of an enemy.
     //It is attached to the Enemy boss object because Death of Enemy boss will stop this counter for the level
 
+    private static EnemySpawnHandler instance;
+    public static EnemySpawnHandler Instance
+    {
+        /*Enemy Boss will be a singleton. It also controls EnemySpawn Handler.*/
+        get { return instance; }
+        private set { instance = value; }
+    }
+
     private bool isEnemySpawnTimerActive = true;
     private int enemySpawnCount = 0;
     private float currentTimerCount = 0f;
@@ -20,7 +28,14 @@ public class EnemySpawnHandler : MonoBehaviour
    
     private void Awake()
     {
-        
+        if (instance == null)
+        {
+            instance = this;//start by setting the Singleton instance 
+        }
+        else
+        {
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of Enemy Spawn Handler");
+        }
     }
     // Start is called before the first frame update
     void Start()
@@ -38,11 +53,19 @@ public class EnemySpawnHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateEnemySpawnTimer();
+        if (isEnemySpawnTimerActive)
+        {
+            UpdateEnemySpawnTimer();
+        }
+        
     }
     //update timer and spawn enemy when it reaches limit.
     private void UpdateEnemySpawnTimer()
     {
+        if (EnemyBossController.Instance.IsEnemyDead())
+        {
+            return;//Do not spawn if Boss is dead.
+        }
         currentTimerCount += Time.deltaTime;
         if (currentTimerCount > maxTimerCount)
         {

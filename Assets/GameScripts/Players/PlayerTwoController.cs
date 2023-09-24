@@ -27,8 +27,6 @@ public class PlayerTwoController : GenericPlayerController
 
     
     [SerializeField] private InputHandler inputHandler;
-    [SerializeField] private float playerTwoInteractionSize = 0.5f; //needed for collision handling in Raycast function.
-    //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
     private float playerTwoInteractionDistance = 2f;
     private readonly float mazeCellCenterErrorMargin = 1f;
@@ -53,8 +51,10 @@ public class PlayerTwoController : GenericPlayerController
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerTwo");
         }
         instance.playerHealth = 15;
+        instance.playerMaxHealth = 15;
         instance.isActive = true;
         instance.playerType = PlayerType.PlayerTwo;
+        instance.playerState = PlayerState.isActiveNormal;
     }
 
     // Start is called before the first frame update
@@ -263,5 +263,13 @@ public class PlayerTwoController : GenericPlayerController
         //update ExitDoor status to be correctly collectable by PlayerTwo.
     }
 
+    protected override void KillPlayer()
+    {
+        Debug.Log(this + " is dead.");
+        this.playerState = PlayerState.isDead;
+
+        //If PlayerTwo Dies, level is lost.
+        LevelBuilder.Instance.LevelDefeat();
+    }
 
 }

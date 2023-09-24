@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6971541367089819425}
   - component: {fileID: 2134789381774519689}
+  - component: {fileID: 8540000093977079955}
   m_Layer: 0
   m_Name: BaseEnemyLogicObj
   m_TagString: Untagged
@@ -46,8 +47,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8043ca4e3d2a2ed4584f9f37c9552e9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyInteractionSize: 1.5
-  enemyDetectionRadiusOfPlayerTwo: 10
+--- !u!65 &8540000093977079955
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2395443585391349701}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 4, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8079953639161118617
 GameObject:
   m_ObjectHideFlags: 0

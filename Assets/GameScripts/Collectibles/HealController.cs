@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class HealController : GenericCollectibleItem
 {
+    //Heal will provide a percentage based heal - x% of the difference from MaxHealth
+    private float healPercent = 0.5f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,13 +20,13 @@ public class HealController : GenericCollectibleItem
     void Update()
     {
         //Need to add logic to ignore if Player is at Max Health
-        if (base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
+        if (!PlayerTwoController.Instance.IsAtMaxHealth() && base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
         {
             //Need to add healing logic to heal 50%
             //PlayerTwoController.Instance.CollectGold();
             Destroy(this.gameObject);
         }
-        if (base.IsActivePlayerInVicinityForCollection(PlayerOneController.Instance))
+        if (!PlayerOneController.Instance.IsAtMaxHealth() && base.IsActivePlayerInVicinityForCollection(PlayerOneController.Instance))
         {
             //PlayerOneController.Instance.CollectGold();
             Destroy(this.gameObject);//increment only once.

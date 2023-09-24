@@ -14,9 +14,6 @@ public class EnemyController : GenericEnemyController
 
     private int rotationSpeed = 10;//needed for Moving Grunts only
 
-
-    public event EventHandler onHuntingPlayerTwo;//will be listened by PlayerTwo
-
     private void Awake()
     {
         currentEnemyState = enemyStates.isMoving;//Grunt should be moving by default
@@ -76,12 +73,7 @@ public class EnemyController : GenericEnemyController
 
        
 
-    public void RespondToPlayerOnePunch()
-    {
-        //function is public because it will be called for the Player class interaction handler
-        Debug.Log("Player One Punched Enemy.");
-        currentEnemyState = enemyStates.isHit;
-    }
+
 
     public void RespondToPlayerTwoInteraction()
     {
@@ -97,14 +89,6 @@ public class EnemyController : GenericEnemyController
             return;//stay alive as long as level is not completed.
         }
         KillEnemy();
-    }
-
-    private void KillEnemy()
-    {
-        currentEnemyState = enemyStates.isDead;//enemy death animation
-        enemyHealth = 0;
-        attackRadius = 0;
-        IncreaseAttackDamageByMultiplier(0);//all attack damage is zero for dead enemy
     }
 
 
