@@ -149,33 +149,28 @@ public class PlayerOneController : GenericPlayerController
         Vector2 keyInputVector = inputHandler.GetPlayerOneMovementVectorNormalized();
         Vector3 directionVector = new Vector3(keyInputVector.x, 0f, keyInputVector.y);
 
-        isMoving = directionVector != Vector3.zero;//if no keyInput, this condition is false 
+        //check if user is giving movement input but not punching.
+        isMoving = (directionVector != Vector3.zero) && !IsPlayerOnePunching();//if no keyInput, this condition is false 
         //this boolean is used in the animator
-                
-        //rotate the object to face the direction
-        transform.forward = Vector3.Slerp(transform.forward, directionVector, Time.deltaTime * rotationSpeed);
+        
+        
+        if (isMoving)
+        {
+            //rotate the object to face the direction
+            transform.forward = Vector3.Slerp(transform.forward, directionVector, Time.deltaTime * rotationSpeed);
 
 
-        //needed for collision handling - if player movement is obstructed, try x or z axis movement only
-        directionVector = GetMovementDirectionAlongObstruction(directionVector);
-        //Note - transform.forward is called before collision handling to ensure direction is always based on key input only.
+            //needed for collision handling - if player movement is obstructed, try x or z axis movement only
+            directionVector = GetMovementDirectionAlongObstruction(directionVector);
+            //Note - transform.forward is called before collision handling to ensure direction is always based on key input only.
 
-        //move the object position in the direction 
-        transform.position += directionVector * Time.deltaTime * moveSpeed;
-        /*transform holds the position of the GameObj, apparently
-        transform.position is a 3D vector.
-        Time.deltaTime ensures that perceived change in position is independent of system framerate.
-        Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
-
-
-
-        /*
-         * Tip - use transform.lookAt function to have object change line of sight to a point. Useful for enemies facing P2
-            transform.up or transform.right can work for 2D games to change direction.
-
-            Slerp() function makes the direction change from prev pos smoother, by adding smoothing to not make the direction change instantaneous.
-         */
-
+            //move the object position in the direction 
+            transform.position += directionVector * Time.deltaTime * moveSpeed;
+            /*transform holds the position of the GameObj, apparently
+            transform.position is a 3D vector.
+            Time.deltaTime ensures that perceived change in position is independent of system framerate.
+            Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
+        }
     }
 
 
@@ -221,5 +216,4 @@ public class PlayerOneController : GenericPlayerController
         return isMoving;
     }
 
-    
 }

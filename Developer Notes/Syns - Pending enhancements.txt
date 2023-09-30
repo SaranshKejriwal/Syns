@@ -3,13 +3,16 @@ Must Haves______________________________________________________________________
 
 BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast.
 
-BUG - Boss is not showing Death Animation. Fixed by Adding Hunting transition to Buff animation.
+BUG - Enemy animation freezes after attack. Need to revise the animator transitions. Also - Enemy speed should be 0 during attack state.
+
+BUG - PlayerOne Punching feels weird. Armour is off and his head bounces independently from body..
+
+BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation.
 
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
 PlayerTwo to reset past visited cells if Stack is empty.
 
-PlayerOne attack to find the enemy in front and do damage more reliably.
 
 Spawn timer should stop when Boss Dies
 
@@ -19,7 +22,12 @@ Enemy to stop moving while attacking. Checking if playerTwo evaded the attack.
 
 Create Menus, and level completion
 
-Health buffs to be collected only if Player has less than max health. 
+Multiple attack types on enemy - use Animation Events.
+
+Addition of PLayer Hit and Death animations.
+
+Create a healthbar component on all, such that its length varies with text. Player1 and PLayer2 healthbar to always be on top of the screen.
+
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
@@ -40,11 +48,14 @@ Difficulty selection - Easy Med Hard
 
 Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
 
+Enable the code that increases the wall height based on PlayerOne position.s
+
+Adding Music to the game.
+
+Save Game stats.
 
 ___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
-
-Multiple attack types on enemy
 
 Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
 
@@ -60,7 +71,7 @@ PlayerOne spawns a range attack which damages enemy on proximity
 
 PlayerOne has an auto-sword which rotates/slices or stabs enemies
 
-Enemy visual radius to be cut from the other side of the wall.
+Prop at end of Envy level - Compass for P1 which points P2 location
 
 
 
@@ -78,3 +89,11 @@ Enemy is jaggy when it is just close to player. Fixed by increasing attack radiu
 BUG - Victory is not called if P2 enters door from the front. Fixed by Calling Victory when PlayerTwo is near door, not after entering it.
 
 Bug - Grunt sometime jitteringly sticks to P1. Fixed by ensuring that if Enemy state is isDead, it doesn't change back to default.
+
+Health buffs to be collected only if Player has less than max health. Done by adding a getter for MaxHealth
+
+PlayerOne attack to find the enemy in front and do damage more reliably. DONE
+
+BUG - Manage Player1 movement and attack animations more smoothly. Create Animation Events to freeze playerOne Movement while attacking. Handled in PLayerOneController to stop moving while punching
+
+Enemy visual radius to be cut from the other side of the wall. Done by adding Raycasts in GenericEnemyController

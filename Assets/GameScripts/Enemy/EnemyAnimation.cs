@@ -23,10 +23,10 @@ public class EnemyAnimation : MonoBehaviour
     /*
      * Reference - https://assetstore.unity.com/packages/3d/characters/animals/free-stylized-bear-rpg-forest-animal-228910
      * 
-     * Attack1 - Right Claw
-     * Attack2 - Left Claw
-     * Attack3 - Bite
-     * Attack5 - Stomp
+     * Attack1 - Right Claw - Value = 1
+     * Attack2 - Left Claw - Value = 2
+     * Attack3 - Bite - Value = 3
+     * Attack5 - Stomp - Value = 4
      */
 
     [SerializeField] private GenericEnemyController enemyLogicObject; // to reference the logic component of Enemy, in the Prefab itself
@@ -61,10 +61,24 @@ public class EnemyAnimation : MonoBehaviour
     //this function is set as the Animation Event in the Enemy Prefabs attack animation. It is only called when Attack animation completes.
     public void EnemyStompAttackAnimationCompletion()
     {
-        //this method seems to be called twice for some unclear reason...but this approach is still better than having the function called infinitely.
+        //this method seems to be called twice, if your Animator is setup improperly. Ensure that transitions from 1 animation to another are simplified.
         //Note - Exit Time is needed on transition after Attack Animation Completion.
-        Debug.Log("Enemy attack completion called only once?");
+        Debug.Log("Enemy Stomp attack completion called only once?");
 
         enemyLogicObject.HandleStompAnimationCompletionEvent();//this method will be called once when animation ends.
+    }
+
+    public void EnemyRightClawAttackAnimationCompletion()
+    {
+        Debug.Log("Enemy Right Claw attack completion called only once?");
+    }
+    public void EnemyLeftClawAttackAnimationCompletion()
+    {
+        Debug.Log("Enemy Left Claw attack completion called only once?");
+    }
+
+    public void EnemyBiteAttackAnimationCompletion()
+    {
+        Debug.Log("Enemy Bite attack completion called only once?");
     }
 }

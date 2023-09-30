@@ -9,6 +9,7 @@ public class PlayerOneAnimation : MonoBehaviour
     // Start is called before the first frame update
     private const string IS_MOVING_PARAM_NAME = "isMoving";//create const to avoid string case match errors
     private const string IS_PUNCH_PARAM_NAME = "isPunching";
+    private const string IS_LEFT_PUNCH_PARAM_NAME = "isLeftPunch";
 
 
     [SerializeField] private PlayerOneController playerOne; // to reference the logic component of PlayerOne
@@ -33,5 +34,8 @@ public class PlayerOneAnimation : MonoBehaviour
 
         playerOneAnimator.SetBool(IS_PUNCH_PARAM_NAME, playerOne.IsPlayerOnePunching());//pickup the "isMoving"  parameter from the Animator component of the player
 
+        //randomly pick left arm or right arm
+        playerOneAnimator.SetBool(IS_LEFT_PUNCH_PARAM_NAME, MathFunctions.GetCoinToss());//returns true/false randomly
     }
+
 }

@@ -75,12 +75,10 @@ public class EnemyController : GenericEnemyController
 
 
 
-    public void RespondToPlayerTwoInteraction()
+    /*public void RespondToPlayerTwoInteraction()
     {
         Debug.Log("Enemy Responding to Player Two");
-        //isEnemyHunting = true;
-        //isEnemyMoving = false;//Enemy is now tracking P2, not moving randomly
-    }
+    }*/
 
     private void CheckDeathOnLevelCompletion()
     {

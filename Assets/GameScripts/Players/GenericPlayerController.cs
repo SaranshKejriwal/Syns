@@ -124,6 +124,7 @@ public abstract class GenericPlayerController : MonoBehaviour
         }
         //heal is not constant. The more damaged the player, the more effective the heal.
         this.playerHealth += healPercent*(this.playerMaxHealth - this.playerHealth);
+        Debug.Log("Player Health Healed to - " + this.playerHealth);
     }
 
 }

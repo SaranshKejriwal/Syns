@@ -114,9 +114,10 @@ public class PlayerTwoController : GenericPlayerController
 
     }
 
+    //this method is currently useless. Should be removed.
     private void HandleAllInteractions()
     {
-        //this method is currently useless. Should be removed.
+
         
         if (Physics.Raycast(transform.position, currentPlayerTwoDirectionVector, out RaycastHit rayCastHit, playerTwoInteractionDistance))
         //tells us if something is in front and returns its object parameter in rayCastHit object
@@ -127,7 +128,7 @@ public class PlayerTwoController : GenericPlayerController
             if (rayCastHit.transform.TryGetComponent(out EnemyController approachingEnemy))
             {
                 Debug.Log(approachingEnemy);
-                approachingEnemy.RespondToPlayerTwoInteraction();
+                //approachingEnemy.RespondToPlayerTwoInteraction();
             }
 
         }

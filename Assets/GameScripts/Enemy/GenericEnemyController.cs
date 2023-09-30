@@ -236,32 +236,45 @@ public class GenericEnemyController : MonoBehaviour
         {
             return enemyHuntingMovementSpeed;
         }
-        else if (IsEnemyAttacking() || IsEnemyDead() || IsEnemyHit() || isEnemyStanding())
+        else
         {
             return 0;
         }
-        return enemyWalkingMovementSpeed;
     }
 
     public void HandleStompAnimationCompletionEvent()
     {
-        float currentPlayerDistance = Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition());
-        if(currentPlayerDistance <= attackRadius)    
+        CheckPlayerDistanceAndCauseDamage(stompAttackDamage);
+    }
+
+    private void CheckPlayerDistanceAndCauseDamage(float attackDamage)
+    {
+        if(currentEnemyState == enemyStates.isDead)
         {
-            //targetPlayer.DamagePlayer(stompAttackDamage / 2);
-            //half damage becuase Animation event is fired twice for some reason.
+            return;//dead enemy do nothing.
+        }
+        //attack animation is completed.  Enemy is no longer attacking
+        currentEnemyState = enemyStates.isHunting;
+
+        //check if Player Dodged the attack.
+        float currentPlayerDistance = Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition());
+        if (currentPlayerDistance <= attackRadius)
+        {
+            targetPlayer.DamagePlayer(attackDamage);
         }
         else
         {
             //player moved out of attack range.
             Debug.Log(targetPlayer + " evaded attack.");
         }
-
-
     }
 
     public void RespondToPlayerOnePunch(float punchDamage)
     {
+        if(currentEnemyState == enemyStates.isDead)
+        {
+            return;//dead enemy cannot respond.
+        }
         //function is public because it will be called for the Player class interaction handler
         Debug.Log("Player One Punched Enemy. " + this);
         currentEnemyState = enemyStates.isHit;
@@ -270,6 +283,10 @@ public class GenericEnemyController : MonoBehaviour
 
     public void DamageEnemy(float attackDamage)
     {
+        if(currentEnemyState == enemyStates.isDead) 
+        { 
+            return; //can't damage a dead enemy.
+        }
         this.enemyHealth -= attackDamage;
         Debug.Log(this + " has remaining health: " + this.enemyHealth);
         if (this.enemyHealth <= 0)

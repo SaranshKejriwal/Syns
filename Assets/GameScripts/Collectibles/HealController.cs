@@ -22,13 +22,13 @@ public class HealController : GenericCollectibleItem
         //Need to add logic to ignore if Player is at Max Health
         if (!PlayerTwoController.Instance.IsAtMaxHealth() && base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
         {
-            //Need to add healing logic to heal 50%
-            //PlayerTwoController.Instance.CollectGold();
+            //Heal 50% of player's damage.
+            PlayerTwoController.Instance.HealPlayer(healPercent);
             Destroy(this.gameObject);
         }
         if (!PlayerOneController.Instance.IsAtMaxHealth() && base.IsActivePlayerInVicinityForCollection(PlayerOneController.Instance))
         {
-            //PlayerOneController.Instance.CollectGold();
+            PlayerOneController.Instance.HealPlayer(healPercent);
             Destroy(this.gameObject);//increment only once.
         }
     }
