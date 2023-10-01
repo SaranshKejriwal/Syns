@@ -1,0 +1,86 @@
+Game concept 1
+
+2D spatial, but not a Platformer; you see players from the top view, like DoTA or League of Legends.
+
+you control 2 players:
+P1 - full WASD control, plus attacks.
+P2 - P2 AI will automatically decide where it is going. You can only control the speed of P2 in its direction.
+
+Goal - P1 has to protect P2 in each level. P2 will look for the key to an exit. The Goal is for both players to reach the opened exit.
+
+Game context:
+P2 is looking for a key to the exit of the level, and will explore the map to find the key, as well as the exit. These 2 can be found by P2 in any order, but the key is needed before the exit can be opened.
+There is an enemy boss in this level who is spawing enemies from all over the map. Primary goal of enemies is to eliminate P2 and will actively attack P2. 
+They will engage with P1 only if P1 attacks enemies to protect P2.
+P2 AI has no attack capability and P1 (Human Player 1) has to protect P2 by defeating the nearest enemies.
+In upgrades along the levels, there can be more varieties of weapons (Ranged, AoE, Melee) for P1 and more defenses for P2, but P2 cannot attack anyone.
+
+In case the Boss is located in the level, and P1 is able to eliminate the boss, then no new enemies spawn from the map, other than the ones already present. This is an optional step in the game, but if the boss is not eliminated, then the spawn rate in the next level may increase.
+Boss will actively attack P1 as well, and P2 will evade the boss.
+
+P1 will level up based on attack damage done - 10x XP for boss.
+P2 will level up based on time AWAY from P1 - <need to determine>
+
+Coins can be collected by both players.
+
+Game Objectives:
+
+P1 Primary objective - protect P2. Game ends if P2 is eliminated.
+P2 Primary objective - Locate the key to the exit.
+
+P1 secondary objective 1 - destroy the boss; Boss can be far away from P2, so P1 will have to balance between staying close to P2 or attacking the boss.
+
+Salient objective - collect gold etc. to buy in-game weapons for P1 and defenses for P2.
+
+
+Other Depth in gameplay - Different types of enemy spawns and bosses, attack weapons and defenses, spawn rate counter, detection concept (roaming in vicinity vs homing on target)
+Having options to explore parallel levels instead of serial. If spawn rate is too high in one thread, one can restart from older level.
+
+Important Addition - Providing 3 options of INCREASING difficulty in the next level and have the player choose 1. Eg. speed, enemy damage, boss health.
+
+Level-up upgrades:
+P1 - attack damage, attack speed, move speed, HP, Armour/Defence
+P2 - move speed, HP, Armour/Defence, 
+
+Should be able to reset the upgrades.
+
+Coin-based tools:
+
+These enhancements can be assigned to P1 OR P2, not both. <Can consider gameplay to swap these tools during a level, only when P1 and P2 are nearby.>
+
+Coin magnet, cloak, long range visibility, weapons (P1 only), shields (P1/P2), whistle (turn P2 to come towards you?), holler (P2 alerts about enemies in range)
+
+
+
+With each level up - you choose how the enemy gets difficult - among 3 options.
+
+
+Now that I think about this in more detail...maybe the enemy units and bosses can have these 7 traits.
+Though that need not be spelled out loud.
+
+The game can have themes of the 7 sins without spelling it out loud. Player chooses any 1 of the 7 themes to start with, and enemies/bosses will have traits in accordance.
+
+
+Greed - enemies tend to pick up gold and leave less for you. - Bosses disable some weapons and coin-based tools.
+Sloth - enemies are slower but do more damage. - Bosses have slow AoE charge and stun to delay P1 from getting back to P2.
+Wrath - enemies are faster - Agile, sleek bosses with rapid low-damage attacks. Massive spawn when boss dies.
+Gluttony - enemies have more HP - Boss is tanky and has high HP, but low attack range.
+Envy - enemies are mimics and may replicate P2 <start game with 1 enemy that looks like P2> - bosses are weak, but damage may transfer to P2 with a %probability.
+Lust - enemies have higher detection radius; Boss chases P1/P2 outside its spawn point, so speed is important.
+Pride - Enemies raise an alarm upon detecting P1/P2, attracting more enemies; Boss pulls P1 towards itself and prevents him from going to P2.
+
+Can start each phase (collection of levels) with a poetic riddle.
+
+
+IMP - Don't have a separate tutorial level? Integrate it with the initial gameplay
+
+Name of the Game - Syns
+
+What is the meaning of SYNS?
+a prefix occurring in loanwords from Greek, having the same function as co- ( synthesis; synoptic); used, with the meaning “with,” “together,” in the formation of compound words (synsepalous) or “ synthetic” in such compounds (syngas) Also: sy-, syl-, sym-, sys-
+
+
+Other homonyms - Sins, Signs (as in detection)
+
+
+Game logo: - Make the Y with one hand holding a sword downwards, another one holding the first one's wrist.

@@ -1,0 +1,99 @@
+________________________________________________________________________________________
+Must Haves___________________________________________________________________________
+
+BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast.
+
+BUG - Enemy animation freezes after attack. Need to revise the animator transitions. Also - Enemy speed should be 0 during attack state.
+
+BUG - PlayerOne Punching feels weird. Armour is off and his head bounces independently from body..
+
+BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation.
+
+PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
+
+PlayerTwo to reset past visited cells if Stack is empty.
+
+
+Spawn timer should stop when Boss Dies
+
+Enemy attack damage to be called only once on animation end, not infinitely while player is in range - Animation Event.
+
+Enemy to stop moving while attacking. Checking if playerTwo evaded the attack.
+
+Create Menus, and level completion
+
+Multiple attack types on enemy - use Animation Events.
+
+Addition of PLayer Hit and Death animations.
+
+Create a healthbar component on all, such that its length varies with text. Player1 and PLayer2 healthbar to always be on top of the screen.
+
+
+________________________________________________________________________________________
+Must Haves Phase 2_________________________________________________________________
+
+Allow user to choose enemy buff at start of next level.
+
+Have Variants and buffs for each enemy of each syn.
+
+Shop to spend Gold and buy special items
+
+Shared Bag to hold items between P1 and P2.
+
+Create special items to be exchanged between P1 and P2 - eg. cloak etc?
+
+Level selection between Base and 7 level types
+
+Difficulty selection - Easy Med Hard
+
+Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
+
+Enable the code that increases the wall height based on PlayerOne position.s
+
+Adding Music to the game.
+
+Save Game stats.
+
+___________________________________________________________________________________
+Nice to Haves Phase 3 - Additions___________________________________________________________________________
+
+Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
+
+Adding states to Players like Walking, Evading, Running, to have better animations.
+
+Players to get Armour upgrades with visible components getting added on.
+
+Can Considers____________________________________________________________________________
+
+
+PlayerOne spawns a range attack which damages enemy on proximity
+	Similar range attack on Bosses only
+
+PlayerOne has an auto-sword which rotates/slices or stabs enemies
+
+Prop at end of Envy level - Compass for P1 which points P2 location
+
+
+
+COMPLETED_______________________________
+
+Enemy to ignore Player if it is behind a wall. Enemy to chase PlayerTwo only if there are no obstacles in between. 
+tweak the collider size to be able to correctly ignore players behind walls. Fixed by adding Box Collider to Players and a RaycastAll to Enemy.
+
+BUG - Boss is ignoring PlayerTwo altogether, because PlayerOne seems to be overriding. Fixed by computing the closest player to enemy/boss
+
+Boss stops moving after one attack unless Player makes a round trip. Fixed by Adding Exit Timed loops to Boss Animator.
+
+Enemy is jaggy when it is just close to player. Fixed by increasing attack radius by 0.5f
+
+BUG - Victory is not called if P2 enters door from the front. Fixed by Calling Victory when PlayerTwo is near door, not after entering it.
+
+Bug - Grunt sometime jitteringly sticks to P1. Fixed by ensuring that if Enemy state is isDead, it doesn't change back to default.
+
+Health buffs to be collected only if Player has less than max health. Done by adding a getter for MaxHealth
+
+PlayerOne attack to find the enemy in front and do damage more reliably. DONE
+
+BUG - Manage Player1 movement and attack animations more smoothly. Create Animation Events to freeze playerOne Movement while attacking. Handled in PLayerOneController to stop moving while punching
+
+Enemy visual radius to be cut from the other side of the wall. Done by adding Raycasts in GenericEnemyController
