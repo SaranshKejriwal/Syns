@@ -40,8 +40,7 @@ public abstract class GenericPlayerController : MonoBehaviour
     protected Vector3 nextIntendedDestination = Vector3.zero;
     //this will be used to dictate the target for PlayerTwo only
 
-    public abstract void RespondToEnemyHunt(Vector3 enemyPosition);
-    public abstract void RespondToEnemyAttack(Vector3 enemyPosition);
+    public abstract void SetEnemyInFocus(GenericEnemyController enemy);
 
     void Start()
     {

@@ -23,13 +23,13 @@ public class PlayerOneController : GenericPlayerController
     //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
     private float playerOnePunchAttackRange = 8f;//determined emperically.
-    private float playerOncePunchAttachDamage = 60f;//instakill for test only.
+    private float playerOnePunchAttackDamage = 60f;//instakill for test only.
 
     //this is used to dictate the direction of playerOne before it stopped moving
     private Vector3 lastInteractionDirectionVector = Vector3.zero;
     // Start is called before the first frame update
 
-    private GenericEnemyController approachedEnemy;//to be replaced by Enemy logic object later
+    private GenericEnemyController approachedEnemy;
 
     private void Awake()
     {
@@ -71,7 +71,7 @@ public class PlayerOneController : GenericPlayerController
         if (approachedEnemy != null)
         {
             //only nearest enemy responds, ONLY when Player One Punches
-            approachedEnemy.RespondToPlayerOnePunch(playerOncePunchAttachDamage);//straightforward non-singleton approach.
+            approachedEnemy.RespondToPlayerOnePunch(playerOnePunchAttackDamage);//straightforward non-singleton approach.
 
         }
         
@@ -82,7 +82,6 @@ public class PlayerOneController : GenericPlayerController
     {        //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
         HandleMovementWithCollision();
         HandleInteractions();
-        //HandleAttackAction();
     }
     
 
@@ -110,7 +109,7 @@ public class PlayerOneController : GenericPlayerController
             //tries to confirm if interacted component is of a specific type.
             if (rayCastHit.transform.TryGetComponent(out GenericEnemyController interactedEnemy))
             {               
-                approachedEnemy = interactedEnemy;//assign this nearest Enemy to interacted Enemy objecct for P1.
+                approachedEnemy = interactedEnemy;//assign this nearest Enemy to interacted Enemy object for P1.
             }
             else
             {
@@ -128,16 +127,6 @@ public class PlayerOneController : GenericPlayerController
         //Debug.Log(approachedTestInteractObject);
     }
 
-    public override void RespondToEnemyHunt(Vector3 enemyPosition)
-    {
-        //PlayerOne cennot do anything by itself since it is Human-controlled.
-        return;
-    }
-
-    public override void RespondToEnemyAttack(Vector3 enemyPosition)
-    {
-        //Debug.Log("Enemy is attacking Player One");
-    }
 
     public bool IsPlayerOnePunching()
     {
@@ -216,4 +205,8 @@ public class PlayerOneController : GenericPlayerController
         return isMoving;
     }
 
+    public override void SetEnemyInFocus(GenericEnemyController enemy)
+    {
+        //PlayerOne will do nothing automatically. User will control PlayerOne
+    }
 }

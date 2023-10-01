@@ -1,6 +1,9 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
+PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
+
+PlayerTwo to reset past visited cells if Stack is empty.
 BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast.
 
 BUG - Enemy animation freezes after attack. Need to revise the animator transitions. Also - Enemy speed should be 0 during attack state.
@@ -8,11 +11,6 @@ BUG - Enemy animation freezes after attack. Need to revise the animator transiti
 BUG - PlayerOne Punching feels weird. Armour is off and his head bounces independently from body..
 
 BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation.
-
-PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
-
-PlayerTwo to reset past visited cells if Stack is empty.
-
 
 Spawn timer should stop when Boss Dies
 

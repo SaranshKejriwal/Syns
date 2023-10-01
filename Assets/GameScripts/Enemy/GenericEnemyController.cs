@@ -120,8 +120,9 @@ public class GenericEnemyController : MonoBehaviour
 
         currentEnemyMovementDirection = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(player.GetPlayerPosition(), transform.position);
         //transform.LookAt(player.GetPlayerPosition());//look at Player
-        
-        //player.RespondToEnemyHunt(transform.position);
+
+        //set itself as the Enemy in focus for either player;
+        player.SetEnemyInFocus(this);
 
 
     }
@@ -171,6 +172,10 @@ public class GenericEnemyController : MonoBehaviour
         return currentEnemyState == enemyStates.isStanding;
     }
 
+    public Vector3 GetEnemyPosition()
+    {
+        return transform.position;
+    }
 
     protected bool IsPlayerRayCastNotObstructed(GenericPlayerController playerInFocus, float detectionRadius)
     {
@@ -279,6 +284,11 @@ public class GenericEnemyController : MonoBehaviour
         Debug.Log("Player One Punched Enemy. " + this);
         currentEnemyState = enemyStates.isHit;
         DamageEnemy(punchDamage);
+    }
+
+    public bool IsTargetingPlayerTwo()
+    {
+        return targetPlayer == PlayerTwoController.Instance;
     }
 
     public void DamageEnemy(float attackDamage)

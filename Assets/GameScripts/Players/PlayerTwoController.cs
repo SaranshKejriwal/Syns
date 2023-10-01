@@ -38,7 +38,14 @@ public class PlayerTwoController : GenericPlayerController
     private bool hasCollectedExitKey = false;//will be set in the ExitKeyController.
     private bool canEnterExitDoorInVicinity = false;//this will be true when PlayerTwo is in the same cell as 
     private bool retraversalRequiredAfterKeyCollect = false;//this will be true in case Player Two reaches Exit before the Key
-    
+
+
+    private GenericEnemyController enemyToEvade;
+    //this object will be populated by the last enemy which is hunting/attacking P2.
+    //if this is not null, andt hunting/attacking P2, then P2 should be in evasive mode.
+    //Risk - multiple enemies can set themselves as the enemyToEvade.
+
+
     //Awake will be called before Start()
     private void Awake()
     {
@@ -84,35 +91,36 @@ public class PlayerTwoController : GenericPlayerController
 
         //using Vector3.Distance to ensure some margin of error.
         if(Vector3.Distance(nextIntendedDestination, transform.position) <= mazeCellCenterErrorMargin)
-        {
-            //only if Player has already reached that destination
-            MoveToNextCell();            
+        {         
+            MoveToNextCell();           
+                       
         }
         CheckStopOnEnteringOpenExit();
-        HandleMovementWithCollision();//returns same vector unless obstructed.
+        HandleMovementToCellCenter();//returns same vector unless obstructed.
         //HandleAllInteractions();
 
     }
 
-    private void MoveToNextCell(bool isEvading = false)
+    private void MoveToNextCell()
     {
-        //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
+        /*if (ShouldBeEvadingEnemy())
+        {
+            //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour to avoid enemy.
+            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToEvadeEnemy(transform.position, enemyToEvade.GetEnemyPosition());
+        }
+        else
+        {
+            //if player has reached the intended maze cell, update the maze cell to the next accessible, unvisited neighbour.
+            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
+        }*/
+
         nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
 
-        //move Player Two to next destination
-        currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
-
-    }
-
-    private void MoveToNextCellToEvade(Vector3 enemyPosition)
-    {
-        //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
-        nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToEvadeEnemy(transform.position, enemyPosition);
 
         //move Player Two to next destination
         currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
-
     }
+
 
     //this method is currently useless. Should be removed.
     private void HandleAllInteractions()
@@ -136,12 +144,10 @@ public class PlayerTwoController : GenericPlayerController
     }
 
 
-    private void HandleMovementWithCollision()
+    private void HandleMovementToCellCenter()
     {               
 
-        //needed for collision handling - if player movement is obstructed, try x or z axis movement only
-        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
-        //removing this since PlayerTwo will never be colliding with any obstacles, and will move in cell centers only.
+        //PlayerTwo will never be colliding with any obstacles, and will move in cell centers only.
 
         //rotate the object to face the updated direction of movement
         transform.forward = Vector3.Slerp(transform.forward, currentPlayerTwoDirectionVector, Time.deltaTime * rotationSpeed);
@@ -216,27 +222,6 @@ public class PlayerTwoController : GenericPlayerController
         }
     }
 
-    //public void RespondToEnemyHunt(object sender, System.EventArgs e)
-    //{
-        //Debug.Log("PlayerTwo responding to Enemy Event.");
-    //}
-
-    public override void RespondToEnemyHunt(Vector3 enemyPosition)
-    {
-        //PlayerTwo will automatically evade Enemy position.
-        isEvadingEnemy = true;
-        MoveToNextCellToEvade(enemyPosition);
-        //change nextIntendedDestination if Enemy is hunting, based on farthest accessible cell from the enemy
-    }
-
-    public override void RespondToEnemyAttack(Vector3 enemyPosition)
-    {
-
-       // Debug.Log("Enemy is attacking Player Two");
-
-        //Add Health drop here AFTER perfecting the Animation Event.
-    }
-
     public bool IsPlayerTwoMoving()
     {
         return isPlayerTwoMoving;
@@ -271,6 +256,39 @@ public class PlayerTwoController : GenericPlayerController
 
         //If PlayerTwo Dies, level is lost.
         LevelBuilder.Instance.LevelDefeat();
+    }
+
+    public override void SetEnemyInFocus(GenericEnemyController enemy)
+    {
+        //PlayerTwo will evade only 1 enemy at a time.
+        instance.enemyToEvade = enemy;
+    }
+
+    private bool ShouldBeEvadingEnemy()
+    {
+
+        if(enemyToEvade == null)
+        {
+            //no enemy has approached P2 yet. Nothing to evade
+            return false;
+        }
+        if (enemyToEvade.IsEnemyDead() || enemyToEvade.IsEnemyMoving())
+        {
+            return false;//enemy is already dead or has stopped chasing PlayerTwo
+        }
+        if(enemyToEvade.IsEnemyHunting() || enemyToEvade.IsEnemyAttacking())
+        {
+            if (enemyToEvade.IsTargetingPlayerTwo())
+            {
+                //evade only if Enemy is targeting PlayerTwo. Else not
+                Debug.Log("PlayerTwo Should be Evading enemy");
+                return true;
+            }
+
+        }
+
+
+        return false;
     }
 
 }
