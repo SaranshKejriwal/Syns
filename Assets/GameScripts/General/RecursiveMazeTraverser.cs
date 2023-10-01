@@ -188,16 +188,18 @@ private void Awake()
             loopIteratorCount++;//ensures no infinite looping
 
             //Do not pop the stack while evading enemy, else the Recursive BackTracker will break.
-            MazeCell lastVisitedCell = mazeCellLastVisitedByPlayerTwoStack.Peek();
+            MazeCell lastVisitedCell = mazeCellLastVisitedByPlayerTwoStack.Pop();
             List<MazeCell> allAccessibleCellNeighbours = GetAllAccessibleNeighboursOfCell(lastVisitedCell, numCellsOnMazeSide);
             if (allAccessibleCellNeighbours.Count == 1)
             {
                 Debug.Log("PlayerTwo has reached a Dead end while Evading Enemy. Should it Stop?");
             }
 
+           
             if (allAccessibleCellNeighbours.Count > 0)//there is more than 1 accessible neighbour, so we're not at a dead-end
             {
-                //only if a previously unvisited cell is visited, add it to stack, else you'll add the same cell multiple times while evading.
+                //This will always be >0 because all cells are connected.
+
                 mazeCellLastVisitedByPlayerTwoStack.Push(lastVisitedCell);//haven't yet reached a dead-end. We may come back
 
                 //check all neighbours to see which one is farthest from enemy, and go to that cell.
@@ -216,26 +218,29 @@ private void Awake()
                     }
                 }
 
-                //if farthest neighbour was already visited, clear that flag because PlayerTwo may have to retraverse that path. 
-                if (levelMazeReference[farthestNeighbour.indexInMazeCellArray.x, farthestNeighbour.indexInMazeCellArray.z].cellWallState.HasFlag(cellWallState.VisitedByPlayerTwo)) 
-                {
+                if (levelMazeReference[farthestNeighbour.indexInMazeCellArray.x, farthestNeighbour.indexInMazeCellArray.z].cellWallState.HasFlag(cellWallState.VisitedByPlayerTwo))
+                {   
+                    //if farthest neighbour was already visited, clear that flag because PlayerTwo may have to retraverse that path. 
+                    //DO NOT add it to the stack if it was already visited and its flag is being cleared
+
                     levelMazeReference[farthestNeighbour.indexInMazeCellArray.x, farthestNeighbour.indexInMazeCellArray.z].cellWallState &= ~cellWallState.VisitedByPlayerTwo;
                 }
+                //if farthest cell was not previously visited, then the algorithm should function the same way, and add the neighbour to the stack.
                 else
                 {
-                    
+                    // mark the cell as visited.
+                    levelMazeReference[farthestNeighbour.indexInMazeCellArray.x, farthestNeighbour.indexInMazeCellArray.z].cellWallState |= cellWallState.VisitedByPlayerTwo;
+                    //add farthest Neighbour to stack and return its position.
+                    mazeCellLastVisitedByPlayerTwoStack.Push(farthestNeighbour);
                 }
 
-
-                //add farthest Neighbour to stack and return its position
-                mazeCellLastVisitedByPlayerTwoStack.Push(farthestNeighbour);
                 nextCellPositionToVisit = farthestNeighbour.cellPositionOnMap;
                 nextCellCenterFound = true;
 
             }
             else if (mazeCellLastVisitedByPlayerTwoStack.Count > 0)
             {
-                //PlayerTwo has hit a dead end and there are no unvisited neighbours.
+                //This code will never be reached because each cell will ALWAYS have a connected neighbour.
 
                 //Peek will not be possible if Stack is empty.
                 nextCellPositionToVisit = mazeCellLastVisitedByPlayerTwoStack.Peek().cellPositionOnMap;//get previously visitedd neighbour without popping stack
@@ -245,17 +250,17 @@ private void Awake()
             }
             else
             {
-                Debug.Log("Stack Peek not possible. PlayerTwo reached the end of the maze. Resetting progress");
+                Debug.Log("Stack Peek not possible. PlayerTwo reached the end of the maze while evading. Resetting progress");
                 ResetPlayerTwoProgress();
             }
         }
 
         if (nextCellPositionToVisit == Vector3.one)
         {
-            Debug.Log("Unable to find next cell position. Stopping PlayerTwo");
+            Debug.Log("Unable to find next Evasive position. Stopping PlayerTwo");
             return currentPlayerTwoPosition;
         }
-        Debug.Log("PlayerTwo should escape to next cell: " + nextCellPositionToVisit);
+        Debug.Log("PlayerTwo should evade to next cell: " + nextCellPositionToVisit);
         return nextCellPositionToVisit;
 
     }
