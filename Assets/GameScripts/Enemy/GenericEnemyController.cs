@@ -63,16 +63,15 @@ public class GenericEnemyController : MonoBehaviour
     //this method needs revision. Reaction to PlayerOne is cancelled by subsequent Normal Reaction to far away PlayerTwo.
     protected void ReactToPlayer(GenericPlayerController player)
     {
+        if (currentEnemyState == enemyStates.isDead)
+        {
+            return;//dead enemies can't react to anything.
+        }
 
-        if(player == null || !player.CanBeAttacked() || !player.isActivePlayer())
+        if (player == null || !player.CanBeAttacked() || !player.isActivePlayer())
         {            
             return;
             //player should not be null and should be attack-able. Ignore Shop and Bag.
-        }
-
-        if(currentEnemyState == enemyStates.isDead)
-        {
-            return;//dead enemies can't react to anything.
         }
 
         bool hasPlayerDetectionRadius = enemyDetectionRadiusReference.TryGetValue(player, out float playerDetectionRadius);
@@ -91,7 +90,7 @@ public class GenericEnemyController : MonoBehaviour
             bool isPlayerNotObstructed = IsPlayerRayCastNotObstructed(player, playerDetectionRadius);
             //Grunts will chase. Boss will Roar. This is configured in the animation
             if(isPlayerNotObstructed)
-            {
+            {               
                 HuntPlayer(player);
                 return;//return here so that one Player doesn't reset the state of enemy against another player
             }
@@ -101,7 +100,7 @@ public class GenericEnemyController : MonoBehaviour
             }
 
         }else if(distanceFromPlayer <= attackRadius)
-        {
+        {            
             AttackPlayer(player);
             return;//return here so that one Player doesn't reset the state of enemy against another player
         }
@@ -119,7 +118,7 @@ public class GenericEnemyController : MonoBehaviour
         currentEnemyState = enemyStates.isHunting;     
 
         currentEnemyMovementDirection = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(player.GetPlayerPosition(), transform.position);
-        //transform.LookAt(player.GetPlayerPosition());//look at Player
+        transform.LookAt(player.GetPlayerPosition());//look at Player
 
         //set itself as the Enemy in focus for either player;
         player.SetEnemyInFocus(this);
@@ -135,7 +134,6 @@ public class GenericEnemyController : MonoBehaviour
         targetPlayer = player;
         currentEnemyState = enemyStates.isAttacking;
         transform.LookAt(player.GetPlayerPosition());//look at Player
-
     }
 
     //if Enemy is far away from Player2 
@@ -252,14 +250,38 @@ public class GenericEnemyController : MonoBehaviour
         CheckPlayerDistanceAndCauseDamage(stompAttackDamage);
     }
 
+    public void HandleRightClawAnimationCompletionEvent()
+    {
+        CheckPlayerDistanceAndCauseDamage(rightClawAttackDamage);
+    }
+
+    public void HandleLeftClawAnimationCompletionEvent()
+    {
+        CheckPlayerDistanceAndCauseDamage(leftClawAttackDamage);
+    }
+
+    public void HandleBiteAnimationCompletionEvent()
+    {
+        CheckPlayerDistanceAndCauseDamage(biteAttackDamage);
+    }
+
     private void CheckPlayerDistanceAndCauseDamage(float attackDamage)
     {
         if(currentEnemyState == enemyStates.isDead)
         {
             return;//dead enemy do nothing.
         }
-        //attack animation is completed.  Enemy is no longer attacking
-        currentEnemyState = enemyStates.isHunting;
+
+        if(targetPlayer == null)
+        {
+            return;//This will happen if enemy spawns right on top of player
+        }
+
+        if (!targetPlayer.CanBeAttacked())
+        {
+            return; //don't damage a player that can't be attacked.
+        }
+         
 
         //check if Player Dodged the attack.
         float currentPlayerDistance = Vector3.Distance(transform.position, targetPlayer.GetPlayerPosition());
@@ -272,6 +294,10 @@ public class GenericEnemyController : MonoBehaviour
             //player moved out of attack range.
             Debug.Log(targetPlayer + " evaded attack.");
         }
+
+        //attack animation is completed.  Enemy is no longer attacking
+        //currentEnemyState = enemyStates.isHunting;
+
     }
 
     public void RespondToPlayerOnePunch(float punchDamage)

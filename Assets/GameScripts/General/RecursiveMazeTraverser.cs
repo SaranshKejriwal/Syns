@@ -24,7 +24,8 @@ public class RecursiveMazeTraverser : MonoBehaviour
     private MazeCell[,] levelMazeReference;
     private uint numCellsOnMazeSide = 5;
     private Stack<MazeCell> mazeCellLastVisitedByPlayerTwoStack;
-    
+
+    private MazeCell currentPlayerTwoPositionCell;
 
 
 private void Awake()
@@ -65,19 +66,19 @@ private void Awake()
             Debug.LogError("Maze Reference is Null in Maze Traverser. Cannot find starting point.");
             return Vector3.zero;//nothing to check if the Maze itself is null
         }
-        MazeCell startingCell = LevelBuilder.Instance.GetGameStartingCell();
+        currentPlayerTwoPositionCell = LevelBuilder.Instance.GetGameStartingCell();
 
-        //add this starting cell as visited.
-        levelMazeReference[startingCell.indexInMazeCellArray.x, startingCell.indexInMazeCellArray.z].cellWallState |= cellWallState.VisitedByPlayerTwo;
-        mazeCellLastVisitedByPlayerTwoStack.Push(levelMazeReference[startingCell.indexInMazeCellArray.x, startingCell.indexInMazeCellArray.z]);
+        //add this starting cell as visited and then push it to stack.
+        levelMazeReference[currentPlayerTwoPositionCell.indexInMazeCellArray.x, currentPlayerTwoPositionCell.indexInMazeCellArray.z].cellWallState |= cellWallState.VisitedByPlayerTwo;
+        mazeCellLastVisitedByPlayerTwoStack.Push(levelMazeReference[currentPlayerTwoPositionCell.indexInMazeCellArray.x, currentPlayerTwoPositionCell.indexInMazeCellArray.z]);
 
-        Debug.Log("Maze Traversal started at " + startingCell.cellPositionOnMap);
-        return startingCell.cellPositionOnMap;
+        //Debug.Log("Maze Traversal started at " + startingCell.cellPositionOnMap);
+        return currentPlayerTwoPositionCell.cellPositionOnMap;
 
     }
 
     //This is the intact method for Recursive backtracking on the normal maze.
-    public Vector3 GetNextCellCenterToVisit(Vector3 currentPlayerTwoPosition)
+    public Vector3 GetNextCellCenterToVisit()
     {
         if (PlayerTwoController.Instance.CanEnterExitDoorInVicinity())
             //this is better than checking if ExitDoor collected flag is true, because this will only work if PlayerTwo is in the same cell as Exit Door.
@@ -88,7 +89,7 @@ private void Awake()
         if (levelMazeReference == null)
         {
             Debug.LogError("Maze Reference is Null in Maze Traverser. Cannot find next cell for PlayerTwo.");
-            return currentPlayerTwoPosition;//nothing to check if the Maze itself is null
+            return currentPlayerTwoPositionCell.cellPositionOnMap;//nothing to check if the Maze itself is null
         }
 
         bool nextCellCenterFound = false;//this will be used to break the while loop that pops the stack
@@ -99,7 +100,7 @@ private void Awake()
 
         if (mazeCellLastVisitedByPlayerTwoStack.Count == 0 && PlayerTwoController.Instance.HasCollectedExitKey())
         {
-            Debug.Log("PlayerTwo reached the end of the maze. Resetting progress");
+            Debug.Log("PlayerTwo reached the end of the maze and has key. Resetting progress");
             ResetPlayerTwoProgress();
             
             //this means that playerTwo found the Exit Door before finding the Exit key, and then traversed the entire maze. 
@@ -123,8 +124,12 @@ private void Awake()
                 //mark randomNeighbour as visited, add to stack and return its position
                 levelMazeReference[randomNeighbour.indexInMazeCellArray.x, randomNeighbour.indexInMazeCellArray.z].cellWallState |= cellWallState.VisitedByPlayerTwo;
                 mazeCellLastVisitedByPlayerTwoStack.Push(randomNeighbour);
+
                 nextCellPositionToVisit = randomNeighbour.cellPositionOnMap;
                 nextCellCenterFound = true;
+
+                //update Current Position of PlayerTwo
+                currentPlayerTwoPositionCell = randomNeighbour;
             }
             else if(mazeCellLastVisitedByPlayerTwoStack.Count>0)//check if PlayerTwo can backtrack
             {
@@ -146,7 +151,7 @@ private void Awake()
         if(nextCellPositionToVisit == Vector3.one)
         {
             Debug.Log("Unable to find next cell position. Stopping PlayerTwo");
-            return currentPlayerTwoPosition;
+            return currentPlayerTwoPositionCell.cellPositionOnMap;
         }
         Debug.Log("PlayerTwo should go to next cell: " + nextCellPositionToVisit);
         return nextCellPositionToVisit;
@@ -154,7 +159,7 @@ private void Awake()
     }
 
 
-    public Vector3 GetNextCellCenterToEvadeEnemy(Vector3 currentPlayerTwoPosition, Vector3 enemyPosition)
+    public Vector3 GetNextCellCenterToEvadeEnemy(Vector3 enemyPosition)
     {
         if (PlayerTwoController.Instance.CanEnterExitDoorInVicinity())
         //this will only work if PlayerTwo is in the same cell as Exit Door and Exit Door is open.
@@ -171,11 +176,11 @@ private void Awake()
         if (levelMazeReference == null)
         {
             Debug.LogError("Maze Reference is Null in Maze Traverser. Cannot find next cell for PlayerTwo Evasion.");
-            return currentPlayerTwoPosition;//nothing to check if the Maze itself is null
+            return currentPlayerTwoPositionCell.cellPositionOnMap;//nothing to check if the Maze itself is null
         }
         if (mazeCellLastVisitedByPlayerTwoStack.Count == 0 && PlayerTwoController.Instance.HasCollectedExitKey())
         {
-            Debug.Log("PlayerTwo reached the end of the maze while evading. Resetting progress");
+            Debug.Log("PlayerTwo reached the end of the maze while evading, and has key. Resetting progress");
             ResetPlayerTwoProgress();
 
             //this means that playerTwo found the Exit Door before finding the Exit key, and then traversed the entire maze. 
@@ -237,6 +242,9 @@ private void Awake()
                 nextCellPositionToVisit = farthestNeighbour.cellPositionOnMap;
                 nextCellCenterFound = true;
 
+                //update currentPosition of Player Two.
+                currentPlayerTwoPositionCell = farthestNeighbour;
+
             }
             else if (mazeCellLastVisitedByPlayerTwoStack.Count > 0)
             {
@@ -258,7 +266,7 @@ private void Awake()
         if (nextCellPositionToVisit == Vector3.one)
         {
             Debug.Log("Unable to find next Evasive position. Stopping PlayerTwo");
-            return currentPlayerTwoPosition;
+            return currentPlayerTwoPositionCell.cellPositionOnMap;
         }
         Debug.Log("PlayerTwo should evade to next cell: " + nextCellPositionToVisit);
         return nextCellPositionToVisit;
@@ -384,13 +392,25 @@ private void Awake()
         //mark all next cells as unvisited??
         for (int i = 0;i<numCellsOnMazeSide;i++)
         {
-
+            for (int j = 0;j< numCellsOnMazeSide; j++)
+            {
+                //forget that any cell was ever visited by PlayerTwo.
+                levelMazeReference[i, j].cellWallState &= ~cellWallState.VisitedByPlayerTwo;
+            }
         }
+
+        //add the current position of PlayerTwo to the stack, to retrigger the traversal from that location.
+        mazeCellLastVisitedByPlayerTwoStack.Push(currentPlayerTwoPositionCell);
     }
 
 
     public void SetLevelMazeReference(MazeCell[,] gameMaze)
     {
         instance.levelMazeReference = gameMaze;
+    }
+
+    public MazeCell GetCurrentPlayerTwoPositionCell()
+    {
+        return currentPlayerTwoPositionCell;
     }
 }

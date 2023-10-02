@@ -3,18 +3,11 @@ Must Haves______________________________________________________________________
 
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
-PlayerTwo to reset past visited cells if Stack is empty.
-BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast.
+PlayerTwo to reset past visited cells if Stack is empty. CONSTRUCTED. Needs testing
 
-BUG - Enemy animation freezes after attack. Need to revise the animator transitions. Also - Enemy speed should be 0 during attack state.
+BUG - PlayerOne Punching feels weird sometimes. Armour is off and his head bounces independently from body.. Somehow fixed after rebuild.
 
-BUG - PlayerOne Punching feels weird. Armour is off and his head bounces independently from body..
-
-BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation.
-
-Spawn timer should stop when Boss Dies
-
-Enemy attack damage to be called only once on animation end, not infinitely while player is in range - Animation Event.
+BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator.
 
 Enemy to stop moving while attacking. Checking if playerTwo evaded the attack.
 
@@ -82,8 +75,6 @@ BUG - Boss is ignoring PlayerTwo altogether, because PlayerOne seems to be overr
 
 Boss stops moving after one attack unless Player makes a round trip. Fixed by Adding Exit Timed loops to Boss Animator.
 
-Enemy is jaggy when it is just close to player. Fixed by increasing attack radius by 0.5f
-
 BUG - Victory is not called if P2 enters door from the front. Fixed by Calling Victory when PlayerTwo is near door, not after entering it.
 
 Bug - Grunt sometime jitteringly sticks to P1. Fixed by ensuring that if Enemy state is isDead, it doesn't change back to default.
@@ -95,3 +86,15 @@ PlayerOne attack to find the enemy in front and do damage more reliably. DONE
 BUG - Manage Player1 movement and attack animations more smoothly. Create Animation Events to freeze playerOne Movement while attacking. Handled in PLayerOneController to stop moving while punching
 
 Enemy visual radius to be cut from the other side of the wall. Done by adding Raycasts in GenericEnemyController
+
+BUG - Player Two sometimes starts going to a diagonal cell, at the start of a game.. Is this a multi-thread issue? Fixed by removing Maze Starting Cell call in PlayerOne.
+
+Enemy attack damage to be called only once on animation end, not infinitely while player is in range - Animation Event. DONE by setting up animation events for each attack type.
+
+BUG - Enemy animation freezes after attack. Need to revise the animator transitions. Also - Enemy speed should be 0 during attack state. Fixed by adding a transition in Enemy animator back to attack start, if enemy is still in attacking state.
+
+Spawn timer should stop when Boss Dies. DONE
+
+Enemy is jaggy when it is just close to player. Need to ensure that it is not moving while attacking. Done by adding transitions from all attack states to Moving/Hunting.
+
+BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast. Fixed by updating Enemy state after attack, and adding transition in animator to reinitiate hunt.

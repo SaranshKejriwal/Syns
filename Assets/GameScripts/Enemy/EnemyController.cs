@@ -52,23 +52,25 @@ public class EnemyController : GenericEnemyController
 
     private void HandleNormalEnemyMovementWithCollision()
     {
+        if(GetEnemyMovementSpeed() > 0)
+        {
+            //needed for collision handling - if player movement is obstructed, try x or z axis movement only
+            currentEnemyMovementDirection = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentEnemyMovementDirection, transform.position, enemyInteractionSize);
+            //rotate the object to face the updated direction of movement
+            transform.forward = Vector3.Slerp(transform.forward, currentEnemyMovementDirection, Time.deltaTime * rotationSpeed);
+            /*
+             * Tip - use transform.lookAt function to have object change line of sight to a point. Useful for enemies facing P2
+                transform.up or transform.right can work for 2D games to change direction.
 
-        //needed for collision handling - if player movement is obstructed, try x or z axis movement only
-        currentEnemyMovementDirection = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentEnemyMovementDirection, transform.position, enemyInteractionSize);
-        //rotate the object to face the updated direction of movement
-        transform.forward = Vector3.Slerp(transform.forward, currentEnemyMovementDirection, Time.deltaTime * rotationSpeed);
-        /*
-         * Tip - use transform.lookAt function to have object change line of sight to a point. Useful for enemies facing P2
-            transform.up or transform.right can work for 2D games to change direction.
+                Slerp() function makes the direction change from prev pos smoother, by adding smoothing to not make the direction change instantaneous.
+             */
 
-            Slerp() function makes the direction change from prev pos smoother, by adding smoothing to not make the direction change instantaneous.
-         */
-
-        //move the object position in the direction 
-        transform.position += currentEnemyMovementDirection * Time.deltaTime * GetEnemyMovementSpeed();
-        /*transform.position is a 3D vector.
-        Time.deltaTime ensures that perceived change in position is independent of system framerate.
-        Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
+            //move the object position in the direction 
+            transform.position += currentEnemyMovementDirection * Time.deltaTime * GetEnemyMovementSpeed();
+            /*transform.position is a 3D vector.
+            Time.deltaTime ensures that perceived change in position is independent of system framerate.
+            Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
+        }
     }
 
        

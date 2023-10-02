@@ -14,11 +14,12 @@ public enum PlayerType
 
 public enum PlayerState
 {
-    isActiveNormal,
+    isMoving,
     isRunning,
     isInjured,
     isDead,
-    isInactive
+    isInactive,
+    isStanding
 }
 
 

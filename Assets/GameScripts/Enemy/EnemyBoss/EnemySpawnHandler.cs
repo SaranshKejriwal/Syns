@@ -62,9 +62,9 @@ public class EnemySpawnHandler : MonoBehaviour
     //update timer and spawn enemy when it reaches limit.
     private void UpdateEnemySpawnTimer()
     {
-        if (EnemyBossController.Instance.IsEnemyDead())
+        if (EnemyBossController.Instance.IsEnemyDead() || LevelBuilder.Instance.IsLevelCompleted())
         {
-            return;//Do not spawn if Boss is dead.
+            return;//Do not spawn if Boss is dead or Level is completed.
         }
         currentTimerCount += Time.deltaTime;
         if (currentTimerCount > maxTimerCount)

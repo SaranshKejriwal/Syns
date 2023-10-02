@@ -29,7 +29,7 @@ public class PlayerTwoController : GenericPlayerController
     [SerializeField] private InputHandler inputHandler;
 
     private float playerTwoInteractionDistance = 2f;
-    private readonly float mazeCellCenterErrorMargin = 1f;
+    private readonly float mazeCellCenterErrorMargin = 1.5f;
     //this is the distance that PlayerTwo has to reach from cell center, for maze traverser to trigger next cell in Stack
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;//direction where it is heading
@@ -61,7 +61,7 @@ public class PlayerTwoController : GenericPlayerController
         instance.playerMaxHealth = 15;
         instance.isActive = true;
         instance.playerType = PlayerType.PlayerTwo;
-        instance.playerState = PlayerState.isActiveNormal;
+        instance.playerState = PlayerState.isMoving;
     }
 
     // Start is called before the first frame update
@@ -103,18 +103,18 @@ public class PlayerTwoController : GenericPlayerController
 
     private void MoveToNextCell()
     {
-        /*if (ShouldBeEvadingEnemy())
+        if (ShouldBeEvadingEnemy())
         {
             //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour to avoid enemy.
-            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToEvadeEnemy(transform.position, enemyToEvade.GetEnemyPosition());
+            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToEvadeEnemy(enemyToEvade.GetEnemyPosition());
         }
         else
         {
             //if player has reached the intended maze cell, update the maze cell to the next accessible, unvisited neighbour.
-            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
-        }*/
+            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit();
+        }
 
-        nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
+        //nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit();
 
 
         //move Player Two to next destination
@@ -177,6 +177,12 @@ public class PlayerTwoController : GenericPlayerController
         {
             return;//if PlayerTwo has already entered Exit, need not check.
         }
+
+        if (LevelBuilder.Instance.IsLevelCompleted())
+        {
+            return;//if Level already won. Need not check again.
+        }
+
         MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
 
         if (exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
@@ -203,7 +209,8 @@ public class PlayerTwoController : GenericPlayerController
 
         }
 
-        if (canEnterExitDoorInVicinity && Vector3.Distance(exitDoorEntryLocation, transform.position) <= mazeCellCenterErrorMargin)
+        //move player inside door, such that it starts to disappear
+        if (canEnterExitDoorInVicinity)
         {
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(disappearanceLocationAfterEntry, transform.position);
             canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
@@ -216,7 +223,7 @@ public class PlayerTwoController : GenericPlayerController
         {
             //ExitDoorController.Instance.CheckExitDoorCollectedStatus();
             isPlayerTwoMoving = false;
-            currentPlayerTwoMovementSpeed = 0;//stop Player Two.
+            currentPlayerTwoMovementSpeed = 0;//stop Player Two animation.
             //LevelBuilder.Instance.LevelVictory();//Close Level
             Debug.Log("2");
         }

@@ -46,7 +46,7 @@ public class PlayerOneController : GenericPlayerController
         instance.isActive = true;//player is Active.
         instance.canBeAttacked = true;
         instance.playerType = PlayerType.PlayerOne;//set PlayerType of its parent class member
-        instance.playerState = PlayerState.isActiveNormal;
+        instance.playerState = PlayerState.isMoving;
     }
 
     void Start()
@@ -54,7 +54,7 @@ public class PlayerOneController : GenericPlayerController
         //Move PlayerOne slightly left of starting Cell
         float cellLength = LevelBuilder.Instance.GetCellSideLength();
         Vector3 startingSpawnOffset = new Vector3(-cellLength / 5f, 0, 0);
-        transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter() +startingSpawnOffset ;
+        transform.localPosition = PlayerTwoController.Instance.GetPlayerPosition() +startingSpawnOffset ;
 
 
         //listen to events on Start(), not Awake()
@@ -68,7 +68,7 @@ public class PlayerOneController : GenericPlayerController
 
         Debug.Log(approachedEnemy);
         //if Raycast hits Enemy in HandleInteractions(), approachedEnemy is updated. When PlayerOne punches, Enemy reaction is called
-        if (approachedEnemy != null)
+        if (approachedEnemy != null && !approachedEnemy.IsEnemyDead())
         {
             //only nearest enemy responds, ONLY when Player One Punches
             approachedEnemy.RespondToPlayerOnePunch(playerOnePunchAttackDamage);//straightforward non-singleton approach.
@@ -207,6 +207,6 @@ public class PlayerOneController : GenericPlayerController
 
     public override void SetEnemyInFocus(GenericEnemyController enemy)
     {
-        //PlayerOne will do nothing automatically. User will control PlayerOne
+        approachedEnemy = enemy;
     }
 }
