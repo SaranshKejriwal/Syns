@@ -7,13 +7,9 @@ PlayerTwo to reset past visited cells if Stack is empty. CONSTRUCTED. Needs test
 
 BUG - PlayerOne Punching feels weird sometimes. Armour is off and his head bounces independently from body.. Somehow fixed after rebuild.
 
-BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator.
-
-Enemy to stop moving while attacking. Checking if playerTwo evaded the attack.
+BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator for Boss.
 
 Create Menus, and level completion
-
-Multiple attack types on enemy - use Animation Events.
 
 Addition of PLayer Hit and Death animations.
 
@@ -98,3 +94,7 @@ Spawn timer should stop when Boss Dies. DONE
 Enemy is jaggy when it is just close to player. Need to ensure that it is not moving while attacking. Done by adding transitions from all attack states to Moving/Hunting.
 
 BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not sure if this can be leveraged since P2 is running fast. Fixed by updating Enemy state after attack, and adding transition in animator to reinitiate hunt.
+
+Enemy to stop moving while attacking. Checking if playerTwo evaded the attack. Done by adding correct transitions in Animator and Animation Events.
+
+Multiple attack types on enemy - use Animation Events. DONE

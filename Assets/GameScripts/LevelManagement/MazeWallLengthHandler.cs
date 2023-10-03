@@ -33,7 +33,7 @@ public class MazeWallLengthHandler : MonoBehaviour
     private void Update()
     {
         //this can be used to increase height of the wall to hide the contents behind it.        
-        //increaseWallHeightToHideBehind();
+        increaseWallHeightToHideBehind();
     }
 
     private void increaseWallHeightToHideBehind()

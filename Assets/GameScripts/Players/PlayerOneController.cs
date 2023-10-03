@@ -20,10 +20,10 @@ public class PlayerOneController : GenericPlayerController
     private bool isMoving = false; //used by animator to render movement animation if player is moving
     [SerializeField] private InputHandler inputHandler;
     [SerializeField] private float playerOneInteractionSize = 0.5f; //needed for collision handling in Raycast function.
-    //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
+
 
     private float playerOnePunchAttackRange = 8f;//determined emperically.
-    private float playerOnePunchAttackDamage = 60f;//instakill for test only.
+    private float playerOnePunchAttackDamage = 30f;//increase to instakill for test only.
 
     //this is used to dictate the direction of playerOne before it stopped moving
     private Vector3 lastInteractionDirectionVector = Vector3.zero;
