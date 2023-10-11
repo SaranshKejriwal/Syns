@@ -44,6 +44,11 @@ public class ExitKeyController : GenericCollectibleItem
     // Update is called once per frame
     void Update()
     {
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         if (!keyAlreadyCollected)
         //As soon as setKeyParentAsPlayerTwo() is called once, this will be true and Update() will do nothing.
         {            

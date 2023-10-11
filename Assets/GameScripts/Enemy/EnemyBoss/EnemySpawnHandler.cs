@@ -17,9 +17,10 @@ public class EnemySpawnHandler : MonoBehaviour
     }
 
     private bool isEnemySpawnTimerActive = true;
-    private int enemySpawnCount = 0;
-    private float currentTimerCount = 0f;
-    private int maxTimerCount = 30;//30 seconds between enemy spawns. Can be changed for increasing/decreasing spawn rate
+    private int aliveEnemyCount = 0;
+    private float currentTimerElapsedSeconds = 0f;
+    private int maxTimerSeconds = 30;//30 seconds between enemy spawns.
+                                   //Can be changed for increasing/decreasing spawn rate
 
     [SerializeField] private Transform enemyPrefab;//make sure to link the prefab in the inspector, and not an instance.
 
@@ -66,17 +67,18 @@ public class EnemySpawnHandler : MonoBehaviour
         {
             return;//Do not spawn if Boss is dead or Level is completed.
         }
-        currentTimerCount += Time.deltaTime;
-        if (currentTimerCount > maxTimerCount)
+        currentTimerElapsedSeconds += Time.deltaTime;
+        if (currentTimerElapsedSeconds >= maxTimerSeconds)
         {
             ResetEnemySpawnTimer();
             SpawnNewEnemy();
         }
+        GameHUDStatsManager.Instance.SetEnemySpawnTimerProgressBarDisplay(currentTimerElapsedSeconds, maxTimerSeconds);
     }
 
     private void ResetEnemySpawnTimer()
     {
-        currentTimerCount = 0f;
+        currentTimerElapsedSeconds = 0f;
     }
 
     private void SpawnNewEnemy()
@@ -89,8 +91,9 @@ public class EnemySpawnHandler : MonoBehaviour
 
         Transform newEnemy = Instantiate(enemyPrefab);
         newEnemy.localPosition = MathFunctions.GetRandomSpawnPointOnFarSideMap(minSpawnDistanceFromOrigin);//always modify localPosition with respect to parent.
-        enemySpawnCount++;
+        aliveEnemyCount++;
         Debug.Log("Spawning New Enemy at "+ newEnemy.localPosition);
+        GameHUDStatsManager.Instance.SetEnemyCounterOnHUD(aliveEnemyCount);
     }
 
 
@@ -100,6 +103,15 @@ public class EnemySpawnHandler : MonoBehaviour
         isEnemySpawnTimerActive = false;
     }
 
+    public int GetAliveEnemyCount()
+    {
+        return aliveEnemyCount;
+    }
 
+    //this will be called by each enemy grunt when it dies.
+    public void ReduceAliveEnemyCountOnDeadEnemy()
+    {
+        aliveEnemyCount--;
+    }
 
 }

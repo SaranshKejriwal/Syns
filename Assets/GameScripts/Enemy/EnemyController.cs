@@ -16,6 +16,7 @@ public class EnemyController : GenericEnemyController
 
     private void Awake()
     {
+        enemyType = EnemyType.Grunt;
         currentEnemyState = enemyStates.isMoving;//Grunt should be moving by default
         defaultEnemyState = enemyStates.isMoving;
         enemyWalkingMovementSpeed = base.enemyWalkingMovementSpeed;
@@ -42,6 +43,11 @@ public class EnemyController : GenericEnemyController
     // Update is called once per frame
     void Update()
     {
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         //Get Nearest Player and react to it
         base.ReactToPlayer(base.GetNearestPlayer());
         HandleNormalEnemyMovementWithCollision();
@@ -73,15 +79,8 @@ public class EnemyController : GenericEnemyController
         }
     }
 
-       
 
-
-
-    /*public void RespondToPlayerTwoInteraction()
-    {
-        Debug.Log("Enemy Responding to Player Two");
-    }*/
-
+    //ideally there should be an event fired here.
     private void CheckDeathOnLevelCompletion()
     {
         if (!LevelBuilder.Instance.IsLevelCompleted())

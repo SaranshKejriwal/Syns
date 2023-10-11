@@ -16,6 +16,13 @@ public enum enemyStates
     isDead //killed by PlayerOne. Applies to Grunt and Boss
 }
 
+public enum EnemyType
+{
+    Grunt,//spawned little enemies that move on screen
+    Boss,//single boss of all enemies on the level
+    Generic//parent class only.
+}
+
 public class GenericEnemyController : MonoBehaviour
 {
     protected int enemyWalkingMovementSpeed = 3; //when enemy is walking normally
@@ -25,7 +32,9 @@ public class GenericEnemyController : MonoBehaviour
     
     protected Vector3 currentEnemyMovementDirection = Vector3.zero;
     //This will be useful for Grunts. Bosses don't move.
-    
+
+    protected EnemyType enemyType = EnemyType.Generic;
+
     protected enemyStates currentEnemyState = enemyStates.isStanding;
     protected enemyStates defaultEnemyState = enemyStates.isStanding;//this is used to restore enemy/boss to normal state
 
@@ -51,8 +60,7 @@ public class GenericEnemyController : MonoBehaviour
     public virtual void UpdateEnemyRadii()
     {
 
-    }//abstract forces the child classes to add a child implementation.
-
+    }//abstract forces the child classes to add a child implem
     // Update is called once per frame
     void Update()
     {
@@ -338,6 +346,12 @@ public class GenericEnemyController : MonoBehaviour
         enemyHealth = 0;
         attackRadius = 0;
         IncreaseAttackDamageByMultiplier(0);//all attack damage is zero for dead enemy
+        
+        //For Grunts only - if enemy dies, reduce the count of active enemies in spawn handler
+        if(enemyType == EnemyType.Grunt)
+        {
+            EnemySpawnHandler.Instance.ReduceAliveEnemyCountOnDeadEnemy();
+        }
     }
 
 }

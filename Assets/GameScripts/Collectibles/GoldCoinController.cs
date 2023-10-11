@@ -16,7 +16,12 @@ public class GoldCoinController : GenericCollectibleItem
 
     // Update is called once per frame
     void Update()
-    {        
+    {
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         if (base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
         {
             PlayerTwoController.Instance.CollectGold();

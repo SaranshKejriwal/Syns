@@ -1,20 +1,27 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
+
+BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator for Boss.
+
+Create a healthbar component on all, such that its length varies with text. Player1 and PLayer2 healthbar to always be on top of the screen.
+
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
 PlayerTwo to reset past visited cells if Stack is empty. CONSTRUCTED. Needs testing
 
 BUG - PlayerOne Punching feels weird sometimes. Armour is off and his head bounces independently from body.. Somehow fixed after rebuild.
 
-BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator for Boss.
-
 Create Menus, and level completion
 
 Addition of PLayer Hit and Death animations.
 
-Create a healthbar component on all, such that its length varies with text. Player1 and PLayer2 healthbar to always be on top of the screen.
+Add an HUD on play screen to show coin collection, health, enemy count, spawn timer, boss dead/alive?
+https://docs.unity3d.com/ScriptReference/Material.SetColor.html - to change color for bars/timerBars
 
+Make Grunt and Boss Icons for Enemy-side HUD
+
+Make P1 and P2 icons for PLayer Healthbars.
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
@@ -35,20 +42,23 @@ Difficulty selection - Easy Med Hard
 
 Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
 
-Enable the code that increases the wall height based on PlayerOne position.s
+Enable the code that increases the wall height based on PlayerOne position...After everything else.
 
-Adding Music to the game.
+Composing & Adding Music to the game.
 
 Save Game stats.
 
 ___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
 
+Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open.
+
 Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
 
 Adding states to Players like Walking, Evading, Running, to have better animations.
 
 Players to get Armour upgrades with visible components getting added on.
+
 
 Can Considers____________________________________________________________________________
 
@@ -60,7 +70,7 @@ PlayerOne has an auto-sword which rotates/slices or stabs enemies
 
 Prop at end of Envy level - Compass for P1 which points P2 location
 
-
+Remove data from Textures folder to reduce game size.
 
 COMPLETED_______________________________
 

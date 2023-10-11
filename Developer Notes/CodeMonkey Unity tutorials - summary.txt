@@ -270,6 +270,8 @@ Key can have 2 parent - spawn location (meh) and P2.
 
 No rocket science - just getters and setters -> setParentOfChildObject(this);
 
+Note - One must not add constant checkers in Update script, especially for events that'll rarely occur.
+
 Interfaces___________________________________________________________
 
 2 classes of different type must implement a common interface to share a set of functions. We solved this using inhetirence
@@ -300,6 +302,41 @@ This is not very different from creating a physical component within each of the
 Can also be used to add Icons on top of players - useful for shop objects.
 
 
+Game Manager UI_______________________________
+
+Need a Heads-up Display (HUD) on play screen to show coin collection, health, enemy count, boss dead/alive?
+
+Inside a prefab, create a UI > Canvas
+In the Inspector, make it a "Screen-Space Overlay", since this will be there regularly.
+Take 1920x1080 as reference, and select match mode as "Match Width or Height".
+
+With the Canvas now setup, you can create widgets INSIDE the canvas GameObject to render them on the screen. All child objects will have a "Rect Transform" Component where you can specify the position and size of the child game object.
+
+You can Use UI > TextMeshPro to add text to the Panel. In the Inspector, you can enable/disable wrapping as required.
+You should use
+
+
+To stack panels in a canvas in one order, you can use "Vertical Layout Group" - not much use for us.
+
+Tip - Avoid using "Find()" method - it's the equivalent of GoTo
+
+https://www.youtube.com/watch?v=Xw506Rfd9Q4
+
+To use TextMeshProUGUI correctly, you need to create 1 Component and 1 script which will hold ALL the numbers that you want to show on your HUD - like Player Gold, Enemy Count etc. 
+
+Then create a separate UI > Text - TextMeshPro GameObject for each number that you want to display on the HUD so that you can position them independently. The reference for all these TextMeshPro objects will be sent to the SerializeField of the single script that you have.
+
+A similar approach can be done for the Healthbars and spawn timers as well.
+
+Adding a Start Menu__________________________________
+
+
+If you name a script "GameManager", unity will give it a different icon - best to give your own names to even game master manager scripts.
+
+First we created a GameMaster, which can govern the state of the game and stop all interactions if Game level is not in playing mode - paused/stopped.
+
+
+Adding a Game Over Menu
 
 ______________________________________________________________________________
 Used https://www.youtube.com/watch?v=ya1HyptE5uc for Maze construction.

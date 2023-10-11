@@ -80,6 +80,12 @@ public class PlayerOneController : GenericPlayerController
     // Update is called once per frame
     private void Update()
     {        //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
+
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         HandleMovementWithCollision();
         HandleInteractions();
     }

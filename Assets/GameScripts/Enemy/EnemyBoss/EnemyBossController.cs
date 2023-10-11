@@ -24,6 +24,7 @@ public class EnemyBossController : GenericEnemyController
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of Enemy Boss");
         }
+        instance.enemyType = EnemyType.Boss;
         instance.currentEnemyState = enemyStates.isStanding;//Boss should not be moving
         instance.defaultEnemyState = enemyStates.isStanding;
         instance.enemyWalkingMovementSpeed = 0;
@@ -64,6 +65,11 @@ public class EnemyBossController : GenericEnemyController
     // Update is called once per frame
     void Update()
     {
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         //Get Nearest Player and react to it
         base.ReactToPlayer(base.GetNearestPlayer());
         CheckStopSpawnOnDeath();
