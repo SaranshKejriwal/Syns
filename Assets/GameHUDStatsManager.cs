@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro; // For TextMeshProUGUI
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameHUDStatsManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class GameHUDStatsManager : MonoBehaviour
     //TextMeshProUGUI needs to be used since we're using TextMeshPro lib from Unity
     //Do not use TextMeshPro class because this is UI Text
     [SerializeField] private TextMeshProUGUI EnemyCounterHUD;
-    [SerializeField] private Transform EnemySpawnTimerProgressBar;
+    [SerializeField] private Image EnemySpawnTimerProgressBar;
 
     private void Awake()
     {
@@ -35,7 +36,7 @@ public class GameHUDStatsManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        EnemyCounterHUD.text = "This is a test string";
+        EnemyCounterHUD.text = "1";//you will have 1 enemy at the start
     }
 
     // Update is called once per frame
@@ -56,8 +57,12 @@ public class GameHUDStatsManager : MonoBehaviour
         }
         float lengthRatio = currentTimer / maxTimer;
 
-        //increase the length of the progress bar, as per the scale of the length Ratio.
-        EnemySpawnTimerProgressBar.transform.localScale = new Vector3(lengthRatio,0.3f,1);
+        //increase the fillAmount of the progress bar, as per the scale of the length Ratio.
+        EnemySpawnTimerProgressBar.fillAmount = lengthRatio;
+
+        Color barColor = new Color(lengthRatio,1-lengthRatio,0); //(r,g,b)
+        EnemySpawnTimerProgressBar.color = barColor;
+
     }
 
     public void SetEnemyCounterOnHUD(int enemyCount)

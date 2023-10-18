@@ -249,13 +249,13 @@ Also useful for creating spawning object, like enemies, after a set duration.
 
 such Prefabs can be used as "Transform"s or "GameObject"s - Don't know the difference.
 
-Scriptable Objects are useful for creating multiple instances of one type - like weapons, enemies;
+Scriptable Objects are useful for creating multiple instances of one type - like weapons, enemies, event sounds;
 
 This will be useful to define the 7 types of enemies and bosses, I guess.
 
 Scriptable objects extend ScriptableObject, not MonoBehaviour. These need CreateAssetMenu() for creating an object - this would allow you to create an object of this type from within the Project window itself.
 
-Not sure if we need them for our use-case - EnemyBuff can be applied consistently. This would be useful if you had a variable set of objects at once.
+Not sure if we need them for our use-case - EnemyBuff can be applied consistently and singularly. This would be useful if you had a variable set of objects at once.
 <Skipping this...>
 
 
@@ -297,7 +297,8 @@ This one is at 4:46:30
 Inside a prefab, create a UI > Canvas
 In the Inspector, make it a "World Space" in the Render Mode, to not occupy the entire screen's space.
 
-This is not very different from creating a physical component within each of the players/enemies.
+This approach is better than creating a rectangle and increasing its localScale - check 4:53:00
+Set the Sprite as "Filled"
 
 Can also be used to add Icons on top of players - useful for shop objects.
 
@@ -328,6 +329,35 @@ Then create a separate UI > Text - TextMeshPro GameObject for each number that y
 
 A similar approach can be done for the Healthbars and spawn timers as well.
 
+
+Adding Music_________________________________________________
+
+Create a new game object - add Component 'Audio Source' and specify the .wav file in the AudioClip
+Enable "Play on Awake" and "Loop" for Background music only.
+
+Unity prioritizes how many sounds play simultaneously. Music should be on Max priority.
+
+"Spatial Blend" should be 2D for music because it has to play the same way across the landscape.
+
+Ensure that Main Camera gameObj should have the 'AudioListener' component in it.
+
+You can also experiment with creating an 'Audio Mixer' in the Project files - this can help create new 'groups' in the mixer - and you can trigger specific soundtracks for specific groups.
+
+
+Adding Sounds on characters and interactions_________________________
+
+These will be event driven, not constant sounds.
+
+Therefore, best to trigger them in code - use AudioSource.PlayClipAtPoint(clip, SoundLocationVector, volume); function - 
+This function is 3D sound by default and will calibrate to Camera position and distance.
+
+Recommendation is to fire an event from the Logic class, which will be listened to, by the visuals class and the sounds class.
+
+Best to avoid SerializeField for Every Single sound that can be played - Use ScriptableObject to refer to, and play all Sounds
+
+Creating an object of a certain array of sounds will allow you to drag and drop soundbit references into the AudioClip[] objects created in the Audio Objects SO class directly.\
+You need to create a new Game Object of the SO type, and the AudioObjects C# class AudioClip[] references will be visible therein.
+
 Adding a Start Menu__________________________________
 
 
@@ -357,7 +387,3 @@ Open Prefab and check "Animation" tab next to console.
 Note - if you rename a function, Animation Event will not automatically rename it in Unity Inspector. Will need manual change.
 
 
-_____________________________________________________
-https://www.youtube.com/watch?v=8rTK68omQow
-
-Explore RigidBody Components for more Physics responses to Player/Enemy attacks.

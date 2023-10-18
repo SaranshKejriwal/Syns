@@ -16,12 +16,12 @@ Create Menus, and level completion
 
 Addition of PLayer Hit and Death animations.
 
-Add an HUD on play screen to show coin collection, health, enemy count, spawn timer, boss dead/alive?
-https://docs.unity3d.com/ScriptReference/Material.SetColor.html - to change color for bars/timerBars
+Add an HUD on play screen to show coin collection, health, enemy count, spawn timer, boss dead/alive? IN PROGRESS
+https://docs.unity3d.com/ScriptReference/Color-ctor.html - to change color for bars/timerBars
 
-Make Grunt and Boss Icons for Enemy-side HUD
+Make Grunt and Boss Icons for Enemy-side HUD - Ensure that it doesn't blob out at small sizes. Can have big face for boss and small face for grunts.
 
-Make P1 and P2 icons for PLayer Healthbars.
+Make P1 and P2 icons for PLayer Healthbars, gold collected stats
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
