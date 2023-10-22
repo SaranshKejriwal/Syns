@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -63,9 +64,9 @@ public class EnemySpawnHandler : MonoBehaviour
     //update timer and spawn enemy when it reaches limit.
     private void UpdateEnemySpawnTimer()
     {
-        if (EnemyBossController.Instance.IsEnemyDead() || LevelBuilder.Instance.IsLevelCompleted())
+        if (!isEnemySpawnTimerActive || EnemyBossController.Instance.IsEnemyDead() || LevelBuilder.Instance.IsLevelCompleted())
         {
-            return;//Do not spawn if Boss is dead or Level is completed.
+            return;//Do not spawn if timer is inactive, or Boss is dead, or Level is completed.
         }
         currentTimerElapsedSeconds += Time.deltaTime;
         if (currentTimerElapsedSeconds >= maxTimerSeconds)
@@ -101,6 +102,16 @@ public class EnemySpawnHandler : MonoBehaviour
     {
         //this will be called when boss dies.
         isEnemySpawnTimerActive = false;
+        ResetEnemySpawnTimer();
+    }
+
+    //this is the listener to the OnBossDeath event which will stop the spawn timer
+    public void StopEnemySpawnOnBossDeathEvent(object boss, EventArgs e)
+    {
+        Debug.Log("Listening to Boss Death Event. Stopping Enemy Spawn");
+        //this will be called when boss dies.
+        isEnemySpawnTimerActive = false;
+        ResetEnemySpawnTimer();
     }
 
     public int GetAliveEnemyCount()
@@ -112,6 +123,7 @@ public class EnemySpawnHandler : MonoBehaviour
     public void ReduceAliveEnemyCountOnDeadEnemy()
     {
         aliveEnemyCount--;
+        GameHUDStatsManager.Instance.SetEnemyCounterOnHUD(aliveEnemyCount);
     }
 
 }

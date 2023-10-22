@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro; // For TextMeshProUGUI
@@ -18,7 +19,8 @@ public class GameHUDStatsManager : MonoBehaviour
     //Do not use TextMeshPro class because this is UI Text
     [SerializeField] private TextMeshProUGUI EnemyCounterHUD;
     [SerializeField] private Image EnemySpawnTimerProgressBar;
-
+    [SerializeField] private RawImage enemyBossIcon; //can be greyed when Boss dies.
+     
     private void Awake()
     {
         if (instance == null)
@@ -36,7 +38,7 @@ public class GameHUDStatsManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        EnemyCounterHUD.text = "1";//you will have 1 enemy at the start
+        EnemyCounterHUD.text = EnemySpawnHandler.Instance.GetAliveEnemyCount().ToString();//you will have 1 enemy at the start
     }
 
     // Update is called once per frame
@@ -51,11 +53,12 @@ public class GameHUDStatsManager : MonoBehaviour
 
     public void SetEnemySpawnTimerProgressBarDisplay(float currentTimer, float maxTimer)
     {
-        if(currentTimer > maxTimer)
+        float lengthRatio = currentTimer / maxTimer;
+        if (currentTimer > maxTimer)
         {
             Debug.LogError("HUD Error - Spawn timer cannot exceed Max Timer");
+            lengthRatio = 1f;
         }
-        float lengthRatio = currentTimer / maxTimer;
 
         //increase the fillAmount of the progress bar, as per the scale of the length Ratio.
         EnemySpawnTimerProgressBar.fillAmount = lengthRatio;
@@ -63,6 +66,17 @@ public class GameHUDStatsManager : MonoBehaviour
         Color barColor = new Color(lengthRatio,1-lengthRatio,0); //(r,g,b)
         EnemySpawnTimerProgressBar.color = barColor;
 
+    }
+
+    //this will be called when boss dies and spawn stops. This should ideally be listening to a boss death event
+    public void UpdateHUDOnBossDeathEvent(object boss, EventArgs e)
+    {
+        Debug.Log("Listening to Boss Death event. Updating HUD.");
+        EnemySpawnTimerProgressBar.fillAmount = 1f;//set it to max fill and then show inactive color.
+        EnemySpawnTimerProgressBar.color = Color.grey;
+
+        enemyBossIcon.color = Color.grey;
+        
     }
 
     public void SetEnemyCounterOnHUD(int enemyCount)

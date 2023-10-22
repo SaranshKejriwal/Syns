@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -351,6 +352,10 @@ public class GenericEnemyController : MonoBehaviour
         if(enemyType == EnemyType.Grunt)
         {
             EnemySpawnHandler.Instance.ReduceAliveEnemyCountOnDeadEnemy();
+        }else if (enemyType == EnemyType.Boss)
+        {
+            //fire an event here which will be listened to by the HUD and the spawn timer.
+            EnemyBossController.Instance.FireOnBossDeathEvent();
         }
     }
 

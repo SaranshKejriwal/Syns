@@ -53,7 +53,8 @@ public class EnemyController : GenericEnemyController
         HandleNormalEnemyMovementWithCollision();
 
         //for grunt only. If level is completed, Kill all grunts
-        CheckDeathOnLevelCompletion();
+        //(Not sure if this is needed since we'll load the main menu screen anyway.
+        CheckStopOnLevelCompletion();
     }
 
     private void HandleNormalEnemyMovementWithCollision()
@@ -81,13 +82,14 @@ public class EnemyController : GenericEnemyController
 
 
     //ideally there should be an event fired here.
-    private void CheckDeathOnLevelCompletion()
+    private void CheckStopOnLevelCompletion()
     {
         if (!LevelBuilder.Instance.IsLevelCompleted())
         {
-            return;//stay alive as long as level is not completed.
+            return;//keep moving as long as level is not completed.
         }
-        KillEnemy();
+        this.enemyWalkingMovementSpeed = 0;//don't move whwn game is won.
+        this.currentEnemyState = enemyStates.isStanding;
     }
 
 

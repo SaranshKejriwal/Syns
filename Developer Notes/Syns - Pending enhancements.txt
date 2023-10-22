@@ -4,24 +4,24 @@ Must Haves______________________________________________________________________
 
 BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator for Boss.
 
+BUG - interaction between P2 and boss is weird. Possible issue in Boss animator.
+
+Add an HUD on play screen to show coin collection, P1/P2 health, P2 speed, enemy count, spawn timer, boss dead/alive? IN PROGRESS
+
+PlayerOne attack range to be limited. Current only event is killing enemy.
+
 Create a healthbar component on all, such that its length varies with text. Player1 and PLayer2 healthbar to always be on top of the screen.
 
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
 PlayerTwo to reset past visited cells if Stack is empty. CONSTRUCTED. Needs testing
 
-BUG - PlayerOne Punching feels weird sometimes. Armour is off and his head bounces independently from body.. Somehow fixed after rebuild.
-
 Create Menus, and level completion
 
 Addition of PLayer Hit and Death animations.
 
-Add an HUD on play screen to show coin collection, health, enemy count, spawn timer, boss dead/alive? IN PROGRESS
-https://docs.unity3d.com/ScriptReference/Color-ctor.html - to change color for bars/timerBars
-
-Make Grunt and Boss Icons for Enemy-side HUD - Ensure that it doesn't blob out at small sizes. Can have big face for boss and small face for grunts.
-
 Make P1 and P2 icons for PLayer Healthbars, gold collected stats
+
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
@@ -33,6 +33,8 @@ Have Variants and buffs for each enemy of each syn.
 Shop to spend Gold and buy special items
 
 Shared Bag to hold items between P1 and P2.
+
+Player1 and Player2 XP system. 
 
 Create special items to be exchanged between P1 and P2 - eg. cloak etc?
 
@@ -48,6 +50,9 @@ Composing & Adding Music to the game.
 
 Save Game stats.
 
+Fix the P2 Exit Door entry logic using Events.
+
+
 ___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
 
@@ -58,6 +63,8 @@ Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
 Adding states to Players like Walking, Evading, Running, to have better animations.
 
 Players to get Armour upgrades with visible components getting added on.
+
+Reduce dependency on Update() for all classes. Add more event driven actions rather than checkers.
 
 
 Can Considers____________________________________________________________________________
@@ -108,3 +115,11 @@ BUG - Enemy Animation does not complete when attacking P2 at certain speeds. Not
 Enemy to stop moving while attacking. Checking if playerTwo evaded the attack. Done by adding correct transitions in Animator and Animation Events.
 
 Multiple attack types on enemy - use Animation Events. DONE
+
+BUG - PlayerOne attack only seems to work at a distance, not at close range. Root casue - EnemyInFocus was being reset because of old HandleInteractions() function
+
+Make Grunt and Boss Icons for Enemy-side HUD - Ensure that it doesn't blob out at small sizes. Unity UI > Raw Image to be used. DONE
+
+BUG - PlayerOne Punching feels weird sometimes. Armour is off and his head bounces independently from body.. Somehow FIXED after rebuild.
+
+Create event for BOss death in generic enemy controllerGrey out Boss icon upon Boss death. DONE

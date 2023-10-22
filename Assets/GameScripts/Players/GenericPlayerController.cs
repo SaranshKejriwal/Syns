@@ -95,12 +95,12 @@ public abstract class GenericPlayerController : MonoBehaviour
         Debug.Log(this + " has remaining health: "+this.playerHealth);
         if (this.playerHealth <= 0)
         {
-            KillPlayer();
+            KillPlayerTwo();
         }
 
     }
 
-    protected virtual void KillPlayer()
+    protected virtual void KillPlayerTwo()
     {
         Debug.Log(this + " is dead.");
         this.playerState = PlayerState.isDead;

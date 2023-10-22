@@ -23,8 +23,7 @@ public class PlayerTwoController : GenericPlayerController
 
     private int rotationSpeed = 10;
     private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving. Will always be true anyway
-    private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
-
+    
     
     [SerializeField] private InputHandler inputHandler;
 
@@ -37,8 +36,7 @@ public class PlayerTwoController : GenericPlayerController
     //ExitKey and Door related objects
     private bool hasCollectedExitKey = false;//will be set in the ExitKeyController.
     private bool canEnterExitDoorInVicinity = false;//this will be true when PlayerTwo is in the same cell as 
-    private bool retraversalRequiredAfterKeyCollect = false;//this will be true in case Player Two reaches Exit before the Key
-
+    
 
     private GenericEnemyController enemyToEvade;
     //this object will be populated by the last enemy which is hunting/attacking P2.
@@ -183,11 +181,6 @@ public class PlayerTwoController : GenericPlayerController
             return;//if PlayerTwo has already entered Exit, need not check.
         }
 
-        if (LevelBuilder.Instance.IsLevelCompleted())
-        {
-            return;//if Level already won. Need not check again.
-        }
-
         MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
 
         if (exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
@@ -197,7 +190,6 @@ public class PlayerTwoController : GenericPlayerController
         if(!hasCollectedExitKey && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
             //this means that PlayerTwo reached Exit Door cell before getting the Key; retraversal will be required
-            retraversalRequiredAfterKeyCollect = true;
             return;//do nothing if Player hasn't collected the key                   
         }
         Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1.5f);//this offset is for making PlayerTwo disappear inside Exit door
@@ -261,10 +253,12 @@ public class PlayerTwoController : GenericPlayerController
         //update ExitDoor status to be correctly collectable by PlayerTwo.
     }
 
-    protected override void KillPlayer()
+    protected override void KillPlayerTwo()
     {
         Debug.Log(this + " is dead.");
-        this.playerState = PlayerState.isDead;
+        instance.playerState = PlayerState.isDead;
+
+        instance.canBeAttacked = false; //no point in attacking if player is already dead.
 
         //If PlayerTwo Dies, level is lost.
         LevelBuilder.Instance.LevelDefeat();

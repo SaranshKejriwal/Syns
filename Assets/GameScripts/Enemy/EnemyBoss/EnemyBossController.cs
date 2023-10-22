@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class EnemyBossController : GenericEnemyController
         private set { instance = value; }
     }
 
-    private bool isSpawning = true;//Boss will spawn while alive.
+    public event EventHandler OnBossDeath;
 
     private void Awake()
     {
@@ -58,7 +59,11 @@ public class EnemyBossController : GenericEnemyController
         //Face the opening of the cell only
         transform.eulerAngles = new Vector3(0, GetRotationAngleInCell(containerCell), 0);
 
-        //scale down to not overflow from the cell.
+
+        //Add subscriptions to OnBossDeath event
+        OnBossDeath += EnemySpawnHandler.Instance.StopEnemySpawnOnBossDeathEvent;
+        OnBossDeath += GameHUDStatsManager.Instance.UpdateHUDOnBossDeathEvent;
+
 
     }
 
@@ -72,7 +77,6 @@ public class EnemyBossController : GenericEnemyController
 
         //Get Nearest Player and react to it
         base.ReactToPlayer(base.GetNearestPlayer());
-        CheckStopSpawnOnDeath();
     }
 
     private int GetRotationAngleInCell(MazeCell cell)
@@ -98,18 +102,13 @@ public class EnemyBossController : GenericEnemyController
         return 0;
     }
 
-    private void CheckStopSpawnOnDeath()
+    public void FireOnBossDeathEvent()
     {
-        if (currentEnemyState != enemyStates.isDead || isSpawning)
+        if(OnBossDeath != null)
         {
-            return;//Enemies should spawn as long as boss is alive.
+            OnBossDeath(this, EventArgs.Empty);//fire event if not null
         }
-        //isSpawning flag ensures that this function is not called infinitely.
 
-        isSpawning = false;
-        Debug.Log("Level Boss Defeated. Stopping Enemy Spawn");
-        EnemySpawnHandler.Instance.StopEnemySpawnTimer();
-        
     }
 
 }

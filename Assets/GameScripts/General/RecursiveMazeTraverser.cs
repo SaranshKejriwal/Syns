@@ -268,7 +268,7 @@ private void Awake()
             Debug.Log("Unable to find next Evasive position. Stopping PlayerTwo");
             return currentPlayerTwoPositionCell.cellPositionOnMap;
         }
-        Debug.Log("PlayerTwo should evade to next cell: " + nextCellPositionToVisit);
+        Debug.Log("PlayerTwo should EVADE to next cell: " + nextCellPositionToVisit);
         return nextCellPositionToVisit;
 
     }

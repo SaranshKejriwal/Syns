@@ -386,4 +386,10 @@ Open Prefab and check "Animation" tab next to console.
 
 Note - if you rename a function, Animation Event will not automatically rename it in Unity Inspector. Will need manual change.
 
+______________________________________________________________________________
+https://www.youtube.com/watch?v=OuZrhykVytg
+
+Using this to limit my Update() method checks and use events instead to trigger functionalities.
+
+Multiple "subscribers" can subscribe to one event hosted by a publisher, fired off by publisher in a certain situation. Publisher does not have to know who the subscribers of the event are (hence the code-cleanliness), thus the 2 logics can be decoupled entirely.. example of logic working independently, regardless of whether a visual exists or not.
 

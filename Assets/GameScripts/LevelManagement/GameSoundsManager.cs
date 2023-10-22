@@ -10,7 +10,7 @@ public class GameSoundsManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //PlaySound(gameSoundsReference.enemySounds[0],new Vector3(0,0,0));//for testing only  
+        PlaySound(gameSoundsReference.enemySounds[0],new Vector3(0,0,0));//for testing only  
     }
 
     // Update is called once per frame
@@ -31,4 +31,8 @@ public class GameSoundsManager : MonoBehaviour
         int randomIndex = MathFunctions.GetRandomIntInRange(0, clipArray.Length);
         AudioSource.PlayClipAtPoint(clipArray[randomIndex], SoundLocationVector, volume);
     }
+
+
+
+
 }

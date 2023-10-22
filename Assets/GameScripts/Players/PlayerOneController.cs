@@ -87,7 +87,7 @@ public class PlayerOneController : GenericPlayerController
         }
 
         HandleMovementWithCollision();
-        HandleInteractions();
+        //HandleInteractions();
     }
     
 
