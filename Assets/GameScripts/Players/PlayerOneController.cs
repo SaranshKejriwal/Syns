@@ -72,7 +72,7 @@ public class PlayerOneController : GenericPlayerController
         {
             //only nearest enemy responds, ONLY when Player One Punches
             approachedEnemy.RespondToPlayerOnePunch(playerOnePunchAttackDamage);//straightforward non-singleton approach.
-
+            IncreasePlayerOneXP(playerOnePunchAttackDamage, approachedEnemy.isEnemyTypeBoss());
         }
         
     }
@@ -90,7 +90,8 @@ public class PlayerOneController : GenericPlayerController
         //HandleInteractions();
     }
     
-
+    //this method is useless. Can consider removing
+    /*
     private void HandleInteractions()
     {
         //Get separate direction vector, to not interfere with occlusion handling vector
@@ -131,12 +132,19 @@ public class PlayerOneController : GenericPlayerController
             approachedEnemy = null;
         }
         //Debug.Log(approachedTestInteractObject);
-    }
+    }*/
 
 
     public bool IsPlayerOnePunching()
     {
        return inputHandler.IsPlayerOnePunchPressed();
+    }
+
+    private void IncreasePlayerOneXP(float attackDamage, bool isAttackingEnemyBoss)
+    {
+        //XP growth is 5x if PlayerOne attacked a boss
+        float xpIncrease = isAttackingEnemyBoss ? 5*attackDamage : attackDamage;
+        IncreasePlayerXP(xpIncrease);
     }
 
     private void HandleMovementWithCollision()

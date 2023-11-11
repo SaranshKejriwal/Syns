@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,10 @@ public class ExitKeyController : GenericCollectibleItem
 
     // Start is called before the first frame update
     private float hoverGapAbovePlayerTwoVisual = 1.5f;
-    private bool keyAlreadyCollected = false;
+    
+    public event EventHandler OnExitKeyCollect;//this event will be fired when PlayerTwo collects ExitKey
+
+
 
     private void Awake()
     {
@@ -37,8 +41,10 @@ public class ExitKeyController : GenericCollectibleItem
 
     void Start()
     {
-        //instance.itemDetectionDistance = 1000;//for testing only
-        //instance.itemCollectionDistance = 1000;//for testing only
+        //Set subscribers to OnExitKeyCollect event
+        OnExitKeyCollect += SetKeyParentAsPlayerTwoOnExitKeyCollectEvent;
+        OnExitKeyCollect += ExitDoorController.Instance.EnableExitDoorForPlayerTwoOnExitKeyCollectEvent;
+
     }
 
     // Update is called once per frame
@@ -49,39 +55,34 @@ public class ExitKeyController : GenericCollectibleItem
             return;//do nothing if game is paused or level has ended.
         }
 
-        if (!keyAlreadyCollected)
-        //As soon as setKeyParentAsPlayerTwo() is called once, this will be true and Update() will do nothing.
-        {            
-            base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance);
-            //ExitKey is not interested in PlayerOne
+        if (this.isObjectCollected)
+        {
+            return;//do nothing if key is already collected.
+        }
 
-            setKeyParentAsPlayerTwo();
+        if (base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
+        {
+            if(OnExitKeyCollect != null)
+            {
+                OnExitKeyCollect(this, EventArgs.Empty);//fire the event for exit key collection
+            }
+
         }
     }
 
-    
-    public void setKeyParentAsPlayerTwo()
+    public void SetKeyParentAsPlayerTwoOnExitKeyCollectEvent(object key, EventArgs e)
     {
-        if (!isObjectCollected)
-        {
-            return;//Key has to be in vicinity of Player Two
-        }
-
         Vector3 keySizeOnCollect = new Vector3(0.7f, 0.7f, 0.7f);
         //this will directly make the Key move relative to PlayerTwo, without calling in Update each time.
         transform.parent = PlayerTwoController.Instance.transform;
-        transform.position = GetHoverLocationAbovePlayerTwoVisual();
+        transform.position = GetHoverYOffsetAbovePlayerTwoVisual();
         transform.localScale = keySizeOnCollect;
 
         PlayerTwoController.Instance.SetHasCollectedExitKey(true);
-        keyAlreadyCollected= true;
-        //we're maintaining this separate bool so that
-        //the above setter doesn't keep getting called infinitely.
     }
 
-    private Vector3 GetHoverLocationAbovePlayerTwoVisual()
+    private Vector3 GetHoverYOffsetAbovePlayerTwoVisual()
     {
-        //this inefficient method is acceptable because it will be called only once, whenever playerTwo is in ExitKey vicinity
-        return new Vector3(PlayerTwoController.Instance.GetPlayerPosition().x, PlayerTwoController.Instance.GetPlayerPosition().y+hoverGapAbovePlayerTwoVisual, PlayerTwoController.Instance.GetPlayerPosition().z);
+        return PlayerTwoController.Instance.GetPlayerPosition()+ new Vector3(0,hoverGapAbovePlayerTwoVisual,0);
     }
 }

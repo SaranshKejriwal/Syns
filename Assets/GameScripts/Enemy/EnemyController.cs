@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -13,6 +14,7 @@ public class EnemyController : GenericEnemyController
     //Note - Scale of Detection circle visual in pixels, is 2x this Detection radius - should be controlled by logic.
 
     private int rotationSpeed = 10;//needed for Moving Grunts only
+
 
     private void Awake()
     {

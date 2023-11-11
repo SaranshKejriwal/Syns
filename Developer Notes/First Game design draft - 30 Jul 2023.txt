@@ -6,7 +6,7 @@ you control 2 players:
 P1 - full WASD control, plus attacks.
 P2 - P2 AI will automatically decide where it is going. You can only control the speed of P2 in its direction.
 
-Goal - P1 has to protect P2 in each level. P2 will look for the key to an exit. The Goal is for both players to reach the opened exit.
+Goal - P1 has to protect P2 in each level. P2 will look for the key to an exit. The Goal is for both players to reach the opened exit. <Edit: Only P2 to reach Exit>
 
 Game context:
 P2 is looking for a key to the exit of the level, and will explore the map to find the key, as well as the exit. These 2 can be found by P2 in any order, but the key is needed before the exit can be opened.
@@ -36,23 +36,35 @@ Salient objective - collect gold etc. to buy in-game weapons for P1 and defenses
 Other Depth in gameplay - Different types of enemy spawns and bosses, attack weapons and defenses, spawn rate counter, detection concept (roaming in vicinity vs homing on target)
 Having options to explore parallel levels instead of serial. If spawn rate is too high in one thread, one can restart from older level.
 
-Important Addition - Providing 3 options of INCREASING difficulty in the next level and have the player choose 1. Eg. speed, enemy damage, boss health.
+XP_____
 
-Level-up upgrades:
+XP Level-up upgrades:
 P1 - attack damage, attack speed, move speed, HP, Armour/Defence
 P2 - move speed, HP, Armour/Defence, 
 
-Should be able to reset the upgrades.
+Should be able to reset and reallocate the XP upgrades
 
-Coin-based tools:
+GOLD_____
+
+Coin-based tools/purchases:
 
 These enhancements can be assigned to P1 OR P2, not both. <Can consider gameplay to swap these tools during a level, only when P1 and P2 are nearby.>
-
 Coin magnet, cloak, long range visibility, weapons (P1 only), shields (P1/P2), whistle (turn P2 to come towards you?), holler (P2 alerts about enemies in range)
+<Above were initial ideas, but didn't make sense in code>
+
+Unlike Runes, Coin based purchases can be perishable as well, eg. 1 invincibility shield, Bullets for P1's magic attacks - perishables are non refundable but Rune upgrades are.
+
+Gold can also be used to upgrade Runes.
+
+RUNES____
+
+Runes are special artifacts that are awarded after the completion of a syn. These cannot be purchased via Gold, and are only earned on level completion.
+
+PlayerOne and PlayerTwo have 2 equipment slots each, to hold either a Gold tool or a Rune
 
 
-
-With each level up - you choose how the enemy gets difficult - among 3 options.
+With each level completion, in the 7 levels per syn - you choose how the enemy gets difficult - among 3 options.
+Important Addition - Providing 3 options of INCREASING difficulty in the next level and have the player choose 1. Eg. speed, enemy damage, boss health.
 
 
 Now that I think about this in more detail...maybe the enemy units and bosses can have these 7 traits.
@@ -60,16 +72,25 @@ Though that need not be spelled out loud.
 
 The game can have themes of the 7 sins without spelling it out loud. Player chooses any 1 of the 7 themes to start with, and enemies/bosses will have traits in accordance.
 
-
-Greed - enemies tend to pick up gold and leave less for you. - Bosses disable some weapons and coin-based tools.
-Sloth - enemies are slower but do more damage. - Bosses have slow AoE charge and stun to delay P1 from getting back to P2.
-Wrath - enemies are faster - Agile, sleek bosses with rapid low-damage attacks. Massive spawn when boss dies.
-Gluttony - enemies have more HP - Boss is tanky and has high HP, but low attack range.
-Envy - enemies are mimics and may replicate P2 <start game with 1 enemy that looks like P2> - bosses are weak, but damage may transfer to P2 with a %probability.
+Greed - enemies tend to pick up gold and leave less for you. - Bosses disable some weapons and coin-based tools, but CANNOT disable other Runes
+Sloth - enemies are slower but do more damage. - Bosses stun P1 when they lose a certain % of health. <Similar to Pride>
+Wrath - enemies can potentially move through walls - Agile bosses with rapid low-damage attacks. Boss has range attacks 
+Gluttony - enemies have more HP and tend to pickup nearby heals when damaged. - Boss attacks have life-steal and can pickup nearby heals. <May eat nearby grunts to absorb their health>
+Envy - enemies are mimics and may replicate P2 <start game with 1 enemy that looks like P2> <Have no detection radius for P1, so they ignore him to blend in> - bosses are weak, but damage may transfer to P2 with a %probability.
 Lust - enemies have higher detection radius; Boss chases P1/P2 outside its spawn point, so speed is important.
-Pride - Enemies raise an alarm upon detecting P1/P2, attracting more enemies; Boss pulls P1 towards itself and prevents him from going to P2.
+Pride - Enemies raise an alarm upon detecting P1/P2, attracting more enemies; 6 grunts spawn where boss dies. 
 
 Can start each phase (collection of levels) with a poetic riddle.
+
+Unique "Runes" at completion of the 7 Syns levels for each Syn.
+
+Greed -OK- Glimmer: Coins collected BY ANY 1 PLAYER become more valuable, whoever holds the item - Gold % value Can be Increased by gold. <needs economy of scale>
+Sloth - OK - Haste: Probability of ignoring damage. - Chance Can be Increased by Gold.
+Wrath - OK - Vengeance: Reflect 50% of own damage back at enemy. Chance - Can be Increased by Gold.
+Gluttony - OK - Resolve: Constant Heal over time. Heal rate be Increased by Gold.
+Envy - OK - Direction: Compass which points to PlayerTwo location at close distance - Has the same effect, regardless of which player holds it. Distance Can be increased by Gold
+Lust - OK - Apathy: When activated, Invisible for 10 seconds. 30 second cooldown. OR Chance of not being detected..-  Duration/Chance Can be Increased by Gold.
+Pride - OK -  Humility: Enemies have a change to be stunned for sometime while chasing Player. Chance can be increased by gold
 
 
 IMP - Don't have a separate tutorial level? Integrate it with the initial gameplay

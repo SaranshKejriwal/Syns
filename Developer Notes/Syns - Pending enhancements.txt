@@ -2,15 +2,15 @@ ________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
 
-BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator for Boss.
 
-BUG - interaction between P2 and boss is weird. Possible issue in Boss animator.
+BUG - interaction between P2 and boss is weird. Possible issue in Boss animator and P2 traversal logic..
 
-Add an HUD on play screen to show coin collection, P1/P2 health, P2 speed, enemy count, spawn timer, boss dead/alive? IN PROGRESS
+Fix PlayerTwo exit entry using events.
 
-PlayerOne attack range to be limited. Current only event is killing enemy.
 
-Create a healthbar component on all, such that its length varies with text. Player1 and PLayer2 healthbar to always be on top of the screen.
+PlayerOne attack range to be limited. Currently punch event is killing the approachedEnemy Object at any distance.
+
+Create a healthbar component on all - grunts + boss + players, such that its length varies with indiv health. 
 
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
@@ -20,11 +20,13 @@ Create Menus, and level completion
 
 Addition of PLayer Hit and Death animations.
 
-Make P1 and P2 icons for PLayer Healthbars, gold collected stats
+Make P1 and P2 icons for HUD
 
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
+
+Addition of Player XP mechanisms
 
 Allow user to choose enemy buff at start of next level.
 
@@ -36,7 +38,7 @@ Shared Bag to hold items between P1 and P2.
 
 Player1 and Player2 XP system. 
 
-Create special items to be exchanged between P1 and P2 - eg. cloak etc?
+Create shop items & Runes to be exchanged between P1 and P2 - eg. cloak etc?
 
 Level selection between Base and 7 level types
 
@@ -45,6 +47,8 @@ Difficulty selection - Easy Med Hard
 Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
 
 Enable the code that increases the wall height based on PlayerOne position...After everything else.
+
+Adding Runes to the game - 2 slots per player
 
 Composing & Adding Music to the game.
 
@@ -78,6 +82,11 @@ PlayerOne has an auto-sword which rotates/slices or stabs enemies
 Prop at end of Envy level - Compass for P1 which points P2 location
 
 Remove data from Textures folder to reduce game size.
+
+
+
+
+
 
 COMPLETED_______________________________
 
@@ -123,3 +132,9 @@ Make Grunt and Boss Icons for Enemy-side HUD - Ensure that it doesn't blob out a
 BUG - PlayerOne Punching feels weird sometimes. Armour is off and his head bounces independently from body.. Somehow FIXED after rebuild.
 
 Create event for BOss death in generic enemy controllerGrey out Boss icon upon Boss death. DONE
+
+Player1 and PLayer2 healthbar to always be on top of the screen. DONE
+
+BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator for Boss. FIXED by creating new Animation for Boss.
+
+Add an HUD on play screen to show coin collection, P1/P2 health (DONE), P2 speed, enemy count(DONE), spawn timer (DONE), boss dead/alive (DONE), P1 P2 XP(DONE) DONE

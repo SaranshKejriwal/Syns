@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using System; //for EventHandler
 
 public class ExitDoorController : GenericCollectibleItem
 {
@@ -16,6 +18,8 @@ public class ExitDoorController : GenericCollectibleItem
     private bool isExitDoorOpen = false;
 
     private MazeCell containerCell;//this stored the cell in which Exit Door is spawned
+
+    public event EventHandler OnExitDoorOpen;
 
     private void Awake()
     {
@@ -67,11 +71,12 @@ public class ExitDoorController : GenericCollectibleItem
             return isExitDoorOpen; 
         }
 
-    public void EnableExitDoorForPlayerTwo()
+
+    public void EnableExitDoorForPlayerTwoOnExitKeyCollectEvent(object key, EventArgs e)
     {
-        Debug.Log("PlayerTwo has collected Exit Key. Can open Exit Door");
+        Debug.Log("ExitDoor is Listening to Exit Key Collection Event. PlayerTwo can Open Exit door");
         instance.correctCollectingPlayer = isCollectableBy.playerTwoOnly;
-        //this will be called when playerTwo collects the Key.
+        //this will be called when OnExitKeyCollect event is fired.
         //Only PlayerTwo can access it until he reaches the door.
     }
 

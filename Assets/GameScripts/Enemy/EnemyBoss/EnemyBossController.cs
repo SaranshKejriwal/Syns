@@ -60,9 +60,9 @@ public class EnemyBossController : GenericEnemyController
         transform.eulerAngles = new Vector3(0, GetRotationAngleInCell(containerCell), 0);
 
 
-        //Add subscriptions to OnBossDeath event
+        //Add subscriptions to OnBossDeath event on Start
         OnBossDeath += EnemySpawnHandler.Instance.StopEnemySpawnOnBossDeathEvent;
-        OnBossDeath += GameHUDStatsManager.Instance.UpdateHUDOnBossDeathEvent;
+        OnBossDeath += GameHUDStatsManager.Instance.UpdateHUDBossIconOnBossDeathEvent;
 
 
     }

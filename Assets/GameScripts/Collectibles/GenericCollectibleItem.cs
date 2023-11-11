@@ -67,17 +67,9 @@ public class GenericCollectibleItem : MonoBehaviour
 
         if (isObjectMovable)//immovable exit door should not come flying :D
         {
-            Vector3 collectionDirection = (player.GetPlayerPosition() - transform.position).normalized;
+            Vector3 collectionDirection = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(player.GetPlayerPosition(), transform.position);
             //move collectible towards player
             transform.position += collectionDirection * Time.deltaTime * itemMovementSpeed;
-        }
-        else
-        {
-            //Debug.Log("Player should go to immovable collectible");
-            //player should move to position of object. Applies to ExitDoor and PlayerTwo only
-            //player.SetNextIntendedDestination(transform.position);
-            //Custom handling added for ExitDoor to prevent PlayerTwo from coming from behind Exit door.
-
         }
 
         if(distanceFromPlayer <= itemCollectionDistance)

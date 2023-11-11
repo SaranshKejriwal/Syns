@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -17,9 +18,9 @@ public class PlayerTwoController : GenericPlayerController
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
-    [SerializeField][Range(1,8)] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
-    [SerializeField] private int maxPlayerTwoMovementSpeed = 10;
-    [SerializeField] private int minPlayerTwoMovementSpeed = 1;
+    private float currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
+    private float maxPlayerTwoMovementSpeed = 8f;
+    private float minPlayerTwoMovementSpeed = 1f;//these speeds are maintained as float to allow HUD to compute ratio
 
     private int rotationSpeed = 10;
     private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving. Will always be true anyway
@@ -27,7 +28,7 @@ public class PlayerTwoController : GenericPlayerController
     
     [SerializeField] private InputHandler inputHandler;
 
-    private float playerTwoInteractionDistance = 2f;
+    //private float playerTwoInteractionDistance = 2f;
     private readonly float mazeCellCenterErrorMargin = 1.5f;
     //this is the distance that PlayerTwo has to reach from cell center, for maze traverser to trigger next cell in Stack
     
@@ -42,6 +43,10 @@ public class PlayerTwoController : GenericPlayerController
     //this object will be populated by the last enemy which is hunting/attacking P2.
     //if this is not null, andt hunting/attacking P2, then P2 should be in evasive mode.
     //Risk - multiple enemies can set themselves as the enemyToEvade.
+
+
+    //Player Two XP growth is based on distance from PlayerOne in each frame.
+    private float minPlayerOneDistanceForXP = 20f;
 
 
     //Awake will be called before Start()
@@ -72,7 +77,9 @@ public class PlayerTwoController : GenericPlayerController
          and then spawn at the nearest one.*/
         transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
         MoveToNextCell();
-        
+
+        //display starting speed in HUD
+        GameHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
     }
 
     // Update is called once per frame
@@ -89,8 +96,7 @@ public class PlayerTwoController : GenericPlayerController
             return;//this will only happen if PlayerTwo Wins.
         }
 
-        //Update speed if Faster or Slower key binding is pressed.
-        currentPlayerTwoMovementSpeed = inputHandler.GetCurrentPlayerTwoMovementSpeed(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed, minPlayerTwoMovementSpeed);
+        //Update speed if Faster or Slower key binding is pressed - this is handled by Event now
 
         //using Vector3.Distance to ensure some margin of error.
         if(Vector3.Distance(nextIntendedDestination, transform.position) <= mazeCellCenterErrorMargin)
@@ -98,9 +104,13 @@ public class PlayerTwoController : GenericPlayerController
             MoveToNextCell();           
                        
         }
+        //This should be driven by an event, not by Update()
         CheckStopOnEnteringOpenExit();
+
         HandleMovementToCellCenter();//returns same vector unless obstructed.
         //HandleAllInteractions();
+
+        IncreasePlayerTwoXP();
 
     }
 
@@ -126,7 +136,7 @@ public class PlayerTwoController : GenericPlayerController
 
 
     //this method is currently useless. Should be removed.
-    private void HandleAllInteractions()
+    /*private void HandleAllInteractions()
     {
 
         
@@ -144,9 +154,9 @@ public class PlayerTwoController : GenericPlayerController
 
         }
 
-    }
+    }*/
 
-
+    //moves the PlayerTwo object to the next cell center.
     private void HandleMovementToCellCenter()
     {               
 
@@ -226,6 +236,40 @@ public class PlayerTwoController : GenericPlayerController
         }
     }
 
+    //this will subscribe to inputHandler Faster pressed event and increase PlayerTwo speed.
+    public void IncreasePlayerTwoSpeedOnFasterInputPress(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(currentPlayerTwoMovementSpeed < maxPlayerTwoMovementSpeed)
+        {
+            currentPlayerTwoMovementSpeed+=1f;
+            GameHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+        }
+    }
+
+    //this will subscribe to inputHandler Faster pressed event and decrease PlayerTwo speed.
+    public void DecreasePlayerTwoSpeedOnSlowerInputPress(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+
+        if (currentPlayerTwoMovementSpeed > minPlayerTwoMovementSpeed)
+        {
+            currentPlayerTwoMovementSpeed-=1f;
+            GameHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+        }
+    }
+
+    private void IncreasePlayerTwoXP()
+    {
+        float distanceFromPlayerOne = Vector3.Distance(transform.position, PlayerOneController.Instance.GetPlayerPosition());
+
+        if(distanceFromPlayerOne <= minPlayerOneDistanceForXP)
+        {
+            return;//no XP gain if Player Two is near Player One.
+        }
+
+        IncreasePlayerXP(distanceFromPlayerOne / 500f);
+
+    }
+
     public bool IsPlayerTwoMoving()
     {
         return isPlayerTwoMoving;
@@ -249,11 +293,9 @@ public class PlayerTwoController : GenericPlayerController
     public void SetHasCollectedExitKey(bool hasCollectedExitKey)
     {
         instance.hasCollectedExitKey = hasCollectedExitKey;
-        ExitDoorController.Instance.EnableExitDoorForPlayerTwo();
-        //update ExitDoor status to be correctly collectable by PlayerTwo.
     }
 
-    protected override void KillPlayerTwo()
+    protected override void KillPlayer()
     {
         Debug.Log(this + " is dead.");
         instance.playerState = PlayerState.isDead;

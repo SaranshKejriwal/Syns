@@ -366,7 +366,7 @@ If you name a script "GameManager", unity will give it a different icon - best t
 First we created a GameMaster, which can govern the state of the game and stop all interactions if Game level is not in playing mode - paused/stopped.
 
 
-Adding a Game Over Menu
+Adding a Game Over Menu_____________________________________________
 
 ______________________________________________________________________________
 Used https://www.youtube.com/watch?v=ya1HyptE5uc for Maze construction.

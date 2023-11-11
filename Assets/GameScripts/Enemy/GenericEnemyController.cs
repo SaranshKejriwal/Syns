@@ -179,6 +179,11 @@ public class GenericEnemyController : MonoBehaviour
         return currentEnemyState == enemyStates.isStanding;
     }
 
+    public bool isEnemyTypeBoss()
+    {
+        return enemyType == EnemyType.Boss;
+    }
+
     public Vector3 GetEnemyPosition()
     {
         return transform.position;

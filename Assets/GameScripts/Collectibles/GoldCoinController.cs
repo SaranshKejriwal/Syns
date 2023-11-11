@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GoldCoinController : GenericCollectibleItem
 {
+
+    private float goldCoinValue = 1f;//this value can be tweaked if we want to make gold coins more valuable.
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,12 +27,12 @@ public class GoldCoinController : GenericCollectibleItem
 
         if (base.IsActivePlayerInVicinityForCollection(PlayerTwoController.Instance))
         {
-            PlayerTwoController.Instance.CollectGold();
+            PlayerTwoController.Instance.CollectGold(goldCoinValue);
             Destroy(this.gameObject);
         }
         if (base.IsActivePlayerInVicinityForCollection(PlayerOneController.Instance))
         {
-            PlayerOneController.Instance.CollectGold();
+            PlayerOneController.Instance.CollectGold(goldCoinValue);
             Destroy(this.gameObject);//increment only once.
         }
     }

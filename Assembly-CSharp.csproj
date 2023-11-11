@@ -71,6 +71,7 @@
     <Compile Include="Assets\GameScripts\Enemy\EnemyController.cs" />
     <Compile Include="Assets\GameScripts\Players\GenericPlayerController.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyAnimation.cs" />
+    <Compile Include="Assets\GameScripts\LevelManagement\GameHUDStatsManager.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeWallLengthHandler.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeRenderer.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitDoorController.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="Assets\GameScripts\Enemy\GenericEnemyController.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\LevelBuilder.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\GoldCoinController.cs" />
-    <Compile Include="Assets\GameHUDStatsManager.cs" />
     <Compile Include="Assets\PlayerInputActions.cs" />
     <Compile Include="Assets\GameScripts\General\RecursiveMazeTraverser.cs" />
     <Compile Include="Assets\GameScripts\Players\InputHandler.cs" />

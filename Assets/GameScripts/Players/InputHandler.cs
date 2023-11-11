@@ -13,11 +13,6 @@ public class InputHandler : MonoBehaviour
     public event EventHandler OnPunchAction;//EventHandler is a "delegate"
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
@@ -36,6 +31,14 @@ public class InputHandler : MonoBehaviour
         //Event to trigger player one attack action
         inputActions.PlayerOne.Punch.performed += PlayerOne_Punch_performed;//the function is not called, but passed as a reference.
 
+    }
+
+    // Start is called before the first frame update
+    private void Start()
+    {
+        //Add PlayerTwo Speed methods as subscribers
+        inputActions.PlayerTwo.Faster.performed += PlayerTwoController.Instance.IncreasePlayerTwoSpeedOnFasterInputPress;
+        inputActions.PlayerTwo.Slower.performed += PlayerTwoController.Instance.DecreasePlayerTwoSpeedOnSlowerInputPress;
     }
 
     private void PlayerOne_Punch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -59,7 +62,7 @@ public class InputHandler : MonoBehaviour
         //this will return a 2D vector corresponding to WASD or arrows in 2D space, as configured in PlayerInputActions Object.
         return keyInputVector;
 
-        //Refer to PlayerInputActions
+        //Refer to PlayerInputActions Asset
 
     }
 
@@ -69,19 +72,4 @@ public class InputHandler : MonoBehaviour
         
     }
 
-    //Update Player Two speed if Faster or Slower key binding is pressed.
-    public int GetCurrentPlayerTwoMovementSpeed(int currentSpeed, int maxSpeed, int minSpeed)
-    {
-        if(inputActions.PlayerTwo.Faster.IsPressed() && currentSpeed < maxSpeed)
-        {
-            //increase current Speed as long as it is under upper limit
-            currentSpeed++;
-        }
-        if(inputActions.PlayerTwo.Slower.IsPressed() && currentSpeed > minSpeed)
-        {
-            //reduce current Speed as long as it is above lower limit
-            currentSpeed--;           
-        }        
-        return currentSpeed;
-    }
 }
