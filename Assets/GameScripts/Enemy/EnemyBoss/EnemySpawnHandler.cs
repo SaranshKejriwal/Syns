@@ -74,7 +74,7 @@ public class EnemySpawnHandler : MonoBehaviour
             ResetEnemySpawnTimer();
             SpawnNewEnemy();
         }
-        GameHUDStatsManager.Instance.SetEnemySpawnTimerProgressBarDisplay(currentTimerElapsedSeconds, maxTimerSeconds);
+        LevelHUDStatsManager.Instance.SetEnemySpawnTimerProgressBarDisplay(currentTimerElapsedSeconds, maxTimerSeconds);
     }
 
     private void ResetEnemySpawnTimer()
@@ -91,10 +91,14 @@ public class EnemySpawnHandler : MonoBehaviour
         }
 
         Transform newEnemy = Instantiate(enemyPrefab);
+
+        //need to fire an event here which will contain the buffs that need to applied on a level.
+        //All enemies that alive need to listen to the event and buff up, since we cannot control any Enemy proerties from here
+
         newEnemy.localPosition = MathFunctions.GetRandomSpawnPointOnFarSideMap(minSpawnDistanceFromOrigin);//always modify localPosition with respect to parent.
         aliveEnemyCount++;
         Debug.Log("Spawning New Enemy at "+ newEnemy.localPosition);
-        GameHUDStatsManager.Instance.SetEnemyCounterOnHUD(aliveEnemyCount);
+        LevelHUDStatsManager.Instance.SetEnemyCounterOnHUD(aliveEnemyCount);
     }
 
 
@@ -120,10 +124,15 @@ public class EnemySpawnHandler : MonoBehaviour
     }
 
     //this will be called by each enemy grunt when it dies.
-    public void ReduceAliveEnemyCountOnDeadEnemy()
+    public void ReduceAliveEnemyCountOnEnemyDeath()
     {
         aliveEnemyCount--;
-        GameHUDStatsManager.Instance.SetEnemyCounterOnHUD(aliveEnemyCount);
+        LevelHUDStatsManager.Instance.SetEnemyCounterOnHUD(aliveEnemyCount);
     }
 
+    public void ResetAllPreviousBuffs()
+    {
+        //this will be called when a player starts another track...
+        //but what about resume? We will need to save the states for each of the level paths, right?
+    }
 }

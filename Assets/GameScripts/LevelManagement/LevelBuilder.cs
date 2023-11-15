@@ -73,12 +73,17 @@ public class LevelBuilder : MonoBehaviour
     {
         Debug.Log("Level Won!");
         isLevelCompleted = true;
+
+        LevelTransitionManager.Instance.ShowLevelComplete();
+
     }
 
     public void LevelDefeat()
     {
         Debug.Log("Level Lost! :(");
         isLevelCompleted = false;
+
+        LevelTransitionManager.Instance.ShowLevelFailure();
     }
 
     //this will be used to spawn collectible items away from, or at walls.

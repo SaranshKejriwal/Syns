@@ -5,10 +5,10 @@ using TMPro; // For TextMeshProUGUI
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameHUDStatsManager : MonoBehaviour
+public class LevelHUDStatsManager : MonoBehaviour
 {
-    private static GameHUDStatsManager instance;
-    public static GameHUDStatsManager Instance
+    private static LevelHUDStatsManager instance;
+    public static LevelHUDStatsManager Instance
     //this instance "Property" will be tracked by ALL enemies, while keeping actual PlayerTwo object private
     {
         get { return instance; }//not very different from getters and setters

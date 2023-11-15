@@ -366,7 +366,25 @@ If you name a script "GameManager", unity will give it a different icon - best t
 First we created a GameMaster, which can govern the state of the game and stop all interactions if Game level is not in playing mode - paused/stopped.
 
 
-Adding a Game Over Menu_____________________________________________
+Adding a Game Over Screen_____________________________________________
+
+UI sorting is based on heirarchy. Bottom-most one is visible first.
+
+
+Adding a Main Menu__________________________________
+
+Unlike Game Over scrren, Main Menu is created as a separate Scene in the game. You'll need to drag the new Scene into File > Build Settings, and move it to the top of list to have it load as the first scene. Index of the scene is visible on the right side of the Build Settings menu.
+
+The initial load may be frozen for a bit if there was a lot of asset to load. Best to test this, or create a loading... Scene in the middle;
+You can have loading scene in Solid color by simply  Going to main camera Game Object and switching to Solid Color in 'Environment'.
+
+In the new Scene, create a UI Canvas with Overlay that scales with Screen Size.
+
+Skipping Loading Scene, assuming that game is light enough.
+
+
+
+
 
 ______________________________________________________________________________
 Used https://www.youtube.com/watch?v=ya1HyptE5uc for Maze construction.
@@ -393,3 +411,6 @@ Using this to limit my Update() method checks and use events instead to trigger 
 
 Multiple "subscribers" can subscribe to one event hosted by a publisher, fired off by publisher in a certain situation. Publisher does not have to know who the subscribers of the event are (hence the code-cleanliness), thus the 2 logics can be decoupled entirely.. example of logic working independently, regardless of whether a visual exists or not.
 
+
+https://www.youtube.com/watch?v=PVOVIxNxxeQ
+Do Not use a Monobehaviour if something is not going to be linked to a GameObj. It is memory heavy.

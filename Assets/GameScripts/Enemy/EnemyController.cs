@@ -13,8 +13,6 @@ public class EnemyController : GenericEnemyController
     private float enemyInteractionSize = 1.5f; //needed for collision handling in Raycast function.
     //Note - Scale of Detection circle visual in pixels, is 2x this Detection radius - should be controlled by logic.
 
-    private int rotationSpeed = 10;//needed for Moving Grunts only
-
 
     private void Awake()
     {
@@ -23,7 +21,8 @@ public class EnemyController : GenericEnemyController
         defaultEnemyState = enemyStates.isMoving;
         enemyWalkingMovementSpeed = base.enemyWalkingMovementSpeed;
         enemyHuntingMovementSpeed = base.enemyHuntingMovementSpeed;
-        enemyHealth = base.enemyHealth;
+        currentEnemyHealth = base.currentEnemyHealth;
+        maxEnemyHealth = base.maxEnemyHealth;
         IncreaseAttackDamageByMultiplier(1);//same attack damage as base
     }
     public override void UpdateEnemyRadii()
@@ -66,7 +65,7 @@ public class EnemyController : GenericEnemyController
             //needed for collision handling - if player movement is obstructed, try x or z axis movement only
             currentEnemyMovementDirection = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentEnemyMovementDirection, transform.position, enemyInteractionSize);
             //rotate the object to face the updated direction of movement
-            transform.forward = Vector3.Slerp(transform.forward, currentEnemyMovementDirection, Time.deltaTime * rotationSpeed);
+            transform.forward = Vector3.Slerp(transform.forward, currentEnemyMovementDirection, Time.deltaTime * enemyRotationSpeed);
             /*
              * Tip - use transform.lookAt function to have object change line of sight to a point. Useful for enemies facing P2
                 transform.up or transform.right can work for 2D games to change direction.

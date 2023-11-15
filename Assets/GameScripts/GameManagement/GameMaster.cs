@@ -16,6 +16,19 @@ public class GameMaster : MonoBehaviour
         onLevelOver
     }
 
+    //this enum will be used to capture the type of level - 7 for each sin and 1 base
+    public enum LevelType
+    {
+        Base,
+        Greed,
+        Sloth,
+        Envy,
+        Gluttony,
+        Lust,
+        Pride,
+        Wrath
+    }
+
     private static GameMaster instance;
     public static GameMaster Instance
     //this instance "Property" will be tracked by ALL enemies, while keeping actual PlayerTwo object private

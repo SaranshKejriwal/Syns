@@ -60,21 +60,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameScripts\ScriptableObjects\AudioObjects.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\GameMaster.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\HealController.cs" />
-    <Compile Include="Assets\GameScripts\LevelManagement\GameSoundsManager.cs" />
-    <Compile Include="Assets\GameScripts\LevelManagement\GameMaster.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyBoss\EnemyBossController.cs" />
-    <Compile Include="Assets\GameScripts\Enemy\EnemyScriptableObject.cs" />
     <Compile Include="Assets\GameScripts\Players\PlayerTwoController.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\PathProgressObject.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyDetectionRadiusVisual.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyBoss\EnemySpawnHandler.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyController.cs" />
+    <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\EnemyBuffManager.cs" />
     <Compile Include="Assets\GameScripts\Players\GenericPlayerController.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyAnimation.cs" />
-    <Compile Include="Assets\GameScripts\LevelManagement\GameHUDStatsManager.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeWallLengthHandler.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeRenderer.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitDoorController.cs" />
+    <Compile Include="Assets\GameScripts\LevelManagement\LevelTransitionManager.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitDoorClosedVisualHandler.cs" />
     <Compile Include="Assets\Blink\Art\Animals\Stylized\Demo_Animals\DemoData\AnimationDemo.cs" />
     <Compile Include="Assets\GameScripts\Players\PlayerOneAnimation.cs" />
@@ -84,13 +84,18 @@
     <Compile Include="Assets\GameScripts\Collectibles\GoldCoinController.cs" />
     <Compile Include="Assets\PlayerInputActions.cs" />
     <Compile Include="Assets\GameScripts\General\RecursiveMazeTraverser.cs" />
+    <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\GenericEnemyBuffObject.cs" />
     <Compile Include="Assets\GameScripts\Players\InputHandler.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\CollectiblesSpawnHandler.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeBuildLogicManager.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\GameProgressManager.cs" />
+    <Compile Include="Assets\GameScripts\LevelManagement\LevelHUDStatsManager.cs" />
     <Compile Include="Assets\GameScripts\General\MathFunctions.cs" />
     <Compile Include="Assets\GameScripts\Players\PlayerTwoAnimation.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitKeyController.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\GameSoundsManager.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\GenericCollectibleItem.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\MainMenuUIManager.cs" />
     <Compile Include="Assets\GameScripts\General\AutoMovementHandler.cs" />
   </ItemGroup>
   <ItemGroup>

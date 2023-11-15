@@ -39,7 +39,7 @@ Having options to explore parallel levels instead of serial. If spawn rate is to
 XP_____
 
 XP Level-up upgrades:
-P1 - attack damage, attack speed, move speed, HP, Armour/Defence
+P1 - attack damage, move speed, HP, Armour/Defence
 P2 - move speed, HP, Armour/Defence, 
 
 Should be able to reset and reallocate the XP upgrades

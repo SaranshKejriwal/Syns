@@ -61,7 +61,7 @@ public abstract class GenericPlayerController : MonoBehaviour
     void Start()
     {
         //add subscribers to  event
-        OnPlayerHealthChange += GameHUDStatsManager.Instance.UpdateHUDOnPlayerHealthChangeEvent;
+        OnPlayerHealthChange += LevelHUDStatsManager.Instance.UpdateHUDOnPlayerHealthChangeEvent;
     }
 
     // Update is called once per frame
@@ -79,7 +79,7 @@ public abstract class GenericPlayerController : MonoBehaviour
     {
         goldCollectedByPlayer+= goldCoinValue;//separate counters for PlayerOne and PlayerTwo Instances.
         GameMaster.Instance.AddTotalCollectedGold(goldCoinValue);
-        GameHUDStatsManager.Instance.AddToGoldCounterOnHUD(goldCoinValue);
+        LevelHUDStatsManager.Instance.AddToGoldCounterOnHUD(goldCoinValue);
         //Note - A separate Gold Counter makes sense for HUD because we don't want to run Update() method to read the count from GameMaster
     }
 
@@ -103,8 +103,8 @@ public abstract class GenericPlayerController : MonoBehaviour
         float xpNeededToLevelUp = (float)Math.Pow((currentPlayerLevel + 1), 3);//Get cube of next Player Level
 
         //For HUD, show all values after calibrating xpSurpassedAtPresentLevel at the 0-line
-        GameHUDStatsManager.Instance.UpdateHUDPlayerCurrentXPBar(this, totalPlayerXP - xpSurpassedAtPresentLevel, (xpNeededToLevelUp - xpSurpassedAtPresentLevel));
-        GameHUDStatsManager.Instance.SetPlayerLevelOnHUD(this, currentPlayerLevel);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerCurrentXPBar(this, totalPlayerXP - xpSurpassedAtPresentLevel, (xpNeededToLevelUp - xpSurpassedAtPresentLevel));
+        LevelHUDStatsManager.Instance.SetPlayerLevelOnHUD(this, currentPlayerLevel);
     }
 
 
@@ -138,7 +138,7 @@ public abstract class GenericPlayerController : MonoBehaviour
         }
 
         Debug.Log(this + " has remaining health: " + this.playerHealth);
-        GameHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.playerHealth, this.playerMaxHealth);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.playerHealth, this.playerMaxHealth);
 
     }
 
@@ -173,7 +173,7 @@ public abstract class GenericPlayerController : MonoBehaviour
         this.playerHealth += healPercent*(this.playerMaxHealth - this.playerHealth);
         Debug.Log("Player Health Healed to - " + this.playerHealth);
 
-        GameHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.playerHealth, this.playerMaxHealth);    
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.playerHealth, this.playerMaxHealth);    
     }
 
     //fire health change event to update HUD

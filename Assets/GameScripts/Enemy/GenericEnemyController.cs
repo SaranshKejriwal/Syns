@@ -40,7 +40,8 @@ public class GenericEnemyController : MonoBehaviour
     protected enemyStates defaultEnemyState = enemyStates.isStanding;//this is used to restore enemy/boss to normal state
 
     protected float attackRadius = 2.5f;//radius at which enemy can attack playerTwo
-    protected float enemyHealth = 25;
+    protected float currentEnemyHealth = 25;
+    protected float maxEnemyHealth = 25;//this will be buffed by BuffManager.
 
     //We have 4 attack types in the free animator. Each can be assigned its own damage value.
     protected float leftClawAttackDamage = 3f;
@@ -337,9 +338,9 @@ public class GenericEnemyController : MonoBehaviour
         { 
             return; //can't damage a dead enemy.
         }
-        this.enemyHealth -= attackDamage;
-        Debug.Log(this + " has remaining health: " + this.enemyHealth);
-        if (this.enemyHealth <= 0)
+        this.currentEnemyHealth -= attackDamage;
+        Debug.Log(this + " has remaining health: " + this.currentEnemyHealth);
+        if (this.currentEnemyHealth <= 0)
         {
             KillEnemy();
         }
@@ -349,19 +350,20 @@ public class GenericEnemyController : MonoBehaviour
     protected void KillEnemy()
     {
         currentEnemyState = enemyStates.isDead;//enemy death animation
-        enemyHealth = 0;
+        currentEnemyHealth = 0;
         attackRadius = 0;
         IncreaseAttackDamageByMultiplier(0);//all attack damage is zero for dead enemy
         
         //For Grunts only - if enemy dies, reduce the count of active enemies in spawn handler
         if(enemyType == EnemyType.Grunt)
         {
-            EnemySpawnHandler.Instance.ReduceAliveEnemyCountOnDeadEnemy();
+            EnemySpawnHandler.Instance.ReduceAliveEnemyCountOnEnemyDeath();
         }else if (enemyType == EnemyType.Boss)
         {
             //fire an event here which will be listened to by the HUD and the spawn timer.
             EnemyBossController.Instance.FireOnBossDeathEvent();
         }
     }
+
 
 }

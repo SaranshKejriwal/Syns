@@ -79,7 +79,7 @@ public class PlayerTwoController : GenericPlayerController
         MoveToNextCell();
 
         //display starting speed in HUD
-        GameHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
     }
 
     // Update is called once per frame
@@ -242,7 +242,7 @@ public class PlayerTwoController : GenericPlayerController
         if(currentPlayerTwoMovementSpeed < maxPlayerTwoMovementSpeed)
         {
             currentPlayerTwoMovementSpeed+=1f;
-            GameHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
         }
     }
 
@@ -253,7 +253,7 @@ public class PlayerTwoController : GenericPlayerController
         if (currentPlayerTwoMovementSpeed > minPlayerTwoMovementSpeed)
         {
             currentPlayerTwoMovementSpeed-=1f;
-            GameHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
         }
     }
 
@@ -266,7 +266,7 @@ public class PlayerTwoController : GenericPlayerController
             return;//no XP gain if Player Two is near Player One.
         }
 
-        IncreasePlayerXP(distanceFromPlayerOne / 500f);
+        IncreasePlayerXP(Time.deltaTime);//1xp for each second away from P1
 
     }
 

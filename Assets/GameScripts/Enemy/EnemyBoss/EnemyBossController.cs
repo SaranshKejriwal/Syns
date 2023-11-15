@@ -30,7 +30,8 @@ public class EnemyBossController : GenericEnemyController
         instance.defaultEnemyState = enemyStates.isStanding;
         instance.enemyWalkingMovementSpeed = 0;
         instance.enemyHuntingMovementSpeed = 0;
-        instance.enemyHealth = 75;
+        instance.currentEnemyHealth = 75;
+        instance.maxEnemyHealth = 75;
         instance.attackRadius = 5f;
         instance.IncreaseAttackDamageByMultiplier(2.5f);//2.5x damage for boss as a start.
         currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
@@ -62,7 +63,7 @@ public class EnemyBossController : GenericEnemyController
 
         //Add subscriptions to OnBossDeath event on Start
         OnBossDeath += EnemySpawnHandler.Instance.StopEnemySpawnOnBossDeathEvent;
-        OnBossDeath += GameHUDStatsManager.Instance.UpdateHUDBossIconOnBossDeathEvent;
+        OnBossDeath += LevelHUDStatsManager.Instance.UpdateHUDBossIconOnBossDeathEvent;
 
 
     }

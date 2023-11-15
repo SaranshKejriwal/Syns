@@ -1,7 +1,11 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
+Add Level Failed and Level Completed screens inside GameScene, with logic for selecting next boss buff
 
+Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. Do Not use a Monobehaviour if something is not going to be linked to a GameObj
+
+Populate Path Progress properties for each of the 8 paths and define the GameProgress class to send to JSON.
 
 BUG - interaction between P2 and boss is weird. Possible issue in Boss animator and P2 traversal logic..
 
@@ -16,11 +20,9 @@ PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
 PlayerTwo to reset past visited cells if Stack is empty. CONSTRUCTED. Needs testing
 
-Create Menus, and level completion
+Create Menus, and level completion/failure screen. IN PROGRESS
 
 Addition of PLayer Hit and Death animations.
-
-Make P1 and P2 icons for HUD
 
 
 ________________________________________________________________________________________
@@ -36,17 +38,11 @@ Shop to spend Gold and buy special items
 
 Shared Bag to hold items between P1 and P2.
 
-Player1 and Player2 XP system. 
+Player1 and Player2 XP system. DONE
 
 Create shop items & Runes to be exchanged between P1 and P2 - eg. cloak etc?
 
 Level selection between Base and 7 level types
-
-Difficulty selection - Easy Med Hard
-
-Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
-
-Enable the code that increases the wall height based on PlayerOne position...After everything else.
 
 Adding Runes to the game - 2 slots per player
 
@@ -56,6 +52,7 @@ Save Game stats.
 
 Fix the P2 Exit Door entry logic using Events.
 
+Make P1 and P2 icons for HUD, 7 sins, gold coin, P2 speed
 
 ___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
@@ -69,6 +66,12 @@ Adding states to Players like Walking, Evading, Running, to have better animatio
 Players to get Armour upgrades with visible components getting added on.
 
 Reduce dependency on Update() for all classes. Add more event driven actions rather than checkers.
+
+Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
+
+Difficulty selection - Easy Med Hard
+
+Enable the code that increases the wall height based on PlayerOne position...After everything else.
 
 
 Can Considers____________________________________________________________________________
