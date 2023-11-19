@@ -48,8 +48,10 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     //this function sets the enemy object for P2 to evade and P1 to attack
     public abstract void SetEnemyInFocus(GenericEnemyController enemy);
-    
+
     //this class will be used to define the properties that will be saved by the GameProgressManager in the JSON
+
+    [Serializable]//Serializable Keyword is necessary for JsonUtility to include this object.
     public class GenericPlayerControllerProperties
     {
         public float maxPlayerHealth = 10;

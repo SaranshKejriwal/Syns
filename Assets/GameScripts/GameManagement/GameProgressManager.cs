@@ -22,19 +22,21 @@ public class GameProgressManager
     }
 
     //Destination file
-    private String savePointLocation = Application.persistentDataPath + "/SavePoint.json";
+    public String SavePointLocation = Application.persistentDataPath + "/SavePoint.json";
 
     //Create Progress Object for each of the 8 paths, including enemy stats.
 
     //Create Global Game Level Properties
-    float totalCoinsCollectedSoFar = 0f;
+    public float TotalCoinsCollectedSoFar = 0f;
+
+    public string SaveTimestamp = "";
 
 
     //PlayerOne Properties
-    private GenericPlayerController.GenericPlayerControllerProperties playerOneProperties = new GenericPlayerController.GenericPlayerControllerProperties();
+    public GenericPlayerController.GenericPlayerControllerProperties playerOneProperties = new GenericPlayerController.GenericPlayerControllerProperties();
 
     //PlayerTwo Properties
-    private GenericPlayerController.GenericPlayerControllerProperties playerTwoProperties = new GenericPlayerController.GenericPlayerControllerProperties();
+    public GenericPlayerController.GenericPlayerControllerProperties playerTwoProperties = new GenericPlayerController.GenericPlayerControllerProperties();
 
     private void UpdateProgressInMemory()
     {
@@ -52,9 +54,9 @@ public class GameProgressManager
         UpdateProgressInMemory();
 
         //Write class instance to JSON file.
+        //IMPORTANT - ALL properties need to be public to be written to JSON.
 
-        //Debug.Log(playerOneProperties);
-        //Debug.Log(playerOneProperties.totalPlayerXP);
+        instance.SaveTimestamp = DateTime.Now.ToString();
 
         string jsonSave = JsonUtility.ToJson(instance);
 
@@ -62,7 +64,7 @@ public class GameProgressManager
         //Write some text to the test.txt file
         Debug.Log(jsonSave);
 
-        StreamWriter writer = new StreamWriter(savePointLocation, false);//overwrite existing file
+        StreamWriter writer = new StreamWriter(SavePointLocation, false);//overwrite existing file
         writer.Write(jsonSave);
 
         writer.Close();
@@ -73,7 +75,7 @@ public class GameProgressManager
     public void LoadProgressFromJSON()
     {
         //This will be called on 'Continue' click to load JSON data.
-        StreamReader reader = new StreamReader(savePointLocation);
+        StreamReader reader = new StreamReader(SavePointLocation);
         string jsonFromSaveFile = reader.ReadToEnd(); 
         Debug.Log(jsonFromSaveFile);
         reader.Close();
@@ -81,6 +83,8 @@ public class GameProgressManager
         //load json into class.
         instance = JsonUtility.FromJson<GameProgressManager>(jsonFromSaveFile);
         Debug.Log("Save Point Loaded successfully.");
+
+        Debug.Log(instance.TotalCoinsCollectedSoFar);
 
     }
 }
