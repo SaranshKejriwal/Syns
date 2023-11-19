@@ -18,9 +18,9 @@ public class PlayerTwoController : GenericPlayerController
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
-    private float currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
-    private float maxPlayerTwoMovementSpeed = 8f;
+    private int currentPlayerTwoMovementSpeed = 3;//maintained as separate Class property because it can be controlled by user.
     private float minPlayerTwoMovementSpeed = 1f;//these speeds are maintained as float to allow HUD to compute ratio
+    //max
 
     private int rotationSpeed = 10;
     private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving. Will always be true anyway
@@ -37,7 +37,9 @@ public class PlayerTwoController : GenericPlayerController
     //ExitKey and Door related objects
     private bool hasCollectedExitKey = false;//will be set in the ExitKeyController.
     private bool canEnterExitDoorInVicinity = false;//this will be true when PlayerTwo is in the same cell as 
-    
+
+    protected Vector3 nextIntendedDestination = Vector3.zero;
+    //this will be used to dictate the target for PlayerTwo only, not Applicable for PlayerOne
 
     private GenericEnemyController enemyToEvade;
     //this object will be populated by the last enemy which is hunting/attacking P2.
@@ -60,8 +62,8 @@ public class PlayerTwoController : GenericPlayerController
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerTwo");
         }
-        instance.playerHealth = 15;
-        instance.playerMaxHealth = 15;
+        instance.currentPlayerHealth = 15;
+        instance.playerControllerProperties.maxPlayerHealth = 15;
         instance.isActive = true;
         instance.playerType = PlayerType.PlayerTwo;
         instance.playerState = PlayerState.isMoving;
@@ -79,7 +81,7 @@ public class PlayerTwoController : GenericPlayerController
         MoveToNextCell();
 
         //display starting speed in HUD
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
     }
 
     // Update is called once per frame
@@ -239,10 +241,10 @@ public class PlayerTwoController : GenericPlayerController
     //this will subscribe to inputHandler Faster pressed event and increase PlayerTwo speed.
     public void IncreasePlayerTwoSpeedOnFasterInputPress(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(currentPlayerTwoMovementSpeed < maxPlayerTwoMovementSpeed)
+        if(currentPlayerTwoMovementSpeed < playerControllerProperties.maxPlayerMovementSpeed)
         {
-            currentPlayerTwoMovementSpeed+=1f;
-            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+            currentPlayerTwoMovementSpeed+=1;
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
         }
     }
 
@@ -252,8 +254,8 @@ public class PlayerTwoController : GenericPlayerController
 
         if (currentPlayerTwoMovementSpeed > minPlayerTwoMovementSpeed)
         {
-            currentPlayerTwoMovementSpeed-=1f;
-            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed);
+            currentPlayerTwoMovementSpeed-=1;
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
         }
     }
 

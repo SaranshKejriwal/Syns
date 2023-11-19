@@ -6,6 +6,7 @@ public class GameSoundsManager : MonoBehaviour
 {
 
     [SerializeField] private AudioObjects gameSoundsReference;
+    //check the Inspector for the Sound array mapping
 
     // Start is called before the first frame update
     void Start()

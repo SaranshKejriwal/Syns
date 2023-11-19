@@ -3,7 +3,7 @@ Must Haves______________________________________________________________________
 
 Add Level Failed and Level Completed screens inside GameScene, with logic for selecting next boss buff
 
-Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. Do Not use a Monobehaviour if something is not going to be linked to a GameObj
+Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. 
 
 Populate Path Progress properties for each of the 8 paths and define the GameProgress class to send to JSON.
 
@@ -34,6 +34,8 @@ Allow user to choose enemy buff at start of next level.
 
 Have Variants and buffs for each enemy of each syn.
 
+Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
+
 Shop to spend Gold and buy special items
 
 Shared Bag to hold items between P1 and P2.
@@ -54,12 +56,12 @@ Fix the P2 Exit Door entry logic using Events.
 
 Make P1 and P2 icons for HUD, 7 sins, gold coin, P2 speed
 
+Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open.
+
 ___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
 
-Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open.
 
-Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
 
 Adding states to Players like Walking, Evading, Running, to have better animations.
 
@@ -73,6 +75,7 @@ Difficulty selection - Easy Med Hard
 
 Enable the code that increases the wall height based on PlayerOne position...After everything else.
 
+Reduce Player One Damage; It is currently instakill
 
 Can Considers____________________________________________________________________________
 

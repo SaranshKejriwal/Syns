@@ -67,7 +67,6 @@
     <Compile Include="Assets\GameScripts\GameManagement\PathProgressObject.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyDetectionRadiusVisual.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyBoss\EnemySpawnHandler.cs" />
-    <Compile Include="Assets\GameScripts\Enemy\EnemyController.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\EnemyBuffManager.cs" />
     <Compile Include="Assets\GameScripts\Players\GenericPlayerController.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyAnimation.cs" />
@@ -83,12 +82,13 @@
     <Compile Include="Assets\GameScripts\LevelManagement\LevelBuilder.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\GoldCoinController.cs" />
     <Compile Include="Assets\PlayerInputActions.cs" />
-    <Compile Include="Assets\GameScripts\General\RecursiveMazeTraverser.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\GenericEnemyBuffObject.cs" />
+    <Compile Include="Assets\GameScripts\General\RecursiveMazeTraverser.cs" />
     <Compile Include="Assets\GameScripts\Players\InputHandler.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\CollectiblesSpawnHandler.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeBuildLogicManager.cs" />
     <Compile Include="Assets\GameScripts\GameManagement\GameProgressManager.cs" />
+    <Compile Include="Assets\GameScripts\Enemy\EnemyGruntController.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\LevelHUDStatsManager.cs" />
     <Compile Include="Assets\GameScripts\General\MathFunctions.cs" />
     <Compile Include="Assets\GameScripts\Players\PlayerTwoAnimation.cs" />

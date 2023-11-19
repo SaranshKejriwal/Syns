@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 
 
-public class EnemyController : GenericEnemyController
+public class EnemyGruntController : GenericEnemyController
 {    
         
     private float enemyInteractionSize = 1.5f; //needed for collision handling in Raycast function.

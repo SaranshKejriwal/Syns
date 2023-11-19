@@ -73,6 +73,11 @@ public class GenericEnemyController : MonoBehaviour
     //this method needs revision. Reaction to PlayerOne is cancelled by subsequent Normal Reaction to far away PlayerTwo.
     protected void ReactToPlayer(GenericPlayerController player)
     {
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         if (currentEnemyState == enemyStates.isDead)
         {
             return;//dead enemies can't react to anything.

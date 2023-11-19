@@ -15,21 +15,20 @@ public class PlayerOneController : GenericPlayerController
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
-    [SerializeField] private int moveSpeed = 5;//this private field is accessible on Inspector only, not anywhere else outside class
     private int rotationSpeed = 10;
     private bool isMoving = false; //used by animator to render movement animation if player is moving
     [SerializeField] private InputHandler inputHandler;
     [SerializeField] private float playerOneInteractionSize = 0.5f; //needed for collision handling in Raycast function.
 
 
-    private float playerOnePunchAttackRange = 8f;//determined emperically.
-    private float playerOnePunchAttackDamage = 30f;//increase to instakill for test only.
+    private const float playerOnePunchAttackRange = 8f;//determined emperically.
 
     //this is used to dictate the direction of playerOne before it stopped moving
     private Vector3 lastInteractionDirectionVector = Vector3.zero;
     // Start is called before the first frame update
 
     private GenericEnemyController approachedEnemy;
+   
 
     private void Awake()
     {
@@ -41,8 +40,9 @@ public class PlayerOneController : GenericPlayerController
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerOne");
         }
-        instance.playerHealth = 35;//Much higher than PlayerTwo
-        instance.playerMaxHealth = 35;
+        instance.playerControllerProperties.maxPlayerMovementSpeed = 5; //it is assumed that PlayerOne will always move at Max speed.
+        instance.currentPlayerHealth = 35;//Much higher than PlayerTwo
+        instance.playerControllerProperties.maxPlayerHealth = 35;
         instance.isActive = true;//player is Active.
         instance.canBeAttacked = true;
         instance.playerType = PlayerType.PlayerOne;//set PlayerType of its parent class member
@@ -71,8 +71,8 @@ public class PlayerOneController : GenericPlayerController
         if (approachedEnemy != null && !approachedEnemy.IsEnemyDead())
         {
             //only nearest enemy responds, ONLY when Player One Punches
-            approachedEnemy.RespondToPlayerOnePunch(playerOnePunchAttackDamage);//straightforward non-singleton approach.
-            IncreasePlayerOneXP(playerOnePunchAttackDamage, approachedEnemy.isEnemyTypeBoss());
+            approachedEnemy.RespondToPlayerOnePunch(playerControllerProperties.playerOnePunchAttackDamage);//straightforward non-singleton approach.
+            IncreasePlayerOneXP(playerControllerProperties.playerOnePunchAttackDamage, approachedEnemy.isEnemyTypeBoss());
         }
         
     }
@@ -168,7 +168,7 @@ public class PlayerOneController : GenericPlayerController
             //Note - transform.forward is called before collision handling to ensure direction is always based on key input only.
 
             //move the object position in the direction 
-            transform.position += directionVector * Time.deltaTime * moveSpeed;
+            transform.position += directionVector * Time.deltaTime * playerControllerProperties.maxPlayerMovementSpeed;
             /*transform holds the position of the GameObj, apparently
             transform.position is a 3D vector.
             Time.deltaTime ensures that perceived change in position is independent of system framerate.

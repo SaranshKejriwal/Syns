@@ -28,15 +28,12 @@ public enum PlayerState
 //It can be used to apply generic buff items, health setters etc.
 public abstract class GenericPlayerController : MonoBehaviour
 {
-    protected float playerHealth = 10;
-    protected float playerMaxHealth = 10;
-    protected float goldCollectedByPlayer = 0;
+    //defensive properties
+    protected float currentPlayerHealth = 10; //this will be reset at level start anyway. 
+    protected const float maxPossiblePlayerArmour = 10;//this is to reduce the enemy damage by a %. MaxPossible armour acts as a demominator.
 
-    protected uint currentPlayerLevel = 1; //starting level of Player
-    protected float totalPlayerXP = 1f;//initialize at 1f because both players will start at Level 1
-    //PlayerOne XP increases based on damage done to enemies, Bonus XP for Boss damage
-    //PlayerTwo XP increases based on time spent away from PlayerOne
-    //totalPlayerXP indicates the total xp gained by player. playerLevel is the cube root of the totalPlayerXP
+
+    protected float goldCollectedByPlayerInLevel = 0;//this need not be saved into Save-File
 
 
     protected bool isActive = false; //true for playerOne and PlayerTwo only. False for Shop and Sack.
@@ -47,27 +44,38 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     protected PlayerState playerState = PlayerState.isInactive;
 
-    protected Vector3 nextIntendedDestination = Vector3.zero;
-    //this will be used to dictate the target for PlayerTwo only
-
-
     public event EventHandler OnPlayerHealthChange;//this event will be fired when a Player is damaged/healed, for HUD update.
 
     //this function sets the enemy object for P2 to evade and P1 to attack
     public abstract void SetEnemyInFocus(GenericEnemyController enemy);
     
+    //this class will be used to define the properties that will be saved by the GameProgressManager in the JSON
+    public class GenericPlayerControllerProperties
+    {
+        public float maxPlayerHealth = 10;
+        public int maxPlayerMovementSpeed = 8;//it is assumed that PlayerOne will always move at Max speed.
+        public float currentPlayerArmour = 0f;
+        public uint currentPlayerLevel = 1; //starting level of Player
+        public float totalPlayerXP = 1f;//initialize at 1f because both players will start at Level 1
 
+        //PlayerOne XP increases based on damage done to enemies, Bonus XP for Boss damage 
+        //PlayerTwo XP increases based on time spent away from PlayerOne
+        //totalPlayerXP indicates the total xp gained by player. playerLevel is the cube root of the totalPlayerXP
 
+        public float playerOnePunchAttackDamage = 30f;//increased to instakill for test only.
+
+        public void setAllPlayerProperties()//as good as a constructor.
+        {
+
+        }
+    }
+    //this object will be saved into Progress Manager and into the final json.
+    protected GenericPlayerControllerProperties playerControllerProperties = new GenericPlayerController.GenericPlayerControllerProperties();
+    
     void Start()
     {
         //add subscribers to  event
         OnPlayerHealthChange += LevelHUDStatsManager.Instance.UpdateHUDOnPlayerHealthChangeEvent;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public virtual Vector3 GetPlayerPosition()
@@ -77,7 +85,7 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     public virtual void CollectGold(float goldCoinValue)
     {
-        goldCollectedByPlayer+= goldCoinValue;//separate counters for PlayerOne and PlayerTwo Instances.
+        goldCollectedByPlayerInLevel+= goldCoinValue;//separate counters for PlayerOne and PlayerTwo Instances.
         GameMaster.Instance.AddTotalCollectedGold(goldCoinValue);
         LevelHUDStatsManager.Instance.AddToGoldCounterOnHUD(goldCoinValue);
         //Note - A separate Gold Counter makes sense for HUD because we don't want to run Update() method to read the count from GameMaster
@@ -85,26 +93,26 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     public float GetGoldCollected()
     {
-        return goldCollectedByPlayer;
+        return goldCollectedByPlayerInLevel;
     }
 
     //This function will increase PlayerXP on different occasions
     public void IncreasePlayerXP(float additionalXP)
     {
-        float xpSurpassedAtPresentLevel = (float)Math.Pow((currentPlayerLevel), 3);//Get cube of current Player Level to see XP threshold passed
+        float xpSurpassedAtPresentLevel = (float)Math.Pow((playerControllerProperties.currentPlayerLevel), 3);//Get cube of current Player Level to see XP threshold passed
 
-        totalPlayerXP += additionalXP;
+        playerControllerProperties.totalPlayerXP += additionalXP;
 
         double cubeRootExponent = 1f / 3f;
 
         //update level to the round value of cube root of the Total Xp
-        currentPlayerLevel = (uint)Math.Pow(totalPlayerXP, cubeRootExponent);//this tactic is used in case Player jumps several levels at once
+        playerControllerProperties.currentPlayerLevel = (uint)Math.Pow(playerControllerProperties.totalPlayerXP, cubeRootExponent);//this tactic is used in case Player jumps several levels at once
 
-        float xpNeededToLevelUp = (float)Math.Pow((currentPlayerLevel + 1), 3);//Get cube of next Player Level
+        float xpNeededToLevelUp = (float)Math.Pow((playerControllerProperties.currentPlayerLevel + 1), 3);//Get cube of next Player Level
 
         //For HUD, show all values after calibrating xpSurpassedAtPresentLevel at the 0-line
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerCurrentXPBar(this, totalPlayerXP - xpSurpassedAtPresentLevel, (xpNeededToLevelUp - xpSurpassedAtPresentLevel));
-        LevelHUDStatsManager.Instance.SetPlayerLevelOnHUD(this, currentPlayerLevel);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerCurrentXPBar(this, playerControllerProperties.totalPlayerXP - xpSurpassedAtPresentLevel, (xpNeededToLevelUp - xpSurpassedAtPresentLevel));
+        LevelHUDStatsManager.Instance.SetPlayerLevelOnHUD(this, playerControllerProperties.currentPlayerLevel);
     }
 
 
@@ -123,22 +131,24 @@ public abstract class GenericPlayerController : MonoBehaviour
         return playerType;
     }
 
-    public void SetNextIntendedDestination(Vector3 destination)
+    public GenericPlayerControllerProperties GetPlayerControllerProperties()
     {
-        nextIntendedDestination = destination;
+        return playerControllerProperties;
     }
 
     public void DamagePlayer(float attackDamage)
     {
-        this.playerHealth -= attackDamage;
-        if (this.playerHealth <= 0)
+        //reduce damage based on Armour of player - Max Damage reduction capped at 50%, hence 2*
+        this.currentPlayerHealth -= attackDamage * (1 - (playerControllerProperties.currentPlayerArmour/(2*maxPossiblePlayerArmour)));
+
+        if (this.currentPlayerHealth <= 0)
         {
-            this.playerHealth = 0; //Health cannot be negative.
+            this.currentPlayerHealth = 0; //Health cannot be negative.
             KillPlayer();
         }
 
-        Debug.Log(this + " has remaining health: " + this.playerHealth);
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.playerHealth, this.playerMaxHealth);
+        Debug.Log(this + " has remaining health: " + this.currentPlayerHealth);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.currentPlayerHealth, this.playerControllerProperties.maxPlayerHealth);
 
     }
 
@@ -148,36 +158,31 @@ public abstract class GenericPlayerController : MonoBehaviour
         this.playerState = PlayerState.isDead;
     }
 
-    public void SetPlayerMaxHealth(int playerHealth)
-    {
-        this.playerMaxHealth = playerHealth;
-    }
-
     public bool IsAtMaxHealth()
     {
-        return this.playerHealth == this.playerMaxHealth;
+        return this.currentPlayerHealth == this.playerControllerProperties.maxPlayerHealth;
     }
 
     public void HealPlayer(float healPercent)
     {
-        if(this.playerHealth >= this.playerMaxHealth)
+        if(this.currentPlayerHealth >= this.playerControllerProperties.maxPlayerHealth)
         {
             return; //can't allow a condition where playerHealth exceeds MaxHealth.
         }
 
-        if(this.playerHealth < 0)
+        if(this.currentPlayerHealth < 0)
         {
-            this.playerHealth = 0;//health cannot be negative.
+            this.currentPlayerHealth = 0;//health cannot be negative.
         }
         //heal is not constant. The more damaged the player, the more effective the heal.
-        this.playerHealth += healPercent*(this.playerMaxHealth - this.playerHealth);
-        Debug.Log("Player Health Healed to - " + this.playerHealth);
+        this.currentPlayerHealth += healPercent*(this.playerControllerProperties.maxPlayerHealth - this.currentPlayerHealth);
+        Debug.Log("Player Health Healed to - " + this.currentPlayerHealth);
 
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.playerHealth, this.playerMaxHealth);    
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.currentPlayerHealth, this.playerControllerProperties.maxPlayerHealth);    
     }
 
     //fire health change event to update HUD
-    private void FireOnHealthChangeEvent()
+    /*private void FireOnHealthChangeEvent()
     {
         EventArgs healthChangeEventArgs;
         //healthChangeEventArgs.
@@ -185,7 +190,7 @@ public abstract class GenericPlayerController : MonoBehaviour
         {
             OnPlayerHealthChange(this, EventArgs.Empty);
         }
-    }
+    }*/
 
 
 

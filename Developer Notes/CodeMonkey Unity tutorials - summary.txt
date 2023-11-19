@@ -366,6 +366,8 @@ If you name a script "GameManager", unity will give it a different icon - best t
 First we created a GameMaster, which can govern the state of the game and stop all interactions if Game level is not in playing mode - paused/stopped.
 
 
+Note - Use the SortOrder in Canvas options to reorder stuff.
+
 Adding a Game Over Screen_____________________________________________
 
 UI sorting is based on heirarchy. Bottom-most one is visible first.
@@ -414,3 +416,6 @@ Multiple "subscribers" can subscribe to one event hosted by a publisher, fired o
 
 https://www.youtube.com/watch?v=PVOVIxNxxeQ
 Do Not use a Monobehaviour if something is not going to be linked to a GameObj. It is memory heavy.
+
+
+https://stackoverflow.com/questions/32306704/how-to-pass-data-and-references-between-scenes-in-unity

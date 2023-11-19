@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyDetectionRadiusVisual : MonoBehaviour
 {
     //radius of visible detection circle should be governed by the Enemy detection radius directly.
-    [SerializeField] private EnemyController parentEnemyController;
+    [SerializeField] private EnemyGruntController parentEnemyController;
 
     private int floatToVisualMultiplier = 2;
 

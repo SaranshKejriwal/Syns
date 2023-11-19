@@ -53,9 +53,11 @@ public class LevelTransitionManager : MonoBehaviour
 
         GameMaster.Instance.PauseGame();//put all objects on hold during transition
 
+
         //Retry button - reload the level
 
         //Home button - Go to Level selector
+        LevelFailedCanvas.enabled = true;
     }
 
 

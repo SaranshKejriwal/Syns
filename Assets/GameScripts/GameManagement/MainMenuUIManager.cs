@@ -6,28 +6,46 @@ using UnityEngine.UI;
 
 public class MainMenuUIManager : MonoBehaviour
 {
-    [SerializeField] private Button playButton;
+    [SerializeField] private Button continueButton;
+    [SerializeField] private Button newGameButton;
     [SerializeField] private Button quitButton;
 
-    private const int LEVEL_SELECT_SCREEN_INDEX = 1;
-    private const int LEVEL_PLAY_SCREEN_INDEX = 2;
+    //private const int LEVEL_SELECT_SCREEN_INDEX = 1;
+    //private const int LEVEL_PLAY_SCREEN_INDEX = 2;
 
     private void Awake()
     {
         //add listeners to button clicks.
-
-        playButton.onClick.AddListener(onPlayButtonClick);//internal functions added as listeners
+        continueButton.onClick.AddListener(LoadSavedGame);
+        newGameButton.onClick.AddListener(checkExistingGameAndPromptUser);//internal functions added as listeners
         quitButton.onClick.AddListener(onQuitButtonClick);
     }
 
 
-    private void onPlayButtonClick()
+    private void LoadSavedGame()
     {
-        SceneManager.LoadScene(LEVEL_SELECT_SCREEN_INDEX);//Scene at index 1
+        GameProgressManager.Instance.LoadProgressFromJSON();
+        //Load the Level-Selector screen, assuming that Game Progress Manager
+        //SceneManager.LoadScene(LEVEL_SELECT_SCREEN_INDEX);//Scene at index 1
+
+        //we're now trying to fit everything in 1 Scene
+    }
+
+    private void checkExistingGameAndPromptUser() 
+    {
+        RemoveSaveAndStartNewGame();
+    }
+
+    private void RemoveSaveAndStartNewGame()
+    {
+        //load a popup here to double check that Player wants to Clear progress, IF ANY
+        //SceneManager.LoadScene(LEVEL_SELECT_SCREEN_INDEX);//Scene at index 1
     }
 
     private void onQuitButtonClick()
     {
+        GameProgressManager.Instance.SaveProgressToJSON();
+
         Application.Quit();//exit the entire application; Will not work in the editor
     }
 
