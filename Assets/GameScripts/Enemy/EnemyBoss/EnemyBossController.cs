@@ -31,26 +31,17 @@ public class EnemyBossController : GenericEnemyController
         instance.enemyWalkingMovementSpeed = 0;
         instance.enemyHuntingMovementSpeed = 0;
         instance.currentEnemyHealth = 75;
-        instance.maxEnemyHealth = 75;
+        instance.EnemyProperties.maxEnemyHealth = 75;
         instance.attackRadius = 5f;
-        instance.IncreaseAttackDamageByMultiplier(2.5f);//2.5x damage for boss as a start.
-        currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
+        instance.EnemyProperties.damageMultiplier = 2.5f;
+        instance.IncreaseAttackDamageByMultiplier(instance.EnemyProperties.damageMultiplier);//2.5x damage for boss as a start.
+        instance.currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
+        instance.enemyDetectionRadius = 9f;//Boss detection radius is hard-coded, not picked up from properties
     }
-    public override void UpdateEnemyRadii()
-    {
-        //this function will update both the radius-lookup dictionaries for each Enemy object.
-        enemyDetectionRadiusReference = new Dictionary<GenericPlayerController, float>()
-        {
-            { PlayerOneController.Instance, 9f }, //boss can detect both players
-            { PlayerTwoController.Instance, 9f } //detection radius is equal to attack radius deliberately.
-        };
 
-        //All values will be 0 for generic class
-    }
     // Start is called before the first frame update
     void Start()
     {
-        instance.UpdateEnemyRadii();
         //To Spawn - Find a mazeCell that is in a dead-end for spawning
         //We don't want to see the butt of the Boss, to the cell should have 1 opening except the top one.
         //Dead-end cell should be at the very edge of the level

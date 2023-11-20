@@ -63,7 +63,7 @@ public class PlayerTwoController : GenericPlayerController
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerTwo");
         }
         instance.currentPlayerHealth = 15;
-        instance.playerControllerProperties.maxPlayerHealth = 15;
+        instance.PlayerControllerProperties.maxPlayerHealth = 15;
         instance.isActive = true;
         instance.playerType = PlayerType.PlayerTwo;
         instance.playerState = PlayerState.isMoving;
@@ -81,7 +81,7 @@ public class PlayerTwoController : GenericPlayerController
         MoveToNextCell();
 
         //display starting speed in HUD
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
     }
 
     // Update is called once per frame
@@ -241,10 +241,10 @@ public class PlayerTwoController : GenericPlayerController
     //this will subscribe to inputHandler Faster pressed event and increase PlayerTwo speed.
     public void IncreasePlayerTwoSpeedOnFasterInputPress(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(currentPlayerTwoMovementSpeed < playerControllerProperties.maxPlayerMovementSpeed)
+        if(currentPlayerTwoMovementSpeed < PlayerControllerProperties.maxPlayerMovementSpeed)
         {
             currentPlayerTwoMovementSpeed+=1;
-            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
         }
     }
 
@@ -255,7 +255,7 @@ public class PlayerTwoController : GenericPlayerController
         if (currentPlayerTwoMovementSpeed > minPlayerTwoMovementSpeed)
         {
             currentPlayerTwoMovementSpeed-=1;
-            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
         }
     }
 

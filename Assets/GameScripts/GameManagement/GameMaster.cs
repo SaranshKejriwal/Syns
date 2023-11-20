@@ -2,32 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LevelType
+{
+    Base = 0,
+    Greed = 1,
+    Sloth = 2,
+    Envy = 3,
+    Gluttony = 4,
+    Lust = 5,
+    Pride = 6,
+    Wrath = 7
+}
+
 //this is the master script that will trigger levelbuilding and main menus.
 public class GameMaster : MonoBehaviour
 {
     //this enum will define the various states that the overall game will be in.
     public enum GameStates
     {
-        onWaitingToStart,
         onMainMenu,
-        onLevelStartCountdown,
+        onLevelSelection,
         onLevelPlay,
         onGamePause,
-        onLevelOver
+        onLevelOver,
+        onGameShop
     }
 
     //this enum will be used to capture the type of level - 7 for each sin and 1 base
-    public enum LevelType
-    {
-        Base,
-        Greed,
-        Sloth,
-        Envy,
-        Gluttony,
-        Lust,
-        Pride,
-        Wrath
-    }
+
 
     private static GameMaster instance;
     public static GameMaster Instance
@@ -37,9 +39,9 @@ public class GameMaster : MonoBehaviour
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
-    private GameStates gameState = GameStates.onWaitingToStart;
+    private GameStates gameState = GameStates.onMainMenu;
 
-    private float levelStartCountdownTimer = 3f;
+    private float levelStartCountdownTimer = 4f;
 
     private float totalUnspentGold = 0f;//This will increase as gold is collected.
     //This is a Game level property, not a single level property.
@@ -61,8 +63,10 @@ public class GameMaster : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Starting GameMaster Object...");
         //instance.gameState = GameStates.onLevelStartCountdown;
-        instance.gameState = GameStates.onLevelPlay;//this one is for testing only.
+        instance.gameState = GameStates.onMainMenu;//this one is for testing only.
+        GameProgressManager.Instance.InitializeGamePathArray();
     }
 
     // Update is called once per frame
@@ -70,7 +74,9 @@ public class GameMaster : MonoBehaviour
     {
         switch(instance.gameState)
         {
-            case GameStates.onLevelStartCountdown:
+            case GameStates.onLevelSelection:
+                levelStartCountdownTimer -= Time.deltaTime; break;
+            case GameStates.onMainMenu:
                 levelStartCountdownTimer -= Time.deltaTime; break;
         }
 

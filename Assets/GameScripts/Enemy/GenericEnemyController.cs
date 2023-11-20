@@ -26,8 +26,8 @@ public enum EnemyType
 
 public class GenericEnemyController : MonoBehaviour
 {
-    protected int enemyWalkingMovementSpeed = 3; //when enemy is walking normally
-    protected int enemyHuntingMovementSpeed = 7; //when Player 2 is detected by the Enemy and Enemy is chasing Player 2
+    protected float enemyWalkingMovementSpeed = 3; //when enemy is walking normally
+    protected float enemyHuntingMovementSpeed = 7; //when Player 2 is detected by the Enemy and Enemy is chasing Player 2
     protected int enemyRotationSpeed = 10;
     //Note - Hunting speed should be same as the max movement speed of playerTwo, else enemy will never catch up.
     
@@ -41,7 +41,7 @@ public class GenericEnemyController : MonoBehaviour
 
     protected float attackRadius = 2.5f;//radius at which enemy can attack playerTwo
     protected float currentEnemyHealth = 25;
-    protected float maxEnemyHealth = 25;//this will be buffed by BuffManager.
+
 
     //We have 4 attack types in the free animator. Each can be assigned its own damage value.
     protected float leftClawAttackDamage = 3f;
@@ -51,18 +51,30 @@ public class GenericEnemyController : MonoBehaviour
 
     protected GenericPlayerController targetPlayer = null;//this will be used to track which player is being tracked by the enemy.
 
-    //these dictionaries will be useful for configuring behaviour of each of the enemy types against each of the player types in one base function.
-    protected Dictionary<GenericPlayerController, float> enemyDetectionRadiusReference;
+    protected float enemyDetectionRadius;//this is maintained internally because Boss detection radius is hard-coded and grunt radius is property driven.
+
+
+    [Serializable]
+    public class GenericEnemyControllerProperties
+    {
+        public float damageMultiplier = 1f;//this will grow with enemy buffs
+        public float maxEnemyHealth = 25;//this will be buffed by BuffManager.
+
+        public float enemyMovementSpeedMultiplier = 1f; //to boost walking/hunting speeds.
+
+        public float gruntDetectionRadius = 10f; //Boss detection radius will be hard coded
+
+        public float gruntSpawnDelay = 30; //needs to be kept regardless of whether it is buffed or not..to track impact of boss on next level
+    }
+
+    protected GenericEnemyControllerProperties EnemyProperties = new GenericEnemyControllerProperties();
 
     // Start is called before the first frame update
     void Start()
     {
         
     }
-    public virtual void UpdateEnemyRadii()
-    {
 
-    }//abstract forces the child classes to add a child implem
     // Update is called once per frame
     void Update()
     {
@@ -89,20 +101,13 @@ public class GenericEnemyController : MonoBehaviour
             //player should not be null and should be attack-able. Ignore Shop and Bag.
         }
 
-        bool hasPlayerDetectionRadius = enemyDetectionRadiusReference.TryGetValue(player, out float playerDetectionRadius);
-        if (!hasPlayerDetectionRadius )
-        {
-            Debug.LogError(this + "Error - Cannot Get Detection of this enemy");
-            return;
-        }
-
         float distanceFromPlayer = Vector3.Distance(player.GetPlayerPosition(), transform.position);
         
 
-        if(distanceFromPlayer <= playerDetectionRadius && distanceFromPlayer > attackRadius)
+        if(distanceFromPlayer <= enemyDetectionRadius && distanceFromPlayer > attackRadius)
         {
             //check for obstruction only when player is in radius, not all the time.
-            bool isPlayerNotObstructed = IsPlayerRayCastNotObstructed(player, playerDetectionRadius);
+            bool isPlayerNotObstructed = IsPlayerRayCastNotObstructed(player, enemyDetectionRadius);
             //Grunts will chase. Boss will Roar. This is configured in the animation
             if(isPlayerNotObstructed)
             {               
@@ -185,7 +190,7 @@ public class GenericEnemyController : MonoBehaviour
         return currentEnemyState == enemyStates.isStanding;
     }
 
-    public bool isEnemyTypeBoss()
+    public bool IsEnemyTypeBoss()
     {
         return enemyType == EnemyType.Boss;
     }
@@ -193,6 +198,11 @@ public class GenericEnemyController : MonoBehaviour
     public Vector3 GetEnemyPosition()
     {
         return transform.position;
+    }
+
+    public GenericEnemyControllerProperties GetEnemyProperties()
+    {
+        return EnemyProperties;
     }
 
     protected bool IsPlayerRayCastNotObstructed(GenericPlayerController playerInFocus, float detectionRadius)
@@ -222,12 +232,9 @@ public class GenericEnemyController : MonoBehaviour
         return true;
     }
 
-    public float GetEnemyDetectionRadiusOfPlayerTwo()
+    public float GetEnemyDetectionRadius()
     {
-        //Needed to configure the radius of the visible circle.
-        float playerTwoDetectionRadius = 0f;
-        enemyDetectionRadiusReference.TryGetValue(PlayerTwoController.Instance, out playerTwoDetectionRadius);
-        return playerTwoDetectionRadius;
+        return enemyDetectionRadius;
     }
 
     //This method returns the player between PlayerOne and PlayerTwo that is nearest to the base object
@@ -249,15 +256,15 @@ public class GenericEnemyController : MonoBehaviour
     }
 
 
-    protected int GetEnemyMovementSpeed()
+    protected float GetEnemyMovementSpeed()
     {
         if (IsEnemyMoving())
         {
-            return enemyWalkingMovementSpeed;
+            return enemyWalkingMovementSpeed * EnemyProperties.enemyMovementSpeedMultiplier;
         }
         else if (IsEnemyHunting())
         {
-            return enemyHuntingMovementSpeed;
+            return enemyHuntingMovementSpeed * EnemyProperties.enemyMovementSpeedMultiplier;
         }
         else
         {

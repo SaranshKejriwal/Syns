@@ -22,22 +22,13 @@ public class EnemyGruntController : GenericEnemyController
         enemyWalkingMovementSpeed = base.enemyWalkingMovementSpeed;
         enemyHuntingMovementSpeed = base.enemyHuntingMovementSpeed;
         currentEnemyHealth = base.currentEnemyHealth;
-        maxEnemyHealth = base.maxEnemyHealth;
-        IncreaseAttackDamageByMultiplier(1);//same attack damage as base
+        EnemyProperties.maxEnemyHealth = base.EnemyProperties.maxEnemyHealth;
+        IncreaseAttackDamageByMultiplier(EnemyProperties.damageMultiplier);//same attack damage as base
+        enemyDetectionRadius = EnemyProperties.gruntDetectionRadius;//pull detection radius from Properties
     }
-    public override void UpdateEnemyRadii()
-    {
-        //this function will update both the radius-lookup dictionaries for each Enemy object.
-        enemyDetectionRadiusReference = new Dictionary<GenericPlayerController, float>()
-        {
-            { PlayerOneController.Instance, 10f },//playerOne is less detectable than playerTwo
-            { PlayerTwoController.Instance, 10f }
-        };
 
-    }
     void Start()
     {
-        this.UpdateEnemyRadii();
         currentEnemyMovementDirection = AutoMovementHandler.GetRandomDirectionVector();
     }
 

@@ -13,6 +13,8 @@ using UnityEngine;
 [Serializable]
 public class GameProgressManager
 {
+    private const int GAME_PATH_COUNT = 8;//Game will always have 8 paths. No need to serialize this
+
     //this will be a singleton to load from a JSON file
     private static GameProgressManager instance = new GameProgressManager();
     public static GameProgressManager Instance
@@ -21,15 +23,17 @@ public class GameProgressManager
         private set { instance = value; }
     }
 
+
+
     //Destination file
     public String SavePointLocation = Application.persistentDataPath + "/SavePoint.json";
+    public string SaveTimestamp = "";
 
-    //Create Progress Object for each of the 8 paths, including enemy stats.
+
 
     //Create Global Game Level Properties
     public float TotalCoinsCollectedSoFar = 0f;
 
-    public string SaveTimestamp = "";
 
 
     //PlayerOne Properties
@@ -37,6 +41,11 @@ public class GameProgressManager
 
     //PlayerTwo Properties
     public GenericPlayerController.GenericPlayerControllerProperties playerTwoProperties = new GenericPlayerController.GenericPlayerControllerProperties();
+
+    //Create Progress Object for each of the 8 paths, including enemy stats.
+    //we are creating array rather than a Dictionary, for easier JSON serialization. Enum can be used for array index
+    public PathProgressObject[] GamePathArray = new PathProgressObject[GAME_PATH_COUNT];//Array will always have 8 members only
+
 
     private void UpdateProgressInMemory()
     {
@@ -48,7 +57,7 @@ public class GameProgressManager
 
 
     //this method will save progress for overall game across all 8 paths.
-    public void SaveProgressToJSON()
+    public void WriteProgressToJSON()
     {
         //Get latest version of the Properties to Save.
         UpdateProgressInMemory();
@@ -77,14 +86,63 @@ public class GameProgressManager
         //This will be called on 'Continue' click to load JSON data.
         StreamReader reader = new StreamReader(SavePointLocation);
         string jsonFromSaveFile = reader.ReadToEnd(); 
-        Debug.Log(jsonFromSaveFile);
         reader.Close();
 
         //load json into class.
         instance = JsonUtility.FromJson<GameProgressManager>(jsonFromSaveFile);
-        Debug.Log("Save Point Loaded successfully.");
+        Debug.Log("Save Point Loaded successfully. Total Coins Loaded: " + instance.TotalCoinsCollectedSoFar);
 
-        Debug.Log(instance.TotalCoinsCollectedSoFar);
+    }
 
+    public PathProgressObject GetPathObjectByLevelType (LevelType type)
+    {
+        return GamePathArray[(int)type];
+        //this should ideally never be called outside this class since it's not a Call by Reference
+    }
+
+    public void InitializeGamePathArray()
+    {
+
+        for (int i = 0;i < GAME_PATH_COUNT;i++)
+        {
+            //Set the LevelType against each array index.
+            GamePathArray[i] = new PathProgressObject((LevelType)i);//convert Index to corresponding Enum
+        }
+
+        Debug.Log("GamePath Array initialized.");
+    }
+
+    public void UnlockAllSynPaths()
+    {
+        //unlock 1 through 6
+        for (int i = 1; i < GAME_PATH_COUNT; i++)
+        {
+            GamePathArray[i].isPathUnlocked = true;
+        }
+    }
+
+    public void ResetGameProgress()
+    {
+        //reset Game Path Array
+        InitializeGamePathArray();
+        //This will not be loaded from Save File at the start of the app.
+        instance.playerOneProperties = PlayerOneController.Instance.GetPlayerControllerProperties();
+        instance.playerTwoProperties = PlayerTwoController.Instance.GetPlayerControllerProperties();
+
+        WriteProgressToJSON();
+    }
+
+    public bool IsExistingSaveFileAvailable()
+    {
+        if (System.IO.File.Exists(SavePointLocation))
+        {
+            Debug.Log("Previous Save File found...");
+            return true;
+        }
+        else
+        {
+            Debug.Log("No Previous Save File Located...");
+            return false;
+        }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 //this class provides all the buffs that the player can select after a level completion.
 
-/*Enemy buff types - MaxHealth Grunt/Boss, Damage Grunt/Boss, Speed Grunt, Detection Radius Grunt, Spawn timer*/
+/*Enemy buff types - MaxHealth Grunt/Boss, Damage Grunt/Boss, Speed Grunt... Detection Radius Grunt, Spawn timer*/
 public class EnemyBuffManager : MonoBehaviour
 {
     private static EnemyBuffManager instance;

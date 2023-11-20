@@ -40,9 +40,9 @@ public class PlayerOneController : GenericPlayerController
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerOne");
         }
-        instance.playerControllerProperties.maxPlayerMovementSpeed = 5; //it is assumed that PlayerOne will always move at Max speed.
+        instance.PlayerControllerProperties.maxPlayerMovementSpeed = 5; //it is assumed that PlayerOne will always move at Max speed.
         instance.currentPlayerHealth = 35;//Much higher than PlayerTwo
-        instance.playerControllerProperties.maxPlayerHealth = 35;
+        instance.PlayerControllerProperties.maxPlayerHealth = 35;
         instance.isActive = true;//player is Active.
         instance.canBeAttacked = true;
         instance.playerType = PlayerType.PlayerOne;//set PlayerType of its parent class member
@@ -71,8 +71,8 @@ public class PlayerOneController : GenericPlayerController
         if (approachedEnemy != null && !approachedEnemy.IsEnemyDead())
         {
             //only nearest enemy responds, ONLY when Player One Punches
-            approachedEnemy.RespondToPlayerOnePunch(playerControllerProperties.playerOnePunchAttackDamage);//straightforward non-singleton approach.
-            IncreasePlayerOneXP(playerControllerProperties.playerOnePunchAttackDamage, approachedEnemy.isEnemyTypeBoss());
+            approachedEnemy.RespondToPlayerOnePunch(PlayerControllerProperties.playerOnePunchAttackDamage);//straightforward non-singleton approach.
+            IncreasePlayerOneXP(PlayerControllerProperties.playerOnePunchAttackDamage, approachedEnemy.IsEnemyTypeBoss());
         }
         
     }
@@ -168,7 +168,7 @@ public class PlayerOneController : GenericPlayerController
             //Note - transform.forward is called before collision handling to ensure direction is always based on key input only.
 
             //move the object position in the direction 
-            transform.position += directionVector * Time.deltaTime * playerControllerProperties.maxPlayerMovementSpeed;
+            transform.position += directionVector * Time.deltaTime * PlayerControllerProperties.maxPlayerMovementSpeed;
             /*transform holds the position of the GameObj, apparently
             transform.position is a 3D vector.
             Time.deltaTime ensures that perceived change in position is independent of system framerate.
