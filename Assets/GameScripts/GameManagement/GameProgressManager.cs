@@ -15,6 +15,7 @@ public class GameProgressManager
 {
     private const int GAME_PATH_COUNT = 8;//Game will always have 8 paths. No need to serialize this
 
+
     //this will be a singleton to load from a JSON file
     private static GameProgressManager instance = new GameProgressManager();
     public static GameProgressManager Instance
@@ -44,7 +45,7 @@ public class GameProgressManager
 
     //Create Progress Object for each of the 8 paths, including enemy stats.
     //we are creating array rather than a Dictionary, for easier JSON serialization. Enum can be used for array index
-    public PathProgressObject[] GamePathArray = new PathProgressObject[GAME_PATH_COUNT];//Array will always have 8 members only
+    public PathProgressObject[] GamePathProgressArray = new PathProgressObject[GAME_PATH_COUNT];//Array will always have 8 members only
 
 
     private void UpdateProgressInMemory()
@@ -85,7 +86,7 @@ public class GameProgressManager
     {
         //This will be called on 'Continue' click to load JSON data.
         StreamReader reader = new StreamReader(SavePointLocation);
-        string jsonFromSaveFile = reader.ReadToEnd(); 
+        string jsonFromSaveFile = reader.ReadToEnd();
         reader.Close();
 
         //load json into class.
@@ -94,19 +95,19 @@ public class GameProgressManager
 
     }
 
-    public PathProgressObject GetPathObjectByLevelType (LevelType type)
+    public PathProgressObject GetPathObjectByLevelType(LevelType type)
     {
-        return GamePathArray[(int)type];
+        return GamePathProgressArray[(int)type];
         //this should ideally never be called outside this class since it's not a Call by Reference
     }
 
     public void InitializeGamePathArray()
     {
 
-        for (int i = 0;i < GAME_PATH_COUNT;i++)
+        for (int i = 0; i < GAME_PATH_COUNT; i++)
         {
             //Set the LevelType against each array index.
-            GamePathArray[i] = new PathProgressObject((LevelType)i);//convert Index to corresponding Enum
+            GamePathProgressArray[i] = new PathProgressObject((LevelType)i);//convert Index to corresponding Enum
         }
 
         Debug.Log("GamePath Array initialized.");
@@ -117,8 +118,10 @@ public class GameProgressManager
         //unlock 1 through 6
         for (int i = 1; i < GAME_PATH_COUNT; i++)
         {
-            GamePathArray[i].isPathUnlocked = true;
+            GamePathProgressArray[i].isPathUnlocked = true;
         }
+
+        WriteProgressToJSON();
     }
 
     public void ResetGameProgress()
@@ -144,5 +147,15 @@ public class GameProgressManager
             Debug.Log("No Previous Save File Located...");
             return false;
         }
+    }
+
+    public uint GetHighestAccessibleLevelForType(LevelType levelType)
+    {
+        if (GamePathProgressArray[(int)levelType].IsPathCompleted())
+        {
+            return GamePathProgressArray[(int)levelType].GetHighestLevelIndex();//return
+        }
+
+        return GamePathProgressArray[(int)(levelType)].levelReachedIndex;
     }
 }

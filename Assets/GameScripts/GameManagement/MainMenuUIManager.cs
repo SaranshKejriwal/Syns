@@ -6,6 +6,15 @@ using UnityEngine.UI;
 
 public class MainMenuUIManager : MonoBehaviour
 {
+    private static MainMenuUIManager instance;
+    public static MainMenuUIManager Instance
+    {
+        /*Enemy Boss will be a singleton. It also controls EnemySpawn Handler.*/
+        get { return instance; }
+        private set { instance = value; }
+    }
+
+    //Buttons on the Main Menu;
     [SerializeField] private Canvas MainMenuCanvas;
     [SerializeField] private Button continueButton;
     [SerializeField] private Button newGameButton;
@@ -15,11 +24,25 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private Button AcceptResetButton;
     [SerializeField] private Button LoadSaveButton;
 
+    //Level Selection Canvas Reference - Buttons to be added more elegantly than individually
+    [SerializeField] private Canvas LevelSelectionCanvas;
+
+
+
     //private const int LEVEL_SELECT_SCREEN_INDEX = 1;
     //private const int LEVEL_PLAY_SCREEN_INDEX = 2;
 
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;//start by setting the Singleton instance 
+        }
+        else
+        {
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of Main Menu UI Manager");
+        }
+
         ResetWarningPromptCanvas.enabled = false;//Not to be shown until NewGame is clicked
 
         //add listeners to button clicks.
@@ -70,6 +93,8 @@ public class MainMenuUIManager : MonoBehaviour
         //Hide Main Menu Canvas and Warning prompt to reveal Level Selection Canvas.
         ResetWarningPromptCanvas.enabled = false;
         MainMenuCanvas.enabled = false;
+
+        LevelSelectionCanvas.enabled = true;//show level selection canvas.
     }
 
     private void onQuitButtonClick()

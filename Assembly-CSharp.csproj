@@ -95,6 +95,7 @@
     <Compile Include="Assets\GameScripts\Collectibles\ExitKeyController.cs" />
     <Compile Include="Assets\GameScripts\GameManagement\GameSoundsManager.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\GenericCollectibleItem.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\LevelSelectionManager.cs" />
     <Compile Include="Assets\GameScripts\GameManagement\MainMenuUIManager.cs" />
     <Compile Include="Assets\GameScripts\General\AutoMovementHandler.cs" />
   </ItemGroup>
@@ -104,6 +105,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
+    <None Include="Assets\Jewel Pack\Shaders\Gem.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
