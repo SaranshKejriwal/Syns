@@ -42,22 +42,11 @@ public class EnemyBossController : GenericEnemyController
     // Start is called before the first frame update
     void Start()
     {
-        //To Spawn - Find a mazeCell that is in a dead-end for spawning
-        //We don't want to see the butt of the Boss, to the cell should have 1 opening except the top one.
-        //Dead-end cell should be at the very edge of the level
-        MazeCell containerCell = LevelBuilder.Instance.GetDeadEndCellForBossSpawn();
-        transform.position = containerCell.cellPositionOnMap;
-
-        //Face the opening of the cell only
-        transform.eulerAngles = new Vector3(0, GetRotationAngleInCell(containerCell), 0);
-
-
         //Add subscriptions to OnBossDeath event on Start
         OnBossDeath += EnemySpawnHandler.Instance.StopEnemySpawnOnBossDeathEvent;
         OnBossDeath += LevelHUDStatsManager.Instance.UpdateHUDBossIconOnBossDeathEvent;
-
-
     }
+
 
     // Update is called once per frame
     void Update()
@@ -69,6 +58,18 @@ public class EnemyBossController : GenericEnemyController
 
         //Get Nearest Player and react to it
         base.ReactToPlayer(base.GetNearestPlayer());
+    }
+
+    public void PlaceLevelBossOnFarMap()
+    {
+        //To Spawn - Find a mazeCell that is in a dead-end for spawning
+        //We don't want to see the butt of the Boss, to the cell should have 1 opening except the top one.
+        //Dead-end cell should be at the very edge of the level
+        MazeCell containerCell = LevelBuilder.Instance.GetDeadEndCellForBossSpawn();
+        transform.position = containerCell.cellPositionOnMap;
+
+        //Face the opening of the cell only
+        transform.eulerAngles = new Vector3(0, GetRotationAngleInCell(containerCell), 0);
     }
 
     private int GetRotationAngleInCell(MazeCell cell)

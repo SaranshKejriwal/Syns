@@ -50,7 +50,7 @@ public class EnemyAnimation : MonoBehaviour
         enemyAnimator.SetBool(IS_MOVING_PARAM_NAME, enemyLogicObject.IsEnemyMoving());//pickup the "isMoving"  parameter from the Animator component of the player
         enemyAnimator.SetBool(IS_HUNTING_PARAM_NAME, enemyLogicObject.IsEnemyHunting());//pickup the "isMoving"  parameter from the Animator component of the player
         enemyAnimator.SetBool(IS_HIT_PARAM_NAME, enemyLogicObject.IsEnemyHit());
-        enemyAnimator.SetBool(IS_STANDING_PARAM_NAME, enemyLogicObject.isEnemyStanding());
+        enemyAnimator.SetBool(IS_STANDING_PARAM_NAME, enemyLogicObject.IsEnemyStanding());
         enemyAnimator.SetBool(IS_DEAD_PARAM_NAME, enemyLogicObject.IsEnemyDead());
 
         if (enemyLogicObject.IsEnemyAttacking())

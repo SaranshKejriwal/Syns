@@ -17,7 +17,7 @@ public class EnemySpawnHandler : MonoBehaviour
         private set { instance = value; }
     }
 
-    private bool isEnemySpawnTimerActive = true;
+    private bool isEnemySpawnTimerActive = false;
     private int aliveEnemyCount = 0;
     private float currentTimerElapsedSeconds = 0f;
     private int maxTimerSeconds = 30;//30 seconds between enemy spawns.
@@ -27,7 +27,12 @@ public class EnemySpawnHandler : MonoBehaviour
 
     //Current values are too small - need to expand for the full map
     private float minSpawnDistanceFromOrigin = 5f;//to get min distance from (0,0), to not spawn on top of players
-   
+
+    //These Properties will be maintained by the Enemy Spawn handler.
+    //When spawning a new grunt, it will fire an event which all grunts will listen, to ensure that their properties are updated.
+    //This is being done because Spawn handler is creating a 'Transform' object.
+    private GenericEnemyController.GenericEnemyControllerProperties currentGruntProperties;
+ 
     private void Awake()
     {
         if (instance == null)
@@ -42,13 +47,6 @@ public class EnemySpawnHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Starting Enemy Spawn Handler...");  
-        
-        //one-fourth maze length from either side of origin should define the inner limit of enemy spawn
-        minSpawnDistanceFromOrigin = LevelBuilder.Instance.GetMazeTotalSideLength()/4;
- 
-
-        SpawnNewEnemy();//Start the game with One Enemy.
 
     }
 
@@ -82,7 +80,7 @@ public class EnemySpawnHandler : MonoBehaviour
         currentTimerElapsedSeconds = 0f;
     }
 
-    private void SpawnNewEnemy()
+    public void SpawnNewEnemy()
     {
         if (!isEnemySpawnTimerActive)
         {
@@ -92,8 +90,11 @@ public class EnemySpawnHandler : MonoBehaviour
 
         Transform newEnemy = Instantiate(enemyPrefab);
 
-        //need to fire an event here which will contain the buffs that need to applied on a level.
-        //All enemies that alive need to listen to the event and buff up, since we cannot control any Enemy proerties from here
+       //Apply current Buff properties of the level to new Enemy.
+        newEnemy.transform.GetComponent<GenericEnemyController>().SetEnemyPropertiesFromSave(currentGruntProperties);
+
+        //one-fourth maze length from either side of origin should define the inner limit of enemy spawn
+        minSpawnDistanceFromOrigin = LevelBuilder.Instance.GetMazeTotalSideLength() / 4;
 
         newEnemy.localPosition = MathFunctions.GetRandomSpawnPointOnFarSideMap(minSpawnDistanceFromOrigin);//always modify localPosition with respect to parent.
         aliveEnemyCount++;
@@ -101,11 +102,19 @@ public class EnemySpawnHandler : MonoBehaviour
         LevelHUDStatsManager.Instance.SetEnemyCounterOnHUD(aliveEnemyCount);
     }
 
+    public void StartEnemySpawn()
+    {
+        SpawnNewEnemy();//this will be called when new level is setup. Start with 1 new enemy on the board.
+
+        //activate timer to spawn new grunts
+        instance.isEnemySpawnTimerActive = true;
+
+    }
 
     public void StopEnemySpawnTimer()
     {
         //this will be called when boss dies.
-        isEnemySpawnTimerActive = false;
+        instance.isEnemySpawnTimerActive = false;
         ResetEnemySpawnTimer();
     }
 
@@ -134,5 +143,18 @@ public class EnemySpawnHandler : MonoBehaviour
     {
         //this will be called when a player starts another track...
         //but what about resume? We will need to save the states for each of the level paths, right?
+    }
+
+    public void SetCurrentGruntProperties(GenericEnemyController.GenericEnemyControllerProperties newGruntProperties)
+    {
+        instance.currentGruntProperties = newGruntProperties;
+        instance.maxTimerSeconds = newGruntProperties.gruntSpawnDelay; //set spawn time based on Level loaded by GameProgressManager
+    }
+
+    public void SetEnemyPropertiesForLevelType(LevelType levelType)
+    {
+        //Implementation needed here for different syn buffs.
+
+
     }
 }

@@ -72,7 +72,7 @@ public class GameMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch(instance.gameState)
+        /*switch(instance.gameState)
         {
             case GameStates.onLevelSelection:
                 levelStartCountdownTimer -= Time.deltaTime; break;
@@ -85,7 +85,7 @@ public class GameMaster : MonoBehaviour
         {
             instance.gameState = GameStates.onLevelPlay;
             return;
-        }
+        }*/
 
     }
 
@@ -98,6 +98,11 @@ public class GameMaster : MonoBehaviour
     public void PauseGame()
     {
         instance.gameState = GameStates.onGamePause;
+    }
+
+    public void StartGamePlay()
+    {
+        instance.gameState = GameStates.onLevelPlay;
     }
 
     public void AddTotalCollectedGold(float goldValue)

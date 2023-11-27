@@ -39,7 +39,7 @@ public class MazeRenderer : MonoBehaviour
         
     }
 
-    public void DrawMazeOnGame(MazeCell[,] gameMaze, uint totalMazeSideLength, uint numCellsOnSide, float singleCellSideLength)
+    public void DrawMazeOnGame(LevelType levelType, MazeCell[,] gameMaze, uint totalMazeSideLength, uint numCellsOnSide, float singleCellSideLength)
     {
         if (gameMaze == null)
         {

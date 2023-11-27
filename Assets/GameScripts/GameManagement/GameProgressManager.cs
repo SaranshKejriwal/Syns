@@ -15,6 +15,8 @@ public class GameProgressManager
 {
     private const int GAME_PATH_COUNT = 8;//Game will always have 8 paths. No need to serialize this
 
+    private const uint BASE_PATH_HIGHEST_LEVEL_INDEX = 2;//3 levels only
+    private const uint SYNS_PATH_HIGHEST_LEVEL_INDEX = 6;//7 levels
 
     //this will be a singleton to load from a JSON file
     private static GameProgressManager instance = new GameProgressManager();
@@ -68,7 +70,7 @@ public class GameProgressManager
 
         instance.SaveTimestamp = DateTime.Now.ToString();
 
-        string jsonSave = JsonUtility.ToJson(instance);
+        string jsonSave = JsonUtility.ToJson(instance,true);//true corresponds to Pretty-Printed json
 
 
         //Write some text to the test.txt file
@@ -110,7 +112,11 @@ public class GameProgressManager
             GamePathProgressArray[i] = new PathProgressObject((LevelType)i);//convert Index to corresponding Enum
         }
 
+        //Base path should have 3 levels only.
+        GamePathProgressArray[(int)LevelType.Base].SetHighestLevelIndex(BASE_PATH_HIGHEST_LEVEL_INDEX);
+
         Debug.Log("GamePath Array initialized.");
+
     }
 
     public void UnlockAllSynPaths()
@@ -157,5 +163,48 @@ public class GameProgressManager
         }
 
         return GamePathProgressArray[(int)(levelType)].levelReachedIndex;
+    }
+
+    public void LoadBaseLevelOfType(LevelType levelType)
+    {
+
+        //Update Latest PlayerOne and PlayerTwo properties from Save, even when restarting a level
+        PlayerOneController.Instance.SetPlayerPropertiesFromSave(instance.playerOneProperties);
+        PlayerTwoController.Instance.SetPlayerPropertiesFromSave(instance.playerTwoProperties);
+
+        //Load the default Grunt Boss stats, not from Save File 
+        EnemySpawnHandler.Instance.SetEnemyPropertiesForLevelType(levelType);
+        EnemyBossController.Instance.GetEnemyPropertiesForLevelType(levelType);
+
+        //Build the Level and Spawn objects on the GameFloor
+        LevelBuilder.Instance.ConstructLevel(levelType);
+
+        LevelSelectionManager.Instance.HideLevelSelectionMenu();
+
+        //Change state of Game to Play.
+        GameMaster.Instance.StartGamePlay();
+    }
+
+    public void LoadHighestSavedLevelOfType(LevelType levelType)
+    {
+
+        //Update Latest PlayerOne and PlayerTwo properties from Save
+        PlayerOneController.Instance.SetPlayerPropertiesFromSave(instance.playerOneProperties);
+        PlayerTwoController.Instance.SetPlayerPropertiesFromSave(instance.playerTwoProperties);
+
+
+        //Load the Grunt and Boss stats of this level type from the SaveFile.
+        EnemyBossController.Instance.SetEnemyPropertiesFromSave(instance.GetPathObjectByLevelType(levelType).GetEnemyBossProperties());
+        EnemySpawnHandler.Instance.SetCurrentGruntProperties(instance.GetPathObjectByLevelType(levelType).GetEnemyGruntProperties());
+        //EnemySpawnHandler is used because it is responsible for creating new grunt objects
+
+        //Build the Level and Spawn objects on the GameFloor
+        LevelBuilder.Instance.ConstructLevel(levelType);
+
+        //Hide Menu after LevelBuilder is done
+        LevelSelectionManager.Instance.HideLevelSelectionMenu();
+
+        //Change state of Game to Play.
+        GameMaster.Instance.StartGamePlay();
     }
 }

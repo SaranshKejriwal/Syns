@@ -72,16 +72,15 @@ public class PlayerTwoController : GenericPlayerController
     // Start is called before the first frame update
     void Start()
     {
+        /*
         //choose a random starting direction to start moving
         //currentPlayerTwoDirectionVector = AutoMovementHandler.GetRandomDirectionVector();
 
-        /*Player Two movement should not be random. It should mmap out all the maze cells on the map
-         and then spawn at the nearest one.*/
         transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
         MoveToNextCell();
 
         //display starting speed in HUD
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);*/
     }
 
     // Update is called once per frame
@@ -113,6 +112,16 @@ public class PlayerTwoController : GenericPlayerController
         //HandleAllInteractions();
 
         IncreasePlayerTwoXP();
+
+    }
+
+    public void PlacePlayerTwoOnLevelStart()
+    {
+        transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
+        MoveToNextCell();
+
+        //display starting speed in HUD
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
 
     }
 

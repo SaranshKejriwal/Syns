@@ -64,7 +64,7 @@ public class GenericEnemyController : MonoBehaviour
 
         public float gruntDetectionRadius = 10f; //Boss detection radius will be hard coded
 
-        public float gruntSpawnDelay = 30; //needs to be kept regardless of whether it is buffed or not..to track impact of boss on next level
+        public int gruntSpawnDelay = 30; //needs to be kept regardless of whether it is buffed or not..to track impact of boss on next level
     }
 
     protected GenericEnemyControllerProperties EnemyProperties = new GenericEnemyControllerProperties();
@@ -185,7 +185,7 @@ public class GenericEnemyController : MonoBehaviour
         return currentEnemyState == enemyStates.isDead;
     }
 
-    public bool isEnemyStanding()
+    public bool IsEnemyStanding()
     {
         return currentEnemyState == enemyStates.isStanding;
     }
@@ -203,6 +203,26 @@ public class GenericEnemyController : MonoBehaviour
     public GenericEnemyControllerProperties GetEnemyProperties()
     {
         return EnemyProperties;
+    }
+
+    public void SetEnemyPropertiesFromSave(GenericEnemyControllerProperties newProperties)
+    {
+        Debug.Log("Loading Saved Enemy Properties: " + newProperties);
+        this.EnemyProperties = newProperties;
+        //Set each field individually rather than just as an object, to be absolutely sure
+        this.EnemyProperties.damageMultiplier = newProperties.damageMultiplier;
+        this.EnemyProperties.maxEnemyHealth = newProperties.maxEnemyHealth;
+        this.EnemyProperties.enemyMovementSpeedMultiplier = newProperties.enemyMovementSpeedMultiplier;
+        this.EnemyProperties.gruntDetectionRadius = newProperties.gruntDetectionRadius;
+        //this.EnemyProperties.gruntSpawnDelay = newProperties.gruntSpawnDelay; Spawn delay is of no concern to Enemy object
+
+    }
+
+    public void GetEnemyPropertiesForLevelType(LevelType levelType)
+    {
+        //Implementation needed here for different syn buffs.
+
+
     }
 
     protected bool IsPlayerRayCastNotObstructed(GenericPlayerController playerInFocus, float detectionRadius)

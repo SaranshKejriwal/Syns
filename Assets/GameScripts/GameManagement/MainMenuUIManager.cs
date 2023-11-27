@@ -95,6 +95,8 @@ public class MainMenuUIManager : MonoBehaviour
         MainMenuCanvas.enabled = false;
 
         LevelSelectionCanvas.enabled = true;//show level selection canvas.
+
+        Debug.Log("Resetting and Starting New Game...");
     }
 
     private void onQuitButtonClick()

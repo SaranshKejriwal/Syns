@@ -138,6 +138,19 @@ public abstract class GenericPlayerController : MonoBehaviour
         return PlayerControllerProperties;
     }
 
+    public void SetPlayerPropertiesFromSave(GenericPlayerControllerProperties newProperties)
+    {
+
+        this.PlayerControllerProperties = newProperties;
+        //Set each field individually rather than just as an object, to be absolutely sure
+        this.PlayerControllerProperties.maxPlayerHealth = newProperties.maxPlayerHealth;
+        this.PlayerControllerProperties.maxPlayerMovementSpeed = newProperties.maxPlayerMovementSpeed;
+        this.PlayerControllerProperties.currentPlayerArmour = newProperties.currentPlayerArmour;
+        this.PlayerControllerProperties.currentPlayerLevel = newProperties.currentPlayerLevel;
+        this.PlayerControllerProperties.totalPlayerXP = newProperties.totalPlayerXP;
+
+    }
+
     public void DamagePlayer(float attackDamage)
     {
         //reduce damage based on Armour of player - Max Damage reduction capped at 50%, hence 2*

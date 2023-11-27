@@ -13,7 +13,6 @@ public class LevelBuilder : MonoBehaviour
 
     private static LevelBuilder instance;
     public static LevelBuilder Instance
-    //this instance "Property" will be tracked by ALL enemies, while keeping actual PlayerTwo object private
     {
         get { return instance; }//not very different from getters and setters
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
@@ -42,19 +41,49 @@ public class LevelBuilder : MonoBehaviour
         }
 
         singleCellSideLength = (float)totalMazeSideLength / numCellsOnSide;
-        Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
+        /*Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
         gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
-        SetupStartingCell();//needed before Player Start is called.
+        SetupStartingCell();//needed before Player Start is called.*/
 
     }
     // Start is called before the first frame update
     void Start()
     {
+        /*
         RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
         //Always put external GameObject references in Start(), not Awake
         MazeRenderer.Instance.DrawMazeOnGame(gameMaze, totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+        */
 
+    }
 
+    public void ConstructLevel(LevelType levelType)
+    {
+        //Make Maze array before drawing
+        Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
+        gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+        SetupStartingCell();//needed before Player Start is called.
+
+        //Setup Level Maze reference for PlayerTwo Traverser.
+        RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
+
+        //Draw constructed maze
+        MazeRenderer.Instance.DrawMazeOnGame(levelType, gameMaze, totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+
+        //Note - LevelType will eventually play a role in the Material selection for visuals.
+
+        //Spawn Collectibles
+        CollectiblesSpawnHandler.Instance.SpawnLevelCollectibles();
+
+        //Place Level Boss
+        EnemyBossController.Instance.PlaceLevelBossOnFarMap();
+
+        //Place Players
+        PlayerTwoController.Instance.PlacePlayerTwoOnLevelStart();
+        PlayerOneController.Instance.PlacePlayerOneOnLevelStart();
+
+        //Place 1 Enemy on map
+        EnemySpawnHandler.Instance.SpawnNewEnemy();
     }
 
     private void SetupStartingCell()

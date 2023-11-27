@@ -1,16 +1,12 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
-Add Level Failed and Level Completed screens inside GameScene, with logic for selecting next boss buff
 
 Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. 
-
-Populate Path Progress properties for each of the 8 paths and define the GameProgress class to send to JSON.
 
 BUG - interaction between P2 and boss is weird. Possible issue in Boss animator and P2 traversal logic..
 
 Fix PlayerTwo exit entry using events.
-
 
 PlayerOne attack range to be limited. Currently punch event is killing the approachedEnemy Object at any distance.
 
@@ -21,6 +17,8 @@ PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 PlayerTwo to reset past visited cells if Stack is empty. CONSTRUCTED. Needs testing
 
 Create Menus, and level completion/failure screen. IN PROGRESS
+
+Add Level Failed and Level Completed screens inside GameScene, with logic for selecting next boss buff. IN PROGRESS
 
 Addition of PLayer Hit and Death animations.
 
@@ -144,3 +142,5 @@ Player1 and PLayer2 healthbar to always be on top of the screen. DONE
 BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition to Buff animation. Need to replicate Grunt Animator for Boss. FIXED by creating new Animation for Boss.
 
 Add an HUD on play screen to show coin collection, P1/P2 health (DONE), P2 speed, enemy count(DONE), spawn timer (DONE), boss dead/alive (DONE), P1 P2 XP(DONE) DONE
+
+Populate Path Progress properties for each of the 8 paths and define the GameProgress class to send to JSON. DONE
