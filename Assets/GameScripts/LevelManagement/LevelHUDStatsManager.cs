@@ -15,6 +15,9 @@ public class LevelHUDStatsManager : MonoBehaviour
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
+    //This canvas holds all the fields on the HUD. This will be shown on Level Build
+    [SerializeField] private Canvas MainLevelHUDCanvas;
+
     //TextMeshProUGUI needs to be used since we're using TextMeshPro lib from Unity
     //Do not use TextMeshPro class because this is UI Text
     [SerializeField] private TextMeshProUGUI EnemyCounter;
@@ -49,6 +52,9 @@ public class LevelHUDStatsManager : MonoBehaviour
         //Both players have no XP at start
         PlayerOneCurrentXPBar.fillAmount = 0f;
         PlayerTwoCurrentXPBar.fillAmount = 0f;
+
+        //Hide HUD on Game load
+        MainLevelHUDCanvas.enabled = false;
 
     }
 
@@ -172,6 +178,16 @@ public class LevelHUDStatsManager : MonoBehaviour
         //Note - A separate Gold Counter makes sense for HUD because we don't want to run Update() method to read the count from GameMaster
         totalGoldCollected += goldCollected;
         TotalGoldCounter.text = totalGoldCollected.ToString();
+    }
+
+    public void ShowHUD()
+    {
+        MainLevelHUDCanvas.enabled = true;
+    }
+
+    public void HideHUD()
+    {
+        MainLevelHUDCanvas.enabled = false;
     }
 
 }

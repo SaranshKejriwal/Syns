@@ -1,6 +1,7 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
+Add default grunt/boss properties when there is No Save available.
 
 Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. 
 

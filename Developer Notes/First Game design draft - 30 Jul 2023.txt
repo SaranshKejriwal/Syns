@@ -72,7 +72,7 @@ Though that need not be spelled out loud.
 
 The game can have themes of the 7 sins without spelling it out loud. Player chooses any 1 of the 7 themes to start with, and enemies/bosses will have traits in accordance.
 
-Greed - enemies tend to pick up gold and leave less for you. - Bosses disable some weapons and coin-based tools, but CANNOT disable other Runes
+Greed - enemies tend to pick up gold and leave less for you. - Bosses disable (some weapons and coin-based tools, including bullets) but can disable other Runes
 Sloth - enemies are slower but do more damage. - Bosses stun P1 when they lose a certain % of health. <Similar to Pride>
 Wrath - enemies can potentially move through walls - Agile bosses with rapid low-damage attacks. Boss has range attacks 
 Gluttony - enemies have more HP and tend to pickup nearby heals when damaged. - Boss attacks have life-steal and can pickup nearby heals. <May eat nearby grunts to absorb their health>

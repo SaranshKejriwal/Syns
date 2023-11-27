@@ -165,7 +165,7 @@ public class GameProgressManager
         return GamePathProgressArray[(int)(levelType)].levelReachedIndex;
     }
 
-    public void LoadBaseLevelOfType(LevelType levelType)
+    public void LoadFirstLevelOfType(LevelType levelType)
     {
 
         //Update Latest PlayerOne and PlayerTwo properties from Save, even when restarting a level
@@ -173,13 +173,13 @@ public class GameProgressManager
         PlayerTwoController.Instance.SetPlayerPropertiesFromSave(instance.playerTwoProperties);
 
         //Load the default Grunt Boss stats, not from Save File 
-        EnemySpawnHandler.Instance.SetEnemyPropertiesForLevelType(levelType);
-        EnemyBossController.Instance.GetEnemyPropertiesForLevelType(levelType);
+        EnemySpawnHandler.Instance.SetFirstEnemyGruntPropertiesForLevelType(levelType);
+        EnemyBossController.Instance.GetFirstEnemyPropertiesForLevelType(levelType);
 
         //Build the Level and Spawn objects on the GameFloor
         LevelBuilder.Instance.ConstructLevel(levelType);
 
-        LevelSelectionManager.Instance.HideLevelSelectionMenu();
+        LevelSelectionManager.Instance.HideLevelSelectionMenus();
 
         //Change state of Game to Play.
         GameMaster.Instance.StartGamePlay();
@@ -202,7 +202,7 @@ public class GameProgressManager
         LevelBuilder.Instance.ConstructLevel(levelType);
 
         //Hide Menu after LevelBuilder is done
-        LevelSelectionManager.Instance.HideLevelSelectionMenu();
+        LevelSelectionManager.Instance.HideLevelSelectionMenus();
 
         //Change state of Game to Play.
         GameMaster.Instance.StartGamePlay();

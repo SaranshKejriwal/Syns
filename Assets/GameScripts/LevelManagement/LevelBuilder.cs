@@ -74,16 +74,19 @@ public class LevelBuilder : MonoBehaviour
 
         //Spawn Collectibles
         CollectiblesSpawnHandler.Instance.SpawnLevelCollectibles();
-
-        //Place Level Boss
-        EnemyBossController.Instance.PlaceLevelBossOnFarMap();
-
+                
         //Place Players
         PlayerTwoController.Instance.PlacePlayerTwoOnLevelStart();
         PlayerOneController.Instance.PlacePlayerOneOnLevelStart();
 
-        //Place 1 Enemy on map
-        EnemySpawnHandler.Instance.SpawnNewEnemy();
+        //Place Level Boss
+        EnemyBossController.Instance.PlaceLevelBossOnFarMap();
+
+        //Start Enemy spawn on map
+        EnemySpawnHandler.Instance.StartEnemySpawn();
+
+        //Show Level HUD
+        LevelHUDStatsManager.Instance.ShowHUD();
     }
 
     private void SetupStartingCell()

@@ -84,7 +84,6 @@ public class EnemySpawnHandler : MonoBehaviour
     {
         if (!isEnemySpawnTimerActive)
         {
-            Debug.Log("Spawn Timer inactive. Enemy spawning stopped.");
             return; //extra check to not spawn anything if counter is inactive
         }
 
@@ -104,11 +103,10 @@ public class EnemySpawnHandler : MonoBehaviour
 
     public void StartEnemySpawn()
     {
-        SpawnNewEnemy();//this will be called when new level is setup. Start with 1 new enemy on the board.
-
         //activate timer to spawn new grunts
         instance.isEnemySpawnTimerActive = true;
 
+        SpawnNewEnemy();//this will be called when new level is setup. Start with 1 new enemy on the board.
     }
 
     public void StopEnemySpawnTimer()
@@ -147,13 +145,17 @@ public class EnemySpawnHandler : MonoBehaviour
 
     public void SetCurrentGruntProperties(GenericEnemyController.GenericEnemyControllerProperties newGruntProperties)
     {
+        if (newGruntProperties == null)
+        {
+            Debug.LogError("newGruntProperties is null; Switching to Default Level Properties for Grunts");
+        }
         instance.currentGruntProperties = newGruntProperties;
         instance.maxTimerSeconds = newGruntProperties.gruntSpawnDelay; //set spawn time based on Level loaded by GameProgressManager
     }
 
-    public void SetEnemyPropertiesForLevelType(LevelType levelType)
+    public void SetFirstEnemyGruntPropertiesForLevelType(LevelType levelType)
     {
-        //Implementation needed here for different syn buffs.
+        //Implementation needed here for different syn buffs on the different properties.
 
 
     }

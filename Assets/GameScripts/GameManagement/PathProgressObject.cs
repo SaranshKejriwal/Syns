@@ -31,6 +31,10 @@ public class PathProgressObject
     {
         this.levelType = levelType;
         this.isPathUnlocked = isUnlocked;
+
+        //Syn type will be the same between Path Progress Object and corresponding Enemies.
+        enemyBossProperties.enemySynType = levelType;
+        enemyGruntProperties.enemySynType = levelType;
     }
 
     public void SetEnemyGruntProperties(GenericEnemyController.GenericEnemyControllerProperties newGruntProperties)

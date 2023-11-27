@@ -57,6 +57,8 @@ public class GenericEnemyController : MonoBehaviour
     [Serializable]
     public class GenericEnemyControllerProperties
     {
+        public LevelType enemySynType = LevelType.Base;//This will help manage the Syn-specific buffs better.
+
         public float damageMultiplier = 1f;//this will grow with enemy buffs
         public float maxEnemyHealth = 25;//this will be buffed by BuffManager.
 
@@ -195,6 +197,11 @@ public class GenericEnemyController : MonoBehaviour
         return enemyType == EnemyType.Boss;
     }
 
+    public LevelType GetEnemySynType()
+    {
+        return EnemyProperties.enemySynType;
+    }
+
     public Vector3 GetEnemyPosition()
     {
         return transform.position;
@@ -207,9 +214,15 @@ public class GenericEnemyController : MonoBehaviour
 
     public void SetEnemyPropertiesFromSave(GenericEnemyControllerProperties newProperties)
     {
-        Debug.Log("Loading Saved Enemy Properties: " + newProperties);
+        if(newProperties == null)
+        {
+            Debug.LogError("No New Enemy Properties Found in Save.");
+            return;
+        }
+        Debug.Log("Setting Enemy properties using object: "+ newProperties);
         this.EnemyProperties = newProperties;
         //Set each field individually rather than just as an object, to be absolutely sure
+        this.EnemyProperties.enemySynType = newProperties.enemySynType;
         this.EnemyProperties.damageMultiplier = newProperties.damageMultiplier;
         this.EnemyProperties.maxEnemyHealth = newProperties.maxEnemyHealth;
         this.EnemyProperties.enemyMovementSpeedMultiplier = newProperties.enemyMovementSpeedMultiplier;
@@ -218,7 +231,7 @@ public class GenericEnemyController : MonoBehaviour
 
     }
 
-    public void GetEnemyPropertiesForLevelType(LevelType levelType)
+    public void GetFirstEnemyPropertiesForLevelType(LevelType levelType)
     {
         //Implementation needed here for different syn buffs.
 

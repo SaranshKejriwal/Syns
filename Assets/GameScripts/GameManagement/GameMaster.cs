@@ -41,7 +41,7 @@ public class GameMaster : MonoBehaviour
 
     private GameStates gameState = GameStates.onMainMenu;
 
-    private float levelStartCountdownTimer = 4f;
+    private float levelStartCountdownTimer = 4f;//this may be needed if we want to introduce a counter later.
 
     private float totalUnspentGold = 0f;//This will increase as gold is collected.
     //This is a Game level property, not a single level property.
