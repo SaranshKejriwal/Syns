@@ -73,6 +73,7 @@
     <Compile Include="Assets\GameScripts\LevelManagement\MazeWallLengthHandler.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeRenderer.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitDoorController.cs" />
+    <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\EnemyBuffObject.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\LevelTransitionManager.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitDoorClosedVisualHandler.cs" />
     <Compile Include="Assets\Blink\Art\Animals\Stylized\Demo_Animals\DemoData\AnimationDemo.cs" />
@@ -82,7 +83,6 @@
     <Compile Include="Assets\GameScripts\LevelManagement\LevelBuilder.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\GoldCoinController.cs" />
     <Compile Include="Assets\PlayerInputActions.cs" />
-    <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\GenericEnemyBuffObject.cs" />
     <Compile Include="Assets\GameScripts\General\RecursiveMazeTraverser.cs" />
     <Compile Include="Assets\GameScripts\Players\InputHandler.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\CollectiblesSpawnHandler.cs" />
@@ -107,6 +107,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\Jewel Pack\Shaders\Gem.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
+    <None Include="Assets\GameMaterials\UITextShader.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />

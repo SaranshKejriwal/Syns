@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 //This enum controls all possible states of an enemy. Needed for Animator and Behaviours
 //instead of having multiple booleans to represent mutually exclusive states, we can use a single Enum
@@ -66,7 +67,43 @@ public class GenericEnemyController : MonoBehaviour
 
         public float gruntDetectionRadius = 10f; //Boss detection radius will be hard coded
 
-        public int gruntSpawnDelay = 30; //needs to be kept regardless of whether it is buffed or not..to track impact of boss on next level
+        public float gruntSpawnDelay = 30; //needs to be kept regardless of whether it is buffed or not..to track impact of boss on next level
+
+
+        //constructor with arguments for Spawn handler and Level 1 properties
+        public GenericEnemyControllerProperties(LevelType syn, float damageMultiplier, float healthMultiplier, float movementSpeedMultiplier, float detectionRadiusMultiplier, float spawnTimeFactor = 1.0f)
+        {
+            this.enemySynType = syn;//kept only to keep Save file in check.
+            this.damageMultiplier = damageMultiplier;
+            this.maxEnemyHealth = this.maxEnemyHealth * healthMultiplier;
+            this.enemyMovementSpeedMultiplier = movementSpeedMultiplier;
+            this.gruntDetectionRadius = this.gruntDetectionRadius * detectionRadiusMultiplier;
+            this.gruntSpawnDelay = this.gruntSpawnDelay* spawnTimeFactor;
+        }
+
+        //Default constructor for Base Level only.
+        public GenericEnemyControllerProperties()
+        {
+            this.enemySynType = LevelType.Base;
+            this.damageMultiplier = 1f;
+            this.maxEnemyHealth = 25;//this will be buffed by BuffManager.
+            this.enemyMovementSpeedMultiplier = 1f; //to boost walking/hunting speeds.
+            this.gruntDetectionRadius = 10f; //Boss detection radius will be hard coded
+            this.gruntSpawnDelay = 30; //needs to be kept regardless of whether it is buffed or not..to track impact of boss on next level
+        }
+
+
+        //This will be used to buff next level enemies after level completion by multiplying on the multiplier itself.
+        public void BuffEnemyPropertiesByBuffObject(EnemyBuffObject buffObject)
+        {
+            this.damageMultiplier = this.damageMultiplier * buffObject.GetDamageMultiplier();
+            this.maxEnemyHealth = this.maxEnemyHealth * buffObject.GetEnemyMaxHealthMultiplier();
+            this.enemyMovementSpeedMultiplier = this.enemyMovementSpeedMultiplier * buffObject.GetEnemyMovementSpeedMultiplier();
+            this.gruntDetectionRadius = this.gruntDetectionRadius * buffObject.GetEnemyDetectionRadiusMultiplier();
+            //All others will be increased, spawn delay will be reduced.
+            this.gruntSpawnDelay = this.gruntSpawnDelay / buffObject.GetEnemySpawnTimeReducer();
+        }
+
     }
 
     protected GenericEnemyControllerProperties EnemyProperties = new GenericEnemyControllerProperties();
@@ -158,54 +195,7 @@ public class GenericEnemyController : MonoBehaviour
         transform.LookAt(player.GetPlayerPosition());//look at Player
     }
 
-    //if Enemy is far away from Player2 
-    protected void ContinueDefaultState()
-    {
-        targetPlayer = null;
-        currentEnemyState = defaultEnemyState;
-    }
-
-    public bool IsEnemyMoving()
-    {
-        return currentEnemyState == enemyStates.isMoving;
-    }
-    public bool IsEnemyHunting()
-    {
-        return currentEnemyState == enemyStates.isHunting;
-    }
-    public bool IsEnemyAttacking()
-    {
-        return currentEnemyState == enemyStates.isAttacking;
-    }
-    public bool IsEnemyHit()
-    {
-        return currentEnemyState == enemyStates.isHit;
-    }
-
-    public bool IsEnemyDead()
-    {
-        return currentEnemyState == enemyStates.isDead;
-    }
-
-    public bool IsEnemyStanding()
-    {
-        return currentEnemyState == enemyStates.isStanding;
-    }
-
-    public bool IsEnemyTypeBoss()
-    {
-        return enemyType == EnemyType.Boss;
-    }
-
-    public LevelType GetEnemySynType()
-    {
-        return EnemyProperties.enemySynType;
-    }
-
-    public Vector3 GetEnemyPosition()
-    {
-        return transform.position;
-    }
+   
 
     public GenericEnemyControllerProperties GetEnemyProperties()
     {
@@ -231,12 +221,86 @@ public class GenericEnemyController : MonoBehaviour
 
     }
 
-    public void GetFirstEnemyPropertiesForLevelType(LevelType levelType)
+
+
+    //this class is kept static because first level enemy properties for each syn are fixed.
+    public static GenericEnemyControllerProperties GetFirstLevelEnemyGruntPropertiesForLevelType(LevelType levelType)
     {
-        //Implementation needed here for different syn buffs.
+        //Get the different syn buffs for grunt of each level type
+        switch (levelType)
+        {
+            case LevelType.Base:
+                //Base object will have no multipliers based on Syn
+                return new GenericEnemyControllerProperties(LevelType.Base,1.0f,1.0f,1.0f, 1.0f);
+            case LevelType.Greed:
+                //slightly higher health
+                return new GenericEnemyControllerProperties(LevelType.Greed, 1.0f, 1.2f, 1.0f, 1.0f);
+            case LevelType.Sloth:
+                //High damage, low speed and detection radius
+                return new GenericEnemyControllerProperties(LevelType.Sloth, 2.5f, 1.0f, 0.5f, 0.65f);
+            case LevelType.Envy:
+                //How to handle the mimic logic?? Setting detection radius to 0?? Low health
+                return new GenericEnemyControllerProperties(LevelType.Envy, 1.0f, 0.5f, 1.0f, 0.5f);//NEEDS REVISION
+            case LevelType.Gluttony:
+                //High HP, slightly Slow movement speed
+                return new GenericEnemyControllerProperties(LevelType.Gluttony, 1.0f, 3.0f, 0.75f, 1.0f);
+            case LevelType.Lust:
+                //high detection radius, slightly high movement speed
+                return new GenericEnemyControllerProperties(LevelType.Lust, 1.0f, 1.0f, 1.25f, 2.0f);
+            case LevelType.Pride:
+                //No special buffs apart from enemy alarm? Reduced spawn time
+                return new GenericEnemyControllerProperties(LevelType.Pride, 1.0f, 1.0f, 1.0f, 1.0f, 0.6f);
+            case LevelType.Wrath:
+                //High attack, can ignore walls?
+                return new GenericEnemyControllerProperties(LevelType.Wrath, 1.5f, 1.2f, 1.2f, 1.1f);
+
+            default:
+                return null;
+        }
+
+    }
+
+    //this class is kept static because first level enemy properties for each syn are fixed.
+    public static GenericEnemyControllerProperties GetFirstLevelBossPropertiesForLevelType(LevelType levelType)
+    {
+        //Get the different syn buffs for Boss of each level type -
+        //All numbers are with respect to Base Grunt Stats only
+        switch (levelType)
+        {
+            case LevelType.Base:
+                //Boss has 2.5x damage and 3.0x health compared to Grunts, but no speed
+                return new GenericEnemyControllerProperties(LevelType.Base, 2.5f, 3.0f, 0f, 1.0f);
+            case LevelType.Greed:
+                //slightly higher health
+                return new GenericEnemyControllerProperties(LevelType.Greed, 2.5f, 3.5f, 0f, 1.0f);
+            case LevelType.Sloth:
+                //High damage, low speed and detection radius
+                return new GenericEnemyControllerProperties(LevelType.Sloth, 5f, 3.0f, 0f, 1.0f);
+            case LevelType.Envy:
+                //How to handle the mimic logic?? Setting detection radius to 0?? Low Health
+                return new GenericEnemyControllerProperties(LevelType.Envy, 2.5f, 1.5f, 0f, 1.0f);//NEEDS REVISION
+            case LevelType.Gluttony:
+                //High HP, slightly Slow movement speed
+                return new GenericEnemyControllerProperties(LevelType.Gluttony, 2.5f, 3.0f, 0f, 1.0f);
+            case LevelType.Lust:
+                //high detection radius, slightly high movement speed - BOSS CAN CHASE
+                return new GenericEnemyControllerProperties(LevelType.Lust, 2.5f, 3.0f, 1.0f, 1.0f);
+            case LevelType.Pride:
+                //No special buffs apart from enemy alarm? Reduced spawn time
+                return new GenericEnemyControllerProperties(LevelType.Pride, 2.5f, 3.0f, 0f, 1.0f, 1.0f);
+            case LevelType.Wrath:
+                //High attack, can ignore walls?
+                return new GenericEnemyControllerProperties(LevelType.Wrath, 4f, 3.5f, 0f, 1.1f);
+
+            default:
+                return null;
+
+
+        }
 
 
     }
+
 
     protected bool IsPlayerRayCastNotObstructed(GenericPlayerController playerInFocus, float detectionRadius)
     {
@@ -278,16 +342,7 @@ public class GenericEnemyController : MonoBehaviour
 
         return playerTwoDistance <= playerOneDistance ? PlayerTwoController.Instance : PlayerOneController.Instance;
     }
-
-
-    protected void IncreaseAttackDamageByMultiplier(float multiplier)
-    {
-        leftClawAttackDamage = multiplier * leftClawAttackDamage;
-        rightClawAttackDamage = multiplier * rightClawAttackDamage;
-        biteAttackDamage = multiplier * biteAttackDamage;
-        stompAttackDamage = multiplier * stompAttackDamage;
-    }
-
+        
 
     protected float GetEnemyMovementSpeed()
     {
@@ -397,7 +452,6 @@ public class GenericEnemyController : MonoBehaviour
         currentEnemyState = enemyStates.isDead;//enemy death animation
         currentEnemyHealth = 0;
         attackRadius = 0;
-        IncreaseAttackDamageByMultiplier(0);//all attack damage is zero for dead enemy
         
         //For Grunts only - if enemy dies, reduce the count of active enemies in spawn handler
         if(enemyType == EnemyType.Grunt)
@@ -410,5 +464,52 @@ public class GenericEnemyController : MonoBehaviour
         }
     }
 
+    //if Enemy is far away from Player2 
+    protected void ContinueDefaultState()
+    {
+        targetPlayer = null;
+        currentEnemyState = defaultEnemyState;
+    }
 
+    public bool IsEnemyMoving()
+    {
+        return currentEnemyState == enemyStates.isMoving;
+    }
+    public bool IsEnemyHunting()
+    {
+        return currentEnemyState == enemyStates.isHunting;
+    }
+    public bool IsEnemyAttacking()
+    {
+        return currentEnemyState == enemyStates.isAttacking;
+    }
+    public bool IsEnemyHit()
+    {
+        return currentEnemyState == enemyStates.isHit;
+    }
+
+    public bool IsEnemyDead()
+    {
+        return currentEnemyState == enemyStates.isDead;
+    }
+
+    public bool IsEnemyStanding()
+    {
+        return currentEnemyState == enemyStates.isStanding;
+    }
+
+    public bool IsEnemyTypeBoss()
+    {
+        return enemyType == EnemyType.Boss;
+    }
+
+    public LevelType GetEnemySynType()
+    {
+        return EnemyProperties.enemySynType;
+    }
+
+    public Vector3 GetEnemyPosition()
+    {
+        return transform.position;
+    }
 }

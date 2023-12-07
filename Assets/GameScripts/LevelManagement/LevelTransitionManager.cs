@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelTransitionManager : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class LevelTransitionManager : MonoBehaviour
 
     [SerializeField] private Canvas LevelCompletedCanvas;
     [SerializeField] private Canvas LevelFailedCanvas;
+
+
+    //buttons to move to next level on Level Completion.
+    [SerializeField] private Button ContinueToNextLevelButton;
 
     private void Awake()
     {

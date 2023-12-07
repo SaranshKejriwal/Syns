@@ -20,17 +20,14 @@ public class EnemySpawnHandler : MonoBehaviour
     private bool isEnemySpawnTimerActive = false;
     private int aliveEnemyCount = 0;
     private float currentTimerElapsedSeconds = 0f;
-    private int maxTimerSeconds = 30;//30 seconds between enemy spawns.
-                                   //Can be changed for increasing/decreasing spawn rate
+    //private float maxTimerSeconds = 30f;//Spawn time will now be managed by EnemyProperties
 
     [SerializeField] private Transform enemyPrefab;//make sure to link the prefab in the inspector, and not an instance.
 
     //Current values are too small - need to expand for the full map
     private float minSpawnDistanceFromOrigin = 5f;//to get min distance from (0,0), to not spawn on top of players
 
-    //These Properties will be maintained by the Enemy Spawn handler.
-    //When spawning a new grunt, it will fire an event which all grunts will listen, to ensure that their properties are updated.
-    //This is being done because Spawn handler is creating a 'Transform' object.
+    //These Properties will be maintained by the Enemy Spawn handler and applied to the spawned grunt
     private GenericEnemyController.GenericEnemyControllerProperties currentGruntProperties;
  
     private void Awake()
@@ -67,12 +64,12 @@ public class EnemySpawnHandler : MonoBehaviour
             return;//Do not spawn if timer is inactive, or Boss is dead, or Level is completed.
         }
         currentTimerElapsedSeconds += Time.deltaTime;
-        if (currentTimerElapsedSeconds >= maxTimerSeconds)
+        if (currentTimerElapsedSeconds >= currentGruntProperties.gruntSpawnDelay)
         {
             ResetEnemySpawnTimer();
             SpawnNewEnemy();
         }
-        LevelHUDStatsManager.Instance.SetEnemySpawnTimerProgressBarDisplay(currentTimerElapsedSeconds, maxTimerSeconds);
+        LevelHUDStatsManager.Instance.SetEnemySpawnTimerProgressBarDisplay(currentTimerElapsedSeconds, currentGruntProperties.gruntSpawnDelay);
     }
 
     private void ResetEnemySpawnTimer()
@@ -139,7 +136,7 @@ public class EnemySpawnHandler : MonoBehaviour
 
     public void ResetAllPreviousBuffs()
     {
-        //this will be called when a player starts another track...
+        //this may be called when a player starts another track...
         //but what about resume? We will need to save the states for each of the level paths, right?
     }
 
@@ -150,13 +147,11 @@ public class EnemySpawnHandler : MonoBehaviour
             Debug.LogError("newGruntProperties is null; Switching to Default Level Properties for Grunts");
         }
         instance.currentGruntProperties = newGruntProperties;
-        instance.maxTimerSeconds = newGruntProperties.gruntSpawnDelay; //set spawn time based on Level loaded by GameProgressManager
     }
 
-    public void SetFirstEnemyGruntPropertiesForLevelType(LevelType levelType)
+    public void SetNextGruntPropertiesByBuffObject(EnemyBuffObject buffObj)
     {
-        //Implementation needed here for different syn buffs on the different properties.
-
-
+        instance.currentGruntProperties.BuffEnemyPropertiesByBuffObject(buffObj);
     }
+
 }

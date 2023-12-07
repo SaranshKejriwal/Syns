@@ -26,17 +26,23 @@ public class EnemyBossController : GenericEnemyController
             Debug.LogError("Fatal Error: Cannot have a predefined instance of Enemy Boss");
         }
         instance.enemyType = EnemyType.Boss;
-        instance.currentEnemyState = enemyStates.isStanding;//Boss should not be moving
+        instance.currentEnemyState = enemyStates.isStanding;//Boss should not be moving on spawn
         instance.defaultEnemyState = enemyStates.isStanding;
-        instance.enemyWalkingMovementSpeed = 0;
-        instance.enemyHuntingMovementSpeed = 0;
-        instance.currentEnemyHealth = 75;
-        instance.EnemyProperties.maxEnemyHealth = 75;
+        //instance.enemyWalkingMovementSpeed = 0;
+        //instance.enemyHuntingMovementSpeed = 0;
+
+        //this is hard coded based on the GameObject Sizes, and cannot be configured anyway.
         instance.attackRadius = 5f;
-        instance.EnemyProperties.damageMultiplier = 2.5f;
-        instance.IncreaseAttackDamageByMultiplier(instance.EnemyProperties.damageMultiplier);//2.5x damage for boss as a start.
+
         instance.currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
         instance.enemyDetectionRadius = 9f;//Boss detection radius is hard-coded, not picked up from properties
+
+        //Get enemies properties from static method instead of hard-coding each property
+        instance.SetEnemyPropertiesFromSave(GenericEnemyController.GetFirstLevelBossPropertiesForLevelType(LevelType.Base));
+
+        //start at Max Health
+        instance.currentEnemyHealth = instance.EnemyProperties.maxEnemyHealth;
+
     }
 
     // Start is called before the first frame update
@@ -102,6 +108,11 @@ public class EnemyBossController : GenericEnemyController
             OnBossDeath(this, EventArgs.Empty);//fire event if not null
         }
 
+    }
+
+    public void SetEnemyBossPropertiesByBuffObject(EnemyBuffObject buffObj)
+    {
+        instance.EnemyProperties.BuffEnemyPropertiesByBuffObject(buffObj);
     }
 
 }

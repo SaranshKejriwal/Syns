@@ -110,6 +110,11 @@ public class GameProgressManager
         {
             //Set the LevelType against each array index.
             GamePathProgressArray[i] = new PathProgressObject((LevelType)i);//convert Index to corresponding Enum
+
+            //Set base stats of Grunts and Bosses from FirstLevel stats.
+            GamePathProgressArray[i].enemyBossProperties = GenericEnemyController.GetFirstLevelBossPropertiesForLevelType((LevelType)i);
+            GamePathProgressArray[i].enemyGruntProperties = GenericEnemyController.GetFirstLevelEnemyGruntPropertiesForLevelType((LevelType)i);
+
         }
 
         //Base path should have 3 levels only.
@@ -173,8 +178,8 @@ public class GameProgressManager
         PlayerTwoController.Instance.SetPlayerPropertiesFromSave(instance.playerTwoProperties);
 
         //Load the default Grunt Boss stats, not from Save File 
-        EnemySpawnHandler.Instance.SetFirstEnemyGruntPropertiesForLevelType(levelType);
-        EnemyBossController.Instance.GetFirstEnemyPropertiesForLevelType(levelType);
+        EnemySpawnHandler.Instance.SetCurrentGruntProperties(GenericEnemyController.GetFirstLevelEnemyGruntPropertiesForLevelType(levelType));
+        EnemyBossController.Instance.SetEnemyPropertiesFromSave(GenericEnemyController.GetFirstLevelBossPropertiesForLevelType(levelType));
 
         //Build the Level and Spawn objects on the GameFloor
         LevelBuilder.Instance.ConstructLevel(levelType);

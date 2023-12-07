@@ -19,12 +19,9 @@ public class EnemyGruntController : GenericEnemyController
         enemyType = EnemyType.Grunt;
         currentEnemyState = enemyStates.isMoving;//Grunt should be moving by default
         defaultEnemyState = enemyStates.isMoving;
-        enemyWalkingMovementSpeed = base.enemyWalkingMovementSpeed;
-        enemyHuntingMovementSpeed = base.enemyHuntingMovementSpeed;
-        currentEnemyHealth = base.currentEnemyHealth;
-        EnemyProperties.maxEnemyHealth = base.EnemyProperties.maxEnemyHealth;
-        IncreaseAttackDamageByMultiplier(EnemyProperties.damageMultiplier);//same attack damage as base
-        enemyDetectionRadius = EnemyProperties.gruntDetectionRadius;//pull detection radius from Properties
+
+        this.EnemyProperties = GenericEnemyController.GetFirstLevelEnemyGruntPropertiesForLevelType(LevelType.Base);
+        this.currentEnemyHealth = this.EnemyProperties.maxEnemyHealth;
     }
 
     void Start()
