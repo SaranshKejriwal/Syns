@@ -72,8 +72,6 @@ public class EnemyBuffManager : MonoBehaviour
     //Icons for All 8 buffs
     private Image[] BuffIconsArray = new Image[TOTAL_BUFF_TYPES];
 
-    //Adding reference to continue button here, only to enable it when buff is selected
-    [SerializeField] private Button ContinueToNextLevelButton;
 
     private void Awake()
     {
@@ -104,8 +102,6 @@ public class EnemyBuffManager : MonoBehaviour
 
     public void AllocateThreeRandomEnemyBuffs()
     {
-        //while 3 random buffs are being computed, disable the continue button.
-        ContinueToNextLevelButton.enabled = false;
 
         //create iterator count and MaxIteration count for the while loops below
         int iteratorCount = 0;
@@ -121,12 +117,29 @@ public class EnemyBuffManager : MonoBehaviour
         {
             rightSideBuffButtonIndex = MathFunctions.GetRandomIntInRange(0, BuffArray.Length);
         }
+        //get middleBuff index that is different from the other 2
         while ((middleBuffButtonIndex == leftSideBuffButtonIndex || middleBuffButtonIndex == rightSideBuffButtonIndex) && iteratorCount < maxIterationsCount)
         {
             middleBuffButtonIndex = MathFunctions.GetRandomIntInRange(0, BuffArray.Length);
         }
 
+        //Update buff titles and descriptions
+        LeftBuffButtonTitle.text = GetBuffObjectAtIndex(leftSideBuffButtonIndex).GetBuffTitle();
+        MiddleBuffButtonTitle.text = GetBuffObjectAtIndex(middleBuffButtonIndex).GetBuffTitle();
+        RightBuffButtonTitle.text = GetBuffObjectAtIndex(rightSideBuffButtonIndex).GetBuffTitle();
 
+        LeftBuffButtonDescription.text = GetBuffObjectAtIndex(leftSideBuffButtonIndex).GetBuffDescription();
+        MiddleBuffButtonDescription.text = GetBuffObjectAtIndex(middleBuffButtonIndex).GetBuffDescription();
+        RightBuffButtonDescription.text = GetBuffObjectAtIndex(rightSideBuffButtonIndex).GetBuffDescription();
+
+        //Remove all previously applied listeners. Add buff listeners to 3 buttons to apply the buff.
+        LeftSideBuffButton.onClick.RemoveAllListeners();
+        MiddleBuffButton.onClick.RemoveAllListeners();
+        RightSideBuffButton.onClick.RemoveAllListeners();
+
+        LeftSideBuffButton.onClick.AddListener(delegate { ApplySelectedBuff(GetBuffObjectAtIndex(leftSideBuffButtonIndex)); });
+        MiddleBuffButton.onClick.AddListener(delegate { ApplySelectedBuff(GetBuffObjectAtIndex(middleBuffButtonIndex)); });
+        RightSideBuffButton.onClick.AddListener(delegate { ApplySelectedBuff(GetBuffObjectAtIndex(rightSideBuffButtonIndex)); });
     }
 
 
@@ -134,7 +147,6 @@ public class EnemyBuffManager : MonoBehaviour
     private EnemyBuffObject GetBuffObjectAtIndex(int index)
     {
         //check if index is assigned correctly
-
         if (index < 0 || index >= BuffArray.Length)
         {
             Debug.LogError("Received invalid index for applying buff from array: " + index);
@@ -156,9 +168,16 @@ public class EnemyBuffManager : MonoBehaviour
         if(buffObj.GetBuffedEnemyType() == EnemyType.Boss)
         {
             EnemyBossController.Instance.SetEnemyBossPropertiesByBuffObject(buffObj);
+
+            //save new properties into memory
+            GameProgressManager.Instance.UpdateBossPropertiesInMemoryForCurrentPath(EnemyBossController.Instance.GetCurrentEnemyControllerProperties());
+
         }else if(buffObj.GetBuffedEnemyType() == EnemyType.Grunt)
         {
             EnemySpawnHandler.Instance.SetNextGruntPropertiesByBuffObject(buffObj);
+
+            //save new properties into memory
+            GameProgressManager.Instance.UpdateGruntPropertiesInMemoryForCurrentPath(EnemySpawnHandler.Instance.GetCurrentGruntProperties());
         }
         else
         {
@@ -166,8 +185,14 @@ public class EnemyBuffManager : MonoBehaviour
             return;
         }
 
-        //if buff is applied successfully, enable the Continue button.
-        ContinueToNextLevelButton.enabled = true;
+
+        //if buff is applied successfully, disable the Buff buttons.
+        LeftSideBuffButton.enabled = false;
+        MiddleBuffButton.enabled = false;
+        RightSideBuffButton.enabled = false;
+
+        //Continue to Next level only when a buff is selected.
+
 
     }
 }

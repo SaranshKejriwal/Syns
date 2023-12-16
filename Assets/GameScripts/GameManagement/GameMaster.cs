@@ -11,7 +11,8 @@ public enum LevelType
     Gluttony = 4,
     Lust = 5,
     Pride = 6,
-    Wrath = 7
+    Wrath = 7,
+    None = 999 //initialization param only.
 }
 
 //this is the master script that will trigger levelbuilding and main menus.

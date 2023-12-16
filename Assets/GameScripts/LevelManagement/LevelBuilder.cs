@@ -28,6 +28,8 @@ public class LevelBuilder : MonoBehaviour
 
     private bool isLevelCompleted = false;
 
+    private LevelType currentLevelType;//determines the levelType being played so that GameProgress can be updated on the right track.
+
     private void Awake()
     {
         //define Gamefloor area, node size based on difficulty level
@@ -59,6 +61,8 @@ public class LevelBuilder : MonoBehaviour
 
     public void ConstructLevel(LevelType levelType)
     {
+        instance.currentLevelType = levelType;
+
         //Make Maze array before drawing
         Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
         gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
@@ -101,12 +105,41 @@ public class LevelBuilder : MonoBehaviour
         return startingCell;
     }
 
-    public void LevelVictory()
+    public void RecordLevelVictory()
     {
         Debug.Log("Level Won!");
         isLevelCompleted = true;
 
-        LevelTransitionManager.Instance.ShowLevelComplete();
+
+
+        //If Boss is alive at the end, increase the spawn rate of the next level via ProgressManager
+        if (!EnemyBossController.Instance.IsEnemyDead())
+        {
+            Debug.Log("Boss Left alive. Increasing Spawn Rate...");
+            GameProgressManager.Instance.IncreaseNextLevelSpawnRateForAliveBoss(currentLevelType);
+        }
+
+        //increment Max level on Game Progress manager
+        GameProgressManager.Instance.IncreaseAccessibleLevelOfCurrentPath();
+
+
+        //if Path is not complete, show next buffs to select, else show the rune that is won.
+        if (GameProgressManager.Instance.IsCurrentPathCompleted(currentLevelType))
+        {
+            LevelTransitionManager.Instance.ShowPathCompletionCanvas();
+        }
+        else
+        {
+            //allocate 3 buffs
+            EnemyBuffManager.Instance.AllocateThreeRandomEnemyBuffs();
+            //Show Level Transition canvas after buffs are allocated
+            LevelTransitionManager.Instance.ShowLevelCompletionCanvas();
+        }
+
+
+
+
+
 
     }
 

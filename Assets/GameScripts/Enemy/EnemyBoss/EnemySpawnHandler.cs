@@ -154,4 +154,24 @@ public class EnemySpawnHandler : MonoBehaviour
         instance.currentGruntProperties.BuffEnemyPropertiesByBuffObject(buffObj);
     }
 
+    public GenericEnemyController.GenericEnemyControllerProperties GetCurrentGruntProperties()
+    {
+        return instance.currentGruntProperties;
+    }
+
+    public void ReduceSpawnDelayForAliveBoss()
+    {
+        ReduceSpawnRateByMultiplier(0.7f);//reduce Spawn rate by 30% because Boss was left alive.
+    }
+
+    private void ReduceSpawnRateByMultiplier(float factor)
+    {
+        if(factor <= 0.5)
+        {
+            Debug.LogError("Cannot reduce Spawn Rate by factor of " + factor);
+            return;
+        }
+        instance.currentGruntProperties.gruntSpawnDelay = instance.currentGruntProperties.gruntSpawnDelay*factor;  
+    }
+
 }

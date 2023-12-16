@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 //This enum controls all possible states of an enemy. Needed for Animator and Behaviours
 //instead of having multiple booleans to represent mutually exclusive states, we can use a single Enum
 //this way, we won't have to toggle 3 booleans to set one state.
-public enum enemyStates
+public enum EnemyStates
 {
     isStanding, //standing in one place. Applies to Boss only.
     isMoving,//moving randomly. Applies to Grunt only
@@ -37,8 +37,8 @@ public class GenericEnemyController : MonoBehaviour
 
     protected EnemyType enemyType = EnemyType.Generic;
 
-    protected enemyStates currentEnemyState = enemyStates.isStanding;
-    protected enemyStates defaultEnemyState = enemyStates.isStanding;//this is used to restore enemy/boss to normal state
+    protected EnemyStates currentEnemyState = EnemyStates.isStanding;
+    protected EnemyStates defaultEnemyState = EnemyStates.isStanding;//this is used to restore enemy/boss to normal state
 
     protected float attackRadius = 2.5f;//radius at which enemy can attack playerTwo
     protected float currentEnemyHealth = 25;
@@ -104,6 +104,18 @@ public class GenericEnemyController : MonoBehaviour
             this.gruntSpawnDelay = this.gruntSpawnDelay / buffObject.GetEnemySpawnTimeReducer();
         }
 
+        //thorough assignment operator
+        public void CopyPropertiesOf(GenericEnemyControllerProperties newProperties)
+        {
+            this.enemySynType = newProperties.enemySynType;
+            this.damageMultiplier = newProperties.damageMultiplier;
+            this.maxEnemyHealth = newProperties.maxEnemyHealth;
+            this.enemyMovementSpeedMultiplier = newProperties.enemyMovementSpeedMultiplier;
+            this.gruntDetectionRadius = newProperties.gruntDetectionRadius;
+            this.gruntSpawnDelay = newProperties.gruntSpawnDelay ;
+        }
+
+
     }
 
     protected GenericEnemyControllerProperties EnemyProperties = new GenericEnemyControllerProperties();
@@ -129,7 +141,7 @@ public class GenericEnemyController : MonoBehaviour
             return;//do nothing if game is paused or level has ended.
         }
 
-        if (currentEnemyState == enemyStates.isDead)
+        if (currentEnemyState == EnemyStates.isDead)
         {
             return;//dead enemies can't react to anything.
         }
@@ -174,7 +186,7 @@ public class GenericEnemyController : MonoBehaviour
     {
         //this is used by grunts to chase PlayerTwo
         targetPlayer = player;
-        currentEnemyState = enemyStates.isHunting;     
+        currentEnemyState = EnemyStates.isHunting;     
 
         currentEnemyMovementDirection = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(player.GetPlayerPosition(), transform.position);
         transform.LookAt(player.GetPlayerPosition());//look at Player
@@ -191,7 +203,7 @@ public class GenericEnemyController : MonoBehaviour
     {
         //this is used by grunts and bosses to attack both Players
         targetPlayer = player;
-        currentEnemyState = enemyStates.isAttacking;
+        currentEnemyState = EnemyStates.isAttacking;
         transform.LookAt(player.GetPlayerPosition());//look at Player
     }
 
@@ -221,6 +233,10 @@ public class GenericEnemyController : MonoBehaviour
 
     }
 
+    public GenericEnemyControllerProperties GetCurrentEnemyControllerProperties()
+    {
+        return this.EnemyProperties;
+    }
 
 
     //this class is kept static because first level enemy properties for each syn are fixed.
@@ -382,7 +398,7 @@ public class GenericEnemyController : MonoBehaviour
 
     private void CheckPlayerDistanceAndCauseDamage(float attackDamage)
     {
-        if(currentEnemyState == enemyStates.isDead)
+        if(currentEnemyState == EnemyStates.isDead)
         {
             return;//dead enemy do nothing.
         }
@@ -417,13 +433,13 @@ public class GenericEnemyController : MonoBehaviour
 
     public void RespondToPlayerOnePunch(float punchDamage)
     {
-        if(currentEnemyState == enemyStates.isDead)
+        if(currentEnemyState == EnemyStates.isDead)
         {
             return;//dead enemy cannot respond.
         }
         //function is public because it will be called for the Player class interaction handler
         Debug.Log("Player One Punched Enemy. " + this);
-        currentEnemyState = enemyStates.isHit;
+        currentEnemyState = EnemyStates.isHit;
         DamageEnemy(punchDamage);
     }
 
@@ -434,7 +450,7 @@ public class GenericEnemyController : MonoBehaviour
 
     public void DamageEnemy(float attackDamage)
     {
-        if(currentEnemyState == enemyStates.isDead) 
+        if(currentEnemyState == EnemyStates.isDead) 
         { 
             return; //can't damage a dead enemy.
         }
@@ -449,7 +465,7 @@ public class GenericEnemyController : MonoBehaviour
 
     protected void KillEnemy()
     {
-        currentEnemyState = enemyStates.isDead;//enemy death animation
+        currentEnemyState = EnemyStates.isDead;//enemy death animation
         currentEnemyHealth = 0;
         attackRadius = 0;
         
@@ -473,29 +489,29 @@ public class GenericEnemyController : MonoBehaviour
 
     public bool IsEnemyMoving()
     {
-        return currentEnemyState == enemyStates.isMoving;
+        return currentEnemyState == EnemyStates.isMoving;
     }
     public bool IsEnemyHunting()
     {
-        return currentEnemyState == enemyStates.isHunting;
+        return currentEnemyState == EnemyStates.isHunting;
     }
     public bool IsEnemyAttacking()
     {
-        return currentEnemyState == enemyStates.isAttacking;
+        return currentEnemyState == EnemyStates.isAttacking;
     }
     public bool IsEnemyHit()
     {
-        return currentEnemyState == enemyStates.isHit;
+        return currentEnemyState == EnemyStates.isHit;
     }
 
     public bool IsEnemyDead()
     {
-        return currentEnemyState == enemyStates.isDead;
+        return currentEnemyState == EnemyStates.isDead;
     }
 
     public bool IsEnemyStanding()
     {
-        return currentEnemyState == enemyStates.isStanding;
+        return currentEnemyState == EnemyStates.isStanding;
     }
 
     public bool IsEnemyTypeBoss()

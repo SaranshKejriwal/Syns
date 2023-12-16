@@ -13,7 +13,13 @@ public class LevelTransitionManager : MonoBehaviour
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
+    //this canvas contains the 3 buff selection buttons
     [SerializeField] private Canvas LevelCompletedCanvas;
+
+    //this canvas contains the victory and Rune chest when the path is completed
+    [SerializeField] private Canvas PathCompletedCanvas;
+
+    //This canvas contains a Retry and Main Menu button
     [SerializeField] private Canvas LevelFailedCanvas;
 
 
@@ -30,6 +36,7 @@ public class LevelTransitionManager : MonoBehaviour
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of LevelTransition Manager");
         }
+
     }
 
     // Start is called before the first frame update
@@ -37,10 +44,13 @@ public class LevelTransitionManager : MonoBehaviour
     {
         //hide both canvases at the start
         LevelCompletedCanvas.enabled = false;
-        LevelFailedCanvas.enabled = false;  
+        LevelFailedCanvas.enabled = false;
+
+        //Add Listener on Start
+        ContinueToNextLevelButton.onClick.AddListener(ContinueToNextLevel);
     }
 
-    public void ShowLevelComplete()
+    public void ShowLevelCompletionCanvas()
     {
 
         GameMaster.Instance.PauseGame();//put all objects on hold during transition
@@ -51,7 +61,20 @@ public class LevelTransitionManager : MonoBehaviour
 
         //enable the canvas
         LevelCompletedCanvas.enabled = true;
-    } 
+
+    }
+
+    public void ShowPathCompletionCanvas()
+    {
+
+        GameMaster.Instance.PauseGame();//put all objects on hold during transition
+
+        //Show The details of the Rune of this Syn type.
+
+        //enable the canvas
+        PathCompletedCanvas.enabled = true;
+
+    }
 
     public void ShowLevelFailure()
     {
@@ -66,7 +89,10 @@ public class LevelTransitionManager : MonoBehaviour
     }
 
 
-
+    private void ContinueToNextLevel()
+    {
+        //Buff has already been applied via EnemyBuffManager.
+    }
 
 
 

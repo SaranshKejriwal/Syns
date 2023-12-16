@@ -61,9 +61,9 @@ public class PathProgressObject
     {
         if(idx > highestLevelIndex)
         {
-            Debug.LogError("Path Index cannot Exceed the 7th level. Capping at 6");//logging purpose only
+            Debug.LogError("Path Index cannot Exceed the 7th level. Capping at 6");//for logging error
         }
-        if(idx >= highestLevelIndex)
+        if(idx == highestLevelIndex)
         {
             this.levelReachedIndex = highestLevelIndex;
             this.isPathCompletedOrRuneCollected = true; // true only if idx == 6, ie 7 Levels are completed. 
@@ -71,6 +71,23 @@ public class PathProgressObject
         }
 
         this.levelReachedIndex = idx;
+
+    }
+
+    public void IncrementLevelReachedIndex()
+    {
+        if (this.levelReachedIndex >= highestLevelIndex)
+        {
+            //meaning that we're already at 6
+            this.levelReachedIndex = highestLevelIndex;
+            this.isPathCompletedOrRuneCollected = true; // true only if idx == 6, ie 7 Levels are completed. 
+            return;
+
+        }
+        else
+        {
+            this.levelReachedIndex++;//increase Level
+        }
 
     }
     public bool IsPathCompleted()

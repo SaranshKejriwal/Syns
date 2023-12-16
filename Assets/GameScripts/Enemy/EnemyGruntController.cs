@@ -17,8 +17,8 @@ public class EnemyGruntController : GenericEnemyController
     private void Awake()
     {
         enemyType = EnemyType.Grunt;
-        currentEnemyState = enemyStates.isMoving;//Grunt should be moving by default
-        defaultEnemyState = enemyStates.isMoving;
+        currentEnemyState = EnemyStates.isMoving;//Grunt should be moving by default
+        defaultEnemyState = EnemyStates.isMoving;
 
         this.EnemyProperties = GenericEnemyController.GetFirstLevelEnemyGruntPropertiesForLevelType(LevelType.Base);
         this.currentEnemyHealth = this.EnemyProperties.maxEnemyHealth;
@@ -78,7 +78,7 @@ public class EnemyGruntController : GenericEnemyController
             return;//keep moving as long as level is not completed.
         }
         this.enemyWalkingMovementSpeed = 0;//don't move whwn game is won.
-        this.currentEnemyState = enemyStates.isStanding;
+        this.currentEnemyState = EnemyStates.isStanding;
     }
 
 

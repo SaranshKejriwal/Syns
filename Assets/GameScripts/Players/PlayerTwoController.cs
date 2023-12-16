@@ -232,7 +232,7 @@ public class PlayerTwoController : GenericPlayerController
         {
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(disappearanceLocationAfterEntry, transform.position);
             canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
-            LevelBuilder.Instance.LevelVictory();//Close Level
+            LevelBuilder.Instance.RecordLevelVictory();//Close Level
             Debug.Log("1");
 
         }

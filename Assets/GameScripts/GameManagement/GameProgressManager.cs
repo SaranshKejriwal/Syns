@@ -26,7 +26,8 @@ public class GameProgressManager
         private set { instance = value; }
     }
 
-
+    private LevelType currentlyPlayedLevelType = LevelType.None;
+    //This will track the level path that is to be updated. 
 
     //Destination file
     public String SavePointLocation = Application.persistentDataPath + "/SavePoint.json";
@@ -50,12 +51,30 @@ public class GameProgressManager
     public PathProgressObject[] GamePathProgressArray = new PathProgressObject[GAME_PATH_COUNT];//Array will always have 8 members only
 
 
-    private void UpdateProgressInMemory()
+    private void UpdatePlayerPropertiesInMemory()
     {
         //this will be called at each level completion to update the save file
         instance.playerOneProperties = PlayerOneController.Instance.GetPlayerControllerProperties();
         instance.playerTwoProperties = PlayerTwoController.Instance.GetPlayerControllerProperties();
-        //Note - Player Monobehaviours do not exist outside their Scene.
+
+        //Update SaveFile
+        instance.WriteProgressToJSON();
+    }
+
+    public void UpdateBossPropertiesInMemoryForCurrentPath(GenericEnemyController.GenericEnemyControllerProperties bossProperties)
+    {
+        instance.GamePathProgressArray[(int)currentlyPlayedLevelType].enemyBossProperties.CopyPropertiesOf(bossProperties);
+
+        //Update SaveFile
+        instance.WriteProgressToJSON();
+    }
+
+    public void UpdateGruntPropertiesInMemoryForCurrentPath(GenericEnemyController.GenericEnemyControllerProperties gruntProperties)
+    {
+        instance.GamePathProgressArray[(int)currentlyPlayedLevelType].enemyGruntProperties.CopyPropertiesOf(gruntProperties);
+
+        //Update SaveFile
+        instance.WriteProgressToJSON();
     }
 
 
@@ -63,7 +82,7 @@ public class GameProgressManager
     public void WriteProgressToJSON()
     {
         //Get latest version of the Properties to Save.
-        UpdateProgressInMemory();
+        UpdatePlayerPropertiesInMemory();
 
         //Write class instance to JSON file.
         //IMPORTANT - ALL properties need to be public to be written to JSON.
@@ -170,8 +189,22 @@ public class GameProgressManager
         return GamePathProgressArray[(int)(levelType)].levelReachedIndex;
     }
 
+    public void IncreaseAccessibleLevelOfCurrentPath()
+    {
+        instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IncrementLevelReachedIndex();
+
+        //save game after incrementing array
+        instance.WriteProgressToJSON();
+    }
+
+    public bool IsCurrentPathCompleted(LevelType levelType)
+    {
+        return instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IsPathCompleted();
+    }
+
     public void LoadFirstLevelOfType(LevelType levelType)
     {
+        currentlyPlayedLevelType = levelType;//this is the path that will be updated after level completion
 
         //Update Latest PlayerOne and PlayerTwo properties from Save, even when restarting a level
         PlayerOneController.Instance.SetPlayerPropertiesFromSave(instance.playerOneProperties);
@@ -192,6 +225,7 @@ public class GameProgressManager
 
     public void LoadHighestSavedLevelOfType(LevelType levelType)
     {
+        currentlyPlayedLevelType = levelType;//this is the path that will be updated after level completion
 
         //Update Latest PlayerOne and PlayerTwo properties from Save
         PlayerOneController.Instance.SetPlayerPropertiesFromSave(instance.playerOneProperties);
@@ -211,5 +245,20 @@ public class GameProgressManager
 
         //Change state of Game to Play.
         GameMaster.Instance.StartGamePlay();
+    }
+
+    public void IncreaseNextLevelSpawnRateForAliveBoss(LevelType levelType)
+    {
+        float SpawnDelayReductionMultiplier = 0.7f;
+
+        //this will be called if previous Level boss is still alive after Level completion.
+        //Increase spawn rate in Save File itself.
+        EnemySpawnHandler.Instance.ReduceSpawnDelayForAliveBoss();
+
+        //update Progress object to update JSON
+        GamePathProgressArray[(int)levelType].enemyGruntProperties.gruntSpawnDelay = GamePathProgressArray[(int)levelType].enemyGruntProperties.gruntSpawnDelay * SpawnDelayReductionMultiplier;
+
+        //Save Progress
+        instance.WriteProgressToJSON();
     }
 }

@@ -26,8 +26,8 @@ public class EnemyBossController : GenericEnemyController
             Debug.LogError("Fatal Error: Cannot have a predefined instance of Enemy Boss");
         }
         instance.enemyType = EnemyType.Boss;
-        instance.currentEnemyState = enemyStates.isStanding;//Boss should not be moving on spawn
-        instance.defaultEnemyState = enemyStates.isStanding;
+        instance.currentEnemyState = EnemyStates.isStanding;//Boss should not be moving on spawn
+        instance.defaultEnemyState = EnemyStates.isStanding;
         //instance.enemyWalkingMovementSpeed = 0;
         //instance.enemyHuntingMovementSpeed = 0;
 
@@ -68,6 +68,9 @@ public class EnemyBossController : GenericEnemyController
 
     public void PlaceLevelBossOnFarMap()
     {
+        //If enemy Boss is being placed via this function, then it has to be alive, even if previously killed.
+        instance.currentEnemyState = EnemyStates.isStanding;
+
         //To Spawn - Find a mazeCell that is in a dead-end for spawning
         //We don't want to see the butt of the Boss, to the cell should have 1 opening except the top one.
         //Dead-end cell should be at the very edge of the level

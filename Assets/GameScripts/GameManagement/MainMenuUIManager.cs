@@ -113,6 +113,7 @@ public class MainMenuUIManager : MonoBehaviour
         {
             //No point in showing Continue button if no Save file is available.
             continueButton.enabled = false;
+
         }
     }
 
