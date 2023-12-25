@@ -23,9 +23,6 @@ public class LevelTransitionManager : MonoBehaviour
     [SerializeField] private Canvas LevelFailedCanvas;
 
 
-    //buttons to move to next level on Level Completion.
-    [SerializeField] private Button ContinueToNextLevelButton;
-
     private void Awake()
     {
         if (instance == null)
@@ -44,10 +41,8 @@ public class LevelTransitionManager : MonoBehaviour
     {
         //hide both canvases at the start
         LevelCompletedCanvas.enabled = false;
+        PathCompletedCanvas.enabled = false;
         LevelFailedCanvas.enabled = false;
-
-        //Add Listener on Start
-        ContinueToNextLevelButton.onClick.AddListener(ContinueToNextLevel);
     }
 
     public void ShowLevelCompletionCanvas()
@@ -88,13 +83,11 @@ public class LevelTransitionManager : MonoBehaviour
         LevelFailedCanvas.enabled = true;
     }
 
-
-    private void ContinueToNextLevel()
+    public void HideAllTransitionCanvases()
     {
-        //Buff has already been applied via EnemyBuffManager.
+        LevelCompletedCanvas.enabled = false;
+        PathCompletedCanvas.enabled = false;
+        LevelFailedCanvas.enabled=false;
     }
-
-
-
 
 }

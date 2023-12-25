@@ -13,7 +13,7 @@ public class PathProgressObject
     //which level has been reached
     public uint levelReachedIndex = 0;//will vary from 0-6, for one path
 
-    private uint highestLevelIndex = 6; //can be ignored in the JSON serialization
+    public uint highestLevelIndex = 6;
     //this value will be 2 for the Base level - 3 levels only.
     //Total Level count = highestLevelIndex + 1, since index starts from 0
 
@@ -93,6 +93,11 @@ public class PathProgressObject
     public bool IsPathCompleted()
     {
         return isPathCompletedOrRuneCollected;
+    }
+
+    public bool IsPathUnlocked()
+    {
+        return isPathUnlocked;
     }
 
     public uint GetHighestAccessibleLevelIndex()

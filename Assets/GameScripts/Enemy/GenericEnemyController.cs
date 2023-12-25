@@ -52,8 +52,6 @@ public class GenericEnemyController : MonoBehaviour
 
     protected GenericPlayerController targetPlayer = null;//this will be used to track which player is being tracked by the enemy.
 
-    protected float enemyDetectionRadius;//this is maintained internally because Boss detection radius is hard-coded and grunt radius is property driven.
-
 
     [Serializable]
     public class GenericEnemyControllerProperties
@@ -155,10 +153,10 @@ public class GenericEnemyController : MonoBehaviour
         float distanceFromPlayer = Vector3.Distance(player.GetPlayerPosition(), transform.position);
         
 
-        if(distanceFromPlayer <= enemyDetectionRadius && distanceFromPlayer > attackRadius)
+        if(distanceFromPlayer <= EnemyProperties.gruntDetectionRadius && distanceFromPlayer > attackRadius)
         {
             //check for obstruction only when player is in radius, not all the time.
-            bool isPlayerNotObstructed = IsPlayerRayCastNotObstructed(player, enemyDetectionRadius);
+            bool isPlayerNotObstructed = IsPlayerRayCastNotObstructed(player, EnemyProperties.gruntDetectionRadius);
             //Grunts will chase. Boss will Roar. This is configured in the animation
             if(isPlayerNotObstructed)
             {               
@@ -306,7 +304,7 @@ public class GenericEnemyController : MonoBehaviour
                 return new GenericEnemyControllerProperties(LevelType.Pride, 2.5f, 3.0f, 0f, 1.0f, 1.0f);
             case LevelType.Wrath:
                 //High attack, can ignore walls?
-                return new GenericEnemyControllerProperties(LevelType.Wrath, 4f, 3.5f, 0f, 1.1f);
+                return new GenericEnemyControllerProperties(LevelType.Wrath, 4f, 3.5f, 0f, 1.0f);
 
             default:
                 return null;
@@ -347,7 +345,7 @@ public class GenericEnemyController : MonoBehaviour
 
     public float GetEnemyDetectionRadius()
     {
-        return enemyDetectionRadius;
+        return EnemyProperties.gruntDetectionRadius;
     }
 
     //This method returns the player between PlayerOne and PlayerTwo that is nearest to the base object

@@ -81,12 +81,10 @@ public class GameProgressManager
     //this method will save progress for overall game across all 8 paths.
     public void WriteProgressToJSON()
     {
-        //Get latest version of the Properties to Save.
-        UpdatePlayerPropertiesInMemory();
+        //we assume that any latest property value update should be done outside this class.
 
         //Write class instance to JSON file.
         //IMPORTANT - ALL properties need to be public to be written to JSON.
-
         instance.SaveTimestamp = DateTime.Now.ToString();
 
         string jsonSave = JsonUtility.ToJson(instance,true);//true corresponds to Pretty-Printed json
@@ -136,14 +134,14 @@ public class GameProgressManager
 
         }
 
-        //Base path should have 3 levels only.
+        //Base path should have 3 levels only, and should always be unlocked.
         GamePathProgressArray[(int)LevelType.Base].SetHighestLevelIndex(BASE_PATH_HIGHEST_LEVEL_INDEX);
-
+        GamePathProgressArray[(int)LevelType.Base].isPathUnlocked = true;
         Debug.Log("GamePath Array initialized.");
 
     }
 
-    public void UnlockAllSynPaths()
+    private void UnlockAllSynPaths()
     {
         //unlock 1 through 6
         for (int i = 1; i < GAME_PATH_COUNT; i++)
@@ -191,7 +189,15 @@ public class GameProgressManager
 
     public void IncreaseAccessibleLevelOfCurrentPath()
     {
+        //if path is completed, it will be captured here.
         instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IncrementLevelReachedIndex();
+
+        //in case the base path is completed, then unlock all the other levels.
+        if(currentlyPlayedLevelType == LevelType.Base && instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IsPathCompleted())
+        {
+            //manage level unlock implicitly.
+            UnlockAllSynPaths();
+        }
 
         //save game after incrementing array
         instance.WriteProgressToJSON();
@@ -199,7 +205,7 @@ public class GameProgressManager
 
     public bool IsCurrentPathCompleted(LevelType levelType)
     {
-        return instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IsPathCompleted();
+        return instance.GamePathProgressArray[(int)levelType].IsPathCompleted();
     }
 
     public void LoadFirstLevelOfType(LevelType levelType)
@@ -217,7 +223,11 @@ public class GameProgressManager
         //Build the Level and Spawn objects on the GameFloor
         LevelBuilder.Instance.ConstructLevel(levelType);
 
+        //Hide Menu after LevelBuilder is done
         LevelSelectionManager.Instance.HideLevelSelectionMenus();
+
+        //Hide Level Transition Menus, if open
+        LevelTransitionManager.Instance.HideAllTransitionCanvases();
 
         //Change state of Game to Play.
         GameMaster.Instance.StartGamePlay();
@@ -226,6 +236,8 @@ public class GameProgressManager
     public void LoadHighestSavedLevelOfType(LevelType levelType)
     {
         currentlyPlayedLevelType = levelType;//this is the path that will be updated after level completion
+
+
 
         //Update Latest PlayerOne and PlayerTwo properties from Save
         PlayerOneController.Instance.SetPlayerPropertiesFromSave(instance.playerOneProperties);
@@ -243,8 +255,21 @@ public class GameProgressManager
         //Hide Menu after LevelBuilder is done
         LevelSelectionManager.Instance.HideLevelSelectionMenus();
 
+        //Hide Level Transition Menus, if open
+        LevelTransitionManager.Instance.HideAllTransitionCanvases();
+
         //Change state of Game to Play.
         GameMaster.Instance.StartGamePlay();
+    }
+
+    public void LoadNextLevelOnCurrentPath()
+    {
+        //Write current properties to JSON first
+        WriteProgressToJSON();
+
+
+        //load the recently saved stats and build level.
+        instance.LoadHighestSavedLevelOfType(currentlyPlayedLevelType);
     }
 
     public void IncreaseNextLevelSpawnRateForAliveBoss(LevelType levelType)

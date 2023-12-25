@@ -24,7 +24,7 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private Button AcceptResetButton;
     [SerializeField] private Button LoadSaveButton;
 
-    //Level Selection Canvas Reference - Buttons to be added more elegantly than individually
+    //Level Selection Canvas Reference
     [SerializeField] private Canvas LevelSelectionCanvas;
 
 
@@ -65,6 +65,9 @@ public class MainMenuUIManager : MonoBehaviour
         ResetWarningPromptCanvas.enabled = false;
         MainMenuCanvas.enabled = false;
 
+        //show level selection canvas.
+        LevelSelectionManager.Instance.ShowLevelSelectionMenu();
+
     }
 
     private void checkExistingGameAndPromptUser() 
@@ -94,7 +97,8 @@ public class MainMenuUIManager : MonoBehaviour
         ResetWarningPromptCanvas.enabled = false;
         MainMenuCanvas.enabled = false;
 
-        LevelSelectionCanvas.enabled = true;//show level selection canvas.
+        //show level selection canvas.
+        LevelSelectionManager.Instance.ShowLevelSelectionMenu();
 
         Debug.Log("Resetting and Starting New Game...");
     }

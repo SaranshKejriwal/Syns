@@ -1,6 +1,8 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
+BUG - Next level does not construct a maze - just renders all the walls.
+
 Add default grunt/boss properties when there is No Save available.
 
 Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. 

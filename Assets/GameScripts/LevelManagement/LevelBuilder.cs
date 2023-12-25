@@ -125,6 +125,7 @@ public class LevelBuilder : MonoBehaviour
 
         //if Path is not complete, show next buffs to select, else show the rune that is won.
         if (GameProgressManager.Instance.IsCurrentPathCompleted(currentLevelType))
+            //completion will be recorded when we increment the accessible level number
         {
             LevelTransitionManager.Instance.ShowPathCompletionCanvas();
         }

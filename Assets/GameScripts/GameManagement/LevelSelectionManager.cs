@@ -73,14 +73,24 @@ public class LevelSelectionManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //DisableLockedPathButtons();
     }
 
-    // Update is called once per frame
-    void Update()
+
+    //Read GameProgress Manager and disable buttons for the locked paths
+    private void DisableLockedPathButtons()
     {
-        
+        BaseLevelButton.enabled = true;//will always be enabled
+        GreedLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Greed].IsPathUnlocked();
+        SlothLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Sloth].IsPathUnlocked();
+        EnvyLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Envy].IsPathUnlocked();
+        GluttonyLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Gluttony].IsPathUnlocked();
+        LustLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Lust].IsPathUnlocked();
+        PrideLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Pride].IsPathUnlocked();
+        WrathLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Wrath].IsPathUnlocked();
+
     }
+
 
     private void LoadLevelNumProgressBarForLevelType(LevelType levelType)
     {
@@ -91,6 +101,9 @@ public class LevelSelectionManager : MonoBehaviour
 
         uint highestAccessibleLevelIndex = GameProgressManager.Instance.GetHighestAccessibleLevelForType(levelType);
 
+        //needed for Base level only, to disable buttons 4-7
+        uint highestPossibleLevelIndex = GameProgressManager.Instance.GetPathObjectByLevelType(levelType).GetHighestLevelIndex();
+
         //Strategy - User can only choose 2 levels - 1st level, and max reachable level. This is because L1 buffs impact subsequent levels.
 
 
@@ -98,20 +111,25 @@ public class LevelSelectionManager : MonoBehaviour
         //No other button will have listeners added. Tweak their color based on how far the player has reached.
         for (int i = 0; i < MAX_LEVEL_BUTTON_COUNT; i++)
         {
-            if (i > GameProgressManager.Instance.GetPathObjectByLevelType(levelType).GetHighestLevelIndex())
+            if (i > highestPossibleLevelIndex)
             {
                 LevelNumberButtons[i].enabled = false;//this will be used for Base Path only, to disable buttons 4-7
+                LevelNumberButtons[i].transform.localScale = Vector3.zero;//hide them
+            }
+            else
+            {
+                LevelNumberButtons[i].transform.localScale = Vector3.one;//show the buttons if hidden previously
             }
 
             if (i > highestAccessibleLevelIndex)
             {
                 //These buttons should be coloured red.
-                LevelNumberButtons[highestAccessibleLevelIndex].GetComponent<Image>().color = new Color(100, 0, 0);
+                LevelNumberButtons[i].GetComponent<Image>().color = new Color(100, 0, 0);
 
             } else if (i < highestAccessibleLevelIndex)
             {
                 //These buttons should be coloured Dark Green.
-                LevelNumberButtons[highestAccessibleLevelIndex].GetComponent<Image>().color = new Color(0, 100, 0);
+                LevelNumberButtons[i].GetComponent<Image>().color = Color.grey;
             }
 
         }
@@ -126,7 +144,17 @@ public class LevelSelectionManager : MonoBehaviour
 
         //if Highest index is 0, then only colour will be overwritten, not the listener.
         LevelNumberButtons[highestAccessibleLevelIndex].enabled = true;
-        LevelNumberButtons[highestAccessibleLevelIndex].GetComponent<Image>().color = Color.yellow;
+
+        if (!GameProgressManager.Instance.IsCurrentPathCompleted(levelType))
+        {
+            //Show last box as yellow if the path is not completed.
+            LevelNumberButtons[highestAccessibleLevelIndex].GetComponent<Image>().color = Color.yellow;
+        }
+        else
+        {
+            //indicate that only first and last buttons can be selected.
+            LevelNumberButtons[highestAccessibleLevelIndex].GetComponent<Image>().color = Color.green;
+        }
 
         //Do not add a separate listener if User has not started the path yet
         if(highestAccessibleLevelIndex > 0)
@@ -154,6 +182,7 @@ public class LevelSelectionManager : MonoBehaviour
     {
         LevelHidingCeiling.localScale = Vector3.one;
         LevelTypeSelectionCanvas.enabled = true;
+        //DisableLockedPathButtons();
     }
 
     public void HideLevelSelectionMenus()

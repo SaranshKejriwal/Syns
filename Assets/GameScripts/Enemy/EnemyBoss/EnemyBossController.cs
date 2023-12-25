@@ -35,8 +35,7 @@ public class EnemyBossController : GenericEnemyController
         instance.attackRadius = 5f;
 
         instance.currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
-        instance.enemyDetectionRadius = 9f;//Boss detection radius is hard-coded, not picked up from properties
-
+        
         //Get enemies properties from static method instead of hard-coding each property
         instance.SetEnemyPropertiesFromSave(GenericEnemyController.GetFirstLevelBossPropertiesForLevelType(LevelType.Base));
 

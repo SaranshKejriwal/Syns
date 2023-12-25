@@ -67,10 +67,11 @@ public class PlayerOneController : GenericPlayerController
     {
         //What will this object do when PunchAction is pressed?
 
-        Debug.Log(approachedEnemy);
+       
         //if Raycast hits Enemy in HandleInteractions(), approachedEnemy is updated. When PlayerOne punches, Enemy reaction is called
         if (approachedEnemy != null && !approachedEnemy.IsEnemyDead())
         {
+            Debug.Log(approachedEnemy);
             //only nearest enemy responds, ONLY when Player One Punches
             approachedEnemy.RespondToPlayerOnePunch(PlayerControllerProperties.playerOnePunchAttackDamage);//straightforward non-singleton approach.
             IncreasePlayerOneXP(PlayerControllerProperties.playerOnePunchAttackDamage, approachedEnemy.IsEnemyTypeBoss());
