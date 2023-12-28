@@ -1,15 +1,13 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
-BUG - Next level does not construct a maze - just renders all the walls.
+BUG - Maze renderer sometimes creates closed boxes on new level.
 
-Add default grunt/boss properties when there is No Save available.
-
-Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. 
+BUG - Next level starts without resetting the parent of Exit Key. Parent is set as P2 from Prev level.
 
 BUG - interaction between P2 and boss is weird. Possible issue in Boss animator and P2 traversal logic..
 
-Fix PlayerTwo exit entry using events.
+Fix PlayerTwo exit entry using events. Level should only end when P2 is entering the exit. Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open.
 
 PlayerOne attack range to be limited. Currently punch event is killing the approachedEnemy Object at any distance.
 
@@ -25,13 +23,10 @@ Add Level Failed and Level Completed screens inside GameScene, with logic for se
 
 Addition of PLayer Hit and Death animations.
 
+Addition of Player XP mechanisms. Increase player stats.
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
-
-Addition of Player XP mechanisms
-
-Allow user to choose enemy buff at start of next level.
 
 Have Variants and buffs for each enemy of each syn.
 
@@ -41,23 +36,16 @@ Shop to spend Gold and buy special items
 
 Shared Bag to hold items between P1 and P2.
 
-Player1 and Player2 XP system. DONE
-
 Create shop items & Runes to be exchanged between P1 and P2 - eg. cloak etc?
-
-Level selection between Base and 7 level types
 
 Adding Runes to the game - 2 slots per player
 
 Composing & Adding Music to the game.
 
-Save Game stats.
-
 Fix the P2 Exit Door entry logic using Events.
 
 Make P1 and P2 icons for HUD, 7 sins, gold coin, P2 speed
 
-Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open.
 
 ___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
@@ -147,3 +135,15 @@ BUG - Boss is not showing Death Animation. Trying by Adding Hunting transition t
 Add an HUD on play screen to show coin collection, P1/P2 health (DONE), P2 speed, enemy count(DONE), spawn timer (DONE), boss dead/alive (DONE), P1 P2 XP(DONE) DONE
 
 Populate Path Progress properties for each of the 8 paths and define the GameProgress class to send to JSON. DONE
+
+Add default grunt/boss properties when there is No Save available. DONE
+
+Create Scriptable Objects for Enemy buff types - need to pick 3 of them on level completion. DONE
+
+Allow user to choose enemy buff at start of next level. DONE
+
+Level selection between Base and 7 level types, DONE
+
+Player1 and Player2 XP system. DONE
+
+Save Game stats. DONE

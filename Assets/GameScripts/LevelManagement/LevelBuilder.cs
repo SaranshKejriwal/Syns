@@ -76,6 +76,8 @@ public class LevelBuilder : MonoBehaviour
 
         //Note - LevelType will eventually play a role in the Material selection for visuals.
 
+
+
         //Spawn Collectibles
         CollectiblesSpawnHandler.Instance.SpawnLevelCollectibles();
                 
@@ -105,7 +107,7 @@ public class LevelBuilder : MonoBehaviour
         return startingCell;
     }
 
-    public void RecordLevelVictory()
+    public void RecordLevelVictory(object obj, EventArgs e)
     {
         Debug.Log("Level Won!");
         isLevelCompleted = true;

@@ -74,11 +74,22 @@ public class ExitKeyController : GenericCollectibleItem
     {
         Vector3 keySizeOnCollect = new Vector3(0.7f, 0.7f, 0.7f);
         //this will directly make the Key move relative to PlayerTwo, without calling in Update each time.
-        transform.parent = PlayerTwoController.Instance.transform;
-        transform.position = GetHoverYOffsetAbovePlayerTwoVisual();
-        transform.localScale = keySizeOnCollect;
+        instance.transform.parent = PlayerTwoController.Instance.transform;
+        instance.transform.position = GetHoverYOffsetAbovePlayerTwoVisual();
+        instance.transform.localScale = keySizeOnCollect;
+    }
 
-        PlayerTwoController.Instance.SetHasCollectedExitKey(true);
+    public void SetExitKeyPosition(Vector3 newPosition)
+    {
+        ResetExitKeyForNextLevel();//is new position is being set, then it is understood 
+        instance.transform.position = newPosition;
+    }
+
+    public void ResetExitKeyForNextLevel()
+    {
+        instance.transform.parent = null;
+        instance.transform.localScale = Vector3.one;
+        instance.isObjectCollected = false;//if parent is reset, then object is not collected.\
     }
 
     private Vector3 GetHoverYOffsetAbovePlayerTwoVisual()

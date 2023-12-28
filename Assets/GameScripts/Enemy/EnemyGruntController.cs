@@ -27,6 +27,12 @@ public class EnemyGruntController : GenericEnemyController
     void Start()
     {
         currentEnemyMovementDirection = AutoMovementHandler.GetRandomDirectionVector();
+
+        //subscribe to PlayerTwo Exit entry event.
+        if (this != null)
+        {
+            PlayerTwoController.Instance.OnPlayerTwoExit += this.StopGruntMovement;
+        }
     }
 
     // Update is called once per frame
@@ -41,9 +47,6 @@ public class EnemyGruntController : GenericEnemyController
         base.ReactToPlayer(base.GetNearestPlayer());
         HandleNormalEnemyMovementWithCollision();
 
-        //for grunt only. If level is completed, Kill all grunts
-        //(Not sure if this is needed since we'll load the main menu screen anyway.
-        CheckStopOnLevelCompletion();
     }
 
     private void HandleNormalEnemyMovementWithCollision()
@@ -70,13 +73,8 @@ public class EnemyGruntController : GenericEnemyController
     }
 
 
-    //ideally there should be an event fired here.
-    private void CheckStopOnLevelCompletion()
+    public void StopGruntMovement(object boss, EventArgs e)
     {
-        if (!LevelBuilder.Instance.IsLevelCompleted())
-        {
-            return;//keep moving as long as level is not completed.
-        }
         this.enemyWalkingMovementSpeed = 0;//don't move whwn game is won.
         this.currentEnemyState = EnemyStates.isStanding;
     }

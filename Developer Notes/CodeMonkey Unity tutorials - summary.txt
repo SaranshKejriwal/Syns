@@ -419,3 +419,8 @@ Do Not use a Monobehaviour if something is not going to be linked to a GameObj. 
 
 
 https://stackoverflow.com/questions/32306704/how-to-pass-data-and-references-between-scenes-in-unity
+
+
+
+https://stackoverflow.com/questions/58485085/how-to-change-the-name-of-my-company-that-gets-auto-logged-for-games
+Change Company Name in the AppData folder

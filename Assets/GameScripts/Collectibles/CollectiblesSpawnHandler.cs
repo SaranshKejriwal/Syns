@@ -83,33 +83,31 @@ public class CollectiblesSpawnHandler : MonoBehaviour
         //spawn Exit Door.Ensure that ExitDoor is spawned close to a TopWall
         MazeCell exitDoorContainerCell = MathFunctions.GetRandomMazeCellWithTopWall();
         Vector3 randomExitDoorPosition = exitDoorContainerCell.cellPositionOnMap + new Vector3(0, 0, LevelBuilder.Instance.GetCellSideLength() / 1.9f);
-        SpawnSingleObject(ExitDoorPrefab, this.isExitDoorSpawnedAlready, randomExitDoorPosition);
         ExitDoorController.Instance.SetExitDoorContainerCell(exitDoorContainerCell);
+        ExitDoorController.Instance.SetExitDoorPosition(randomExitDoorPosition);
 
         //spawn Exit Key. Ensure that ExitKey is spawned on a cell at the edges only
         Vector3 randomExitKeyPosition = MathFunctions.GetRandomMazeEdgeCellCenterSpawnWithOffset(0, LevelBuilder.Instance.GetCellSideLength() / 4f);
-        SpawnSingleObject(ExitKeyPrefab, this.isExitKeySpawnedAlready, randomExitKeyPosition);
-
-        //update checkers
-        isExitDoorSpawnedAlready = true;
-        isExitKeySpawnedAlready = true;
+        ExitKeyController.Instance.SetExitKeyPosition(randomExitKeyPosition);
 
         //spawn Coins and Heals
         SpawnMultipleObjectsByCount(GoldCoinPrefab, numCoinsOnLevel);
         SpawnMultipleObjectsByCount(HealPrefab, numHealsOnLevel);
     }
 
+    /*
     private void SpawnSingleObject(Transform objectPrefab, bool isAlreadySpawned, Vector3 preferredPosition)
     {
         if (isAlreadySpawned)
         {
+            //how to move the position of the singleton object from here??
             return;//don't want 2 instances of singular object.
         }
 
         Transform singleObject = Instantiate(objectPrefab);
         singleObject.localPosition = preferredPosition;
         //Ensure that ExitDoor is spawned close to a TopWall
-    }
+    }*/
 
     private void SpawnMultipleObjectsByCount(Transform objectPrefab, int objectCount)
     {
