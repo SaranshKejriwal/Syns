@@ -32,6 +32,7 @@ public class EnemyGruntController : GenericEnemyController
         if (this != null)
         {
             PlayerTwoController.Instance.OnPlayerTwoExit += this.StopGruntMovement;
+            PlayerTwoController.Instance.OnPlayerTwoDeath += this.StopGruntMovement;//both end the level anyway
         }
     }
 
@@ -77,6 +78,9 @@ public class EnemyGruntController : GenericEnemyController
     {
         this.enemyWalkingMovementSpeed = 0;//don't move whwn game is won.
         this.currentEnemyState = EnemyStates.isStanding;
+
+        //Since this is called on Level Completion, destroy all existing Grunts
+        Destroy(this.gameObject);
     }
 
 

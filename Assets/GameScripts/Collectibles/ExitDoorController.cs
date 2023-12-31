@@ -58,6 +58,7 @@ public class ExitDoorController : GenericCollectibleItem
         }
         //if PlayerTwo has reached ExitDoor with Key, then it should be open and accessible to PlayerOne also.
         instance.correctCollectingPlayer = isCollectableBy.BothActivePlayers;//Allow PlayerOne to Enter
+        instance.isObjectCollected = true;
     }
 
     public bool IsExitDoorOpen() 
@@ -68,7 +69,7 @@ public class ExitDoorController : GenericCollectibleItem
 
     public void EnableExitDoorForPlayerTwoOnExitKeyCollectEvent(object key, EventArgs e)
     {
-        Debug.Log("ExitDoor is Listening to Exit Key Collection Event. PlayerTwo can Open Exit door");
+        //Debug.Log("ExitDoor is Listening to Exit Key Collection Event. PlayerTwo can Open Exit door");
         instance.correctCollectingPlayer = isCollectableBy.playerTwoOnly;
         //this will be called when OnExitKeyCollect event is fired.
         //Only PlayerTwo can access it until he reaches the door.

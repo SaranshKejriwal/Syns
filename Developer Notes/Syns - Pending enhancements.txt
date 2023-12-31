@@ -1,13 +1,9 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
-BUG - Maze renderer sometimes creates closed boxes on new level.
-
-BUG - Next level starts without resetting the parent of Exit Key. Parent is set as P2 from Prev level.
+MAJOR BUG - Maze renderer sometimes creates closed boxes on new level. Cause unknown
 
 BUG - interaction between P2 and boss is weird. Possible issue in Boss animator and P2 traversal logic..
-
-Fix PlayerTwo exit entry using events. Level should only end when P2 is entering the exit. Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open.
 
 PlayerOne attack range to be limited. Currently punch event is killing the approachedEnemy Object at any distance.
 
@@ -38,7 +34,9 @@ Shared Bag to hold items between P1 and P2.
 
 Create shop items & Runes to be exchanged between P1 and P2 - eg. cloak etc?
 
-Adding Runes to the game - 2 slots per player
+Adding Runes to the game - 
+
+Adding 2 item slots per player
 
 Composing & Adding Music to the game.
 
@@ -147,3 +145,19 @@ Level selection between Base and 7 level types, DONE
 Player1 and Player2 XP system. DONE
 
 Save Game stats. DONE
+
+BUG - Next level starts without resetting the parent of Exit Key. Parent is set as P2 from Prev level. DONE with a proper coded reset on Exit Key
+
+
+BUG - PlayerTwo needs to reset its trajectory to the maze cells after exiting the prev level. Fix by restricting PlayerTwo to stay within Maze Path
+
+BUG - Old dead enemies remain on the track of the next level. FIXED Added enemy object deletion gameObject deletion on level completion/failure.
+
+Weird corner case - if exit key is running to P2 and P2 passes exit, then it doesn't count as P2 exiting. Need to increase exit key speed.
+
+Add an Exit to Main Menu routine. DONE
+
+Can merge the screens for Level Pause, Level Fail and Path Complete. Change background colors in code. DONE
+
+
+Fix PlayerTwo exit etry using events. Level should only end when P2 is entering the exit. Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open. DONE

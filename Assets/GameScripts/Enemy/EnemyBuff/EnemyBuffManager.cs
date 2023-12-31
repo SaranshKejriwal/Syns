@@ -192,7 +192,7 @@ public class EnemyBuffManager : MonoBehaviour
         RightSideBuffButton.enabled = false;
 
         //Continue to Next level only when a buff is selected.
-        GameProgressManager.Instance.LoadNextLevelOnCurrentPath();
+        GameProgressManager.Instance.LoadHighestLevelOnCurrentPath();
 
     }
 }

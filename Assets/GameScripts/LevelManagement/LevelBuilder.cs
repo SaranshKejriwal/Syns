@@ -76,11 +76,13 @@ public class LevelBuilder : MonoBehaviour
 
         //Note - LevelType will eventually play a role in the Material selection for visuals.
 
-
-
         //Spawn Collectibles
         CollectiblesSpawnHandler.Instance.SpawnLevelCollectibles();
-                
+
+
+        //Show Level HUD
+        LevelHUDStatsManager.Instance.ShowHUD();
+
         //Place Players
         PlayerTwoController.Instance.PlacePlayerTwoOnLevelStart();
         PlayerOneController.Instance.PlacePlayerOneOnLevelStart();
@@ -91,8 +93,6 @@ public class LevelBuilder : MonoBehaviour
         //Start Enemy spawn on map
         EnemySpawnHandler.Instance.StartEnemySpawn();
 
-        //Show Level HUD
-        LevelHUDStatsManager.Instance.ShowHUD();
     }
 
     private void SetupStartingCell()
@@ -146,7 +146,8 @@ public class LevelBuilder : MonoBehaviour
 
     }
 
-    public void LevelDefeat()
+    //If PlayerTwo Dies, level is lost.
+    public void LevelDefeat(object obj, EventArgs e)
     {
         Debug.Log("Level Lost! :(");
         isLevelCompleted = false;

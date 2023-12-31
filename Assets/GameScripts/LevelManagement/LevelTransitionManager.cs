@@ -16,12 +16,18 @@ public class LevelTransitionManager : MonoBehaviour
     //this canvas contains the 3 buff selection buttons
     [SerializeField] private Canvas LevelCompletedCanvas;
 
-    //this canvas contains the victory and Rune chest when the path is completed
-    [SerializeField] private Canvas PathCompletedCanvas;
 
-    //This canvas contains a Retry and Main Menu button
-    [SerializeField] private Canvas LevelFailedCanvas;
+    //this canvas will serve 3 purposes
+    //1. Show level Fail when P2 dies. 2. Show Pause Menu. 3. Show Path completion
+    //3 common buttons will be shown/hidden based on requirement, and background color will be changed.
+    [SerializeField] private Canvas LevelPathNavigationCanvas;
+    [SerializeField] private Image LevelPathNavigCanvasBackground;
 
+    [SerializeField] private Button ContinueLevelButton;
+    [SerializeField] private Button MainMenuButton;
+    [SerializeField] private Button RestartLevelButton;
+
+    //Level Completion Canvas will remain separate because it has a different Button Set.
 
     private void Awake()
     {
@@ -41,8 +47,12 @@ public class LevelTransitionManager : MonoBehaviour
     {
         //hide both canvases at the start
         LevelCompletedCanvas.enabled = false;
-        PathCompletedCanvas.enabled = false;
-        LevelFailedCanvas.enabled = false;
+        LevelPathNavigationCanvas.enabled = false;
+
+        //Add functions for buttons
+        ContinueLevelButton.onClick.AddListener(ResumeGame);
+        RestartLevelButton.onClick.AddListener(RestartLevel);
+        MainMenuButton.onClick.AddListener(GoToMainMenu);
     }
 
     public void ShowLevelCompletionCanvas()
@@ -56,18 +66,35 @@ public class LevelTransitionManager : MonoBehaviour
 
         //enable the canvas
         LevelCompletedCanvas.enabled = true;
+        LevelPathNavigationCanvas.enabled = false;
 
+    }
+
+    public void ShowLevelPauseCanvas(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        GameMaster.Instance.PauseGame();
+
+        //2 buttons - Continue Level and Main Menu
+        LevelPathNavigationCanvas.enabled = true;
+        LevelPathNavigCanvasBackground.color = new Color(150, 0, 150);
+
+        //Show Continue Button, if previously hidden.
+        ContinueLevelButton.transform.localScale = Vector3.one;
     }
 
     public void ShowPathCompletionCanvas()
     {
+        //Hide Continue and Restart Button.
+        ContinueLevelButton.transform.localScale = Vector3.zero;
+        RestartLevelButton.transform.localScale += Vector3.zero;
 
         GameMaster.Instance.PauseGame();//put all objects on hold during transition
 
         //Show The details of the Rune of this Syn type.
 
         //enable the canvas
-        PathCompletedCanvas.enabled = true;
+        LevelPathNavigationCanvas.enabled = true;
+        LevelPathNavigCanvasBackground.color = new Color(0, 150, 50);
 
     }
 
@@ -76,18 +103,38 @@ public class LevelTransitionManager : MonoBehaviour
 
         GameMaster.Instance.PauseGame();//put all objects on hold during transition
 
+        //Hide Continue Button, Not applicable here.
+        ContinueLevelButton.transform.localScale = Vector3.zero;
 
-        //Retry button - reload the level
-
-        //Home button - Go to Level selector
-        LevelFailedCanvas.enabled = true;
+        LevelPathNavigationCanvas.enabled = true;
+        LevelPathNavigCanvasBackground.color = new Color(0, 50, 150);
     }
 
     public void HideAllTransitionCanvases()
     {
         LevelCompletedCanvas.enabled = false;
-        PathCompletedCanvas.enabled = false;
-        LevelFailedCanvas.enabled=false;
+        LevelPathNavigationCanvas.enabled=false;
+    }
+
+    private void ResumeGame()
+    {
+        HideAllTransitionCanvases();
+        GameMaster.Instance.StartGamePlay();
+    }
+
+    private void RestartLevel()
+    {
+        HideAllTransitionCanvases();
+
+        GameProgressManager.Instance.LoadHighestLevelOnCurrentPath();
+    }
+
+    private void GoToMainMenu()
+    {
+        HideAllTransitionCanvases();
+
+        LevelSelectionManager.Instance.ShowLevelSelectionMenu();
+
     }
 
 }

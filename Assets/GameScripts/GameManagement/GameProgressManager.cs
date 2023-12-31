@@ -237,7 +237,8 @@ public class GameProgressManager
     {
         currentlyPlayedLevelType = levelType;//this is the path that will be updated after level completion
 
-
+        //Build the Level and Spawn objects on the GameFloor
+        LevelBuilder.Instance.ConstructLevel(levelType);
 
         //Update Latest PlayerOne and PlayerTwo properties from Save
         PlayerOneController.Instance.SetPlayerPropertiesFromSave(instance.playerOneProperties);
@@ -249,8 +250,6 @@ public class GameProgressManager
         EnemySpawnHandler.Instance.SetCurrentGruntProperties(instance.GetPathObjectByLevelType(levelType).GetEnemyGruntProperties());
         //EnemySpawnHandler is used because it is responsible for creating new grunt objects
 
-        //Build the Level and Spawn objects on the GameFloor
-        LevelBuilder.Instance.ConstructLevel(levelType);
 
         //Hide Menu after LevelBuilder is done
         LevelSelectionManager.Instance.HideLevelSelectionMenus();
@@ -258,14 +257,17 @@ public class GameProgressManager
         //Hide Level Transition Menus, if open
         LevelTransitionManager.Instance.HideAllTransitionCanvases();
 
+
         //Change state of Game to Play.
         GameMaster.Instance.StartGamePlay();
     }
 
-    public void LoadNextLevelOnCurrentPath()
+    public void LoadHighestLevelOnCurrentPath()
     {
+
+
         //Write current properties to JSON first
-        WriteProgressToJSON();
+        instance.WriteProgressToJSON();
 
 
         //load the recently saved stats and build level.

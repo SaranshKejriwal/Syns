@@ -73,7 +73,6 @@ public class LevelSelectionManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //DisableLockedPathButtons();
     }
 
 
@@ -81,13 +80,16 @@ public class LevelSelectionManager : MonoBehaviour
     private void DisableLockedPathButtons()
     {
         BaseLevelButton.enabled = true;//will always be enabled
-        GreedLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Greed].IsPathUnlocked();
-        SlothLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Sloth].IsPathUnlocked();
-        EnvyLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Envy].IsPathUnlocked();
-        GluttonyLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Gluttony].IsPathUnlocked();
-        LustLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Lust].IsPathUnlocked();
-        PrideLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Pride].IsPathUnlocked();
-        WrathLevelButton.enabled = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Wrath].IsPathUnlocked();
+        bool isBasePathCompleted = GameProgressManager.Instance.GamePathProgressArray[(int)LevelType.Base].IsPathCompleted();
+
+        //either all paths are locked, or all are unlocked simultaneously.
+        GreedLevelButton.enabled = isBasePathCompleted;
+        SlothLevelButton.enabled = isBasePathCompleted;
+        EnvyLevelButton.enabled = isBasePathCompleted;
+        GluttonyLevelButton.enabled = isBasePathCompleted;
+        LustLevelButton.enabled = isBasePathCompleted;
+        PrideLevelButton.enabled = isBasePathCompleted;
+        WrathLevelButton.enabled = isBasePathCompleted;
 
     }
 
@@ -182,7 +184,7 @@ public class LevelSelectionManager : MonoBehaviour
     {
         LevelHidingCeiling.localScale = Vector3.one;
         LevelTypeSelectionCanvas.enabled = true;
-        //DisableLockedPathButtons();
+        DisableLockedPathButtons();
     }
 
     public void HideLevelSelectionMenus()

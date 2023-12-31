@@ -39,6 +39,7 @@ public class InputHandler : MonoBehaviour
         //Add PlayerTwo Speed methods as subscribers
         inputActions.PlayerTwo.Faster.performed += PlayerTwoController.Instance.IncreasePlayerTwoSpeedOnFasterInputPress;
         inputActions.PlayerTwo.Slower.performed += PlayerTwoController.Instance.DecreasePlayerTwoSpeedOnSlowerInputPress;
+        inputActions.Pause.Pause.performed += LevelTransitionManager.Instance.ShowLevelPauseCanvas;
     }
 
     private void PlayerOne_Punch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)

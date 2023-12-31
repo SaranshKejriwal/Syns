@@ -25,7 +25,7 @@ public class GenericCollectibleItem : MonoBehaviour
 
 
     protected bool isObjectCollected = false;
-    protected int itemMovementSpeed = 4;//speed at which item moves to player
+    protected int itemMovementSpeed = 8;//speed at which item moves to player
 
     // Start is called before the first frame update
     void Start()

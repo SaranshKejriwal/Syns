@@ -52,6 +52,8 @@ public class PlayerTwoController : GenericPlayerController
     //This event will be fired when PlayerTwo enters the open Exit door.
     public event EventHandler OnPlayerTwoExit;
 
+    public event EventHandler OnPlayerTwoDeath;
+
     //Awake will be called before Start()
     private void Awake()
     {
@@ -75,6 +77,7 @@ public class PlayerTwoController : GenericPlayerController
     {
         //Add subscribers to OnPlayerTwoEvent
         OnPlayerTwoExit += LevelBuilder.Instance.RecordLevelVictory;
+        OnPlayerTwoDeath += LevelBuilder.Instance.LevelDefeat;
 
         //OnPlayerTwoExit += EnemyGruntController.StopGruntMovement;
         //Grunts subscribe to this event in their own class.
@@ -104,7 +107,7 @@ public class PlayerTwoController : GenericPlayerController
         }
 
         CheckVicinityToOpenExitDoor();
-        CheckPlayerTwoExitToFireEvent();
+        //CheckPlayerTwoExitToFireEvent();
 
         MovePlayerTwo();//returns same vector unless obstructed.
 
@@ -116,7 +119,7 @@ public class PlayerTwoController : GenericPlayerController
     {
         //this will only be called at the start of a level
         transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
-        DefineNextPlayerTwoDestination();
+
 
         //display starting speed in HUD
         LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
@@ -125,6 +128,8 @@ public class PlayerTwoController : GenericPlayerController
         isPlayerTwoMoving = true;
         isEnteringExitDoorInVicinity = false;
         canBeAttacked = true;
+        DefineNextPlayerTwoDestination();
+
     }
 
     private void DefineNextPlayerTwoDestination()
@@ -269,12 +274,18 @@ public class PlayerTwoController : GenericPlayerController
         }
 
         //it is assumed that P2 will still be mobile and flickering when it enters the door, but the victory screen will cover that.
-        currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(ExitDoorController.Instance.GetExitDoorPosition(), transform.position);
+        //TEST Only
+        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(ExitDoorController.Instance.GetExitDoorPosition(), transform.position);
         isEnteringExitDoorInVicinity = true;
 
         //show Exit Door open visual.
         ExitDoorController.Instance.OpenExitDoorForBothPlayers();
-       
+
+        if (OnPlayerTwoExit != null)
+        {
+            OnPlayerTwoExit(this, EventArgs.Empty);
+        }
+
     }
 
     //This method will fire the event corresponding to PlayerTwoExit 
@@ -368,8 +379,11 @@ public class PlayerTwoController : GenericPlayerController
 
         instance.canBeAttacked = false; //no point in attacking if player is already dead.
 
-        //If PlayerTwo Dies, level is lost.
-        LevelBuilder.Instance.LevelDefeat();
+        if(OnPlayerTwoDeath != null)
+        {
+            OnPlayerTwoDeath(this, EventArgs.Empty);
+        }
+
     }
 
     public override void SetEnemyInFocus(GenericEnemyController enemy)
