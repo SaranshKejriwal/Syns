@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,9 @@ public class GoldCoinController : GenericCollectibleItem
     // Start is called before the first frame update
     void Start()
     {
+        //subscribe to event of MazeRenderer. Destroy old prefab objects if a new maze is going to be rendered.
+        MazeRenderer.Instance.OnNewMazeRender += DestroySelfOnNewMazeRender;
+
         this.destroyObjectOnCollect = true;//coin should be destroyed on collection
         this.isObjectMovable = true;
         this.correctCollectingPlayer = isCollectableBy.BothActivePlayers;
@@ -34,6 +38,14 @@ public class GoldCoinController : GenericCollectibleItem
         {
             PlayerOneController.Instance.CollectGold(goldCoinValue);
             Destroy(this.gameObject);//increment only once.
+        }
+    }
+
+    private void DestroySelfOnNewMazeRender(object obj, EventArgs e)
+    {
+        if (this != null && this.gameObject != null)
+        {
+            Destroy(this.gameObject);
         }
     }
 }

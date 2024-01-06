@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,9 @@ public class MazeWallLengthHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //subscribe to event of MazeRenderer. Destroy old prefab objects if a new maze is going to be rendered.
+        MazeRenderer.Instance.OnNewMazeRender += DestroySelfOnNewMazeRender;
+
         wallBoxCollider = GetComponent<BoxCollider>();
         mazeCellLength = LevelBuilder.Instance.GetCellSideLength();
         //this gets the length of each cell of the maze, based on number of cells of LevelBuilder
@@ -32,8 +36,17 @@ public class MazeWallLengthHandler : MonoBehaviour
 
     private void Update()
     {
-        //this can be used to increase height of the wall to hide the contents behind it.        
+        //this can be used to increase height of the wall to hide the contents behind it, whenever PlayerOne is infront of a wall       
         //increaseWallHeightToHideBehind();
+    }
+
+    //Destroy itself if it is part of an old maze and a new one is being rendered.
+    private void DestroySelfOnNewMazeRender(object obj, EventArgs e)
+    {
+        if(this !=null && this.gameObject != null)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     private void increaseWallHeightToHideBehind()

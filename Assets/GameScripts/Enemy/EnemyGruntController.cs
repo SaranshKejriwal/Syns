@@ -31,8 +31,15 @@ public class EnemyGruntController : GenericEnemyController
         //subscribe to PlayerTwo Exit entry event.
         if (this != null)
         {
-            PlayerTwoController.Instance.OnPlayerTwoExit += this.StopGruntMovement;
-            PlayerTwoController.Instance.OnPlayerTwoDeath += this.StopGruntMovement;//both end the level anyway
+            PlayerTwoController.Instance.OnPlayerTwoExit += this.DestroyCurrentActiveGrunts;
+
+
+            //We cannot have Enemy Grunts Die on P2 death
+            //because their animation events would still be firing and the object would be destroyed
+            PlayerTwoController.Instance.OnPlayerTwoDeath += this.StopGruntMovement;
+
+            //if a new maze is rendered, destroy all grunts that exist currently;
+            MazeRenderer.Instance.OnNewMazeRender += this.DestroyCurrentActiveGrunts;
         }
     }
 
@@ -74,13 +81,22 @@ public class EnemyGruntController : GenericEnemyController
     }
 
 
-    public void StopGruntMovement(object boss, EventArgs e)
+    private void StopGruntMovement(object obj, EventArgs e)
     {
+        //this is called when PlayerTwo Dies
         this.enemyWalkingMovementSpeed = 0;//don't move whwn game is won.
         this.currentEnemyState = EnemyStates.isStanding;
+;
+    }
+
+    private void DestroyCurrentActiveGrunts(object obj, EventArgs e)
+    {
 
         //Since this is called on Level Completion, destroy all existing Grunts
-        Destroy(this.gameObject);
+        if(this != null && this.gameObject != null)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
 

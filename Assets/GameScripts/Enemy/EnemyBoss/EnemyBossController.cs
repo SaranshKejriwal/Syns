@@ -65,11 +65,18 @@ public class EnemyBossController : GenericEnemyController
         base.ReactToPlayer(base.GetNearestPlayer());
     }
 
-    public void PlaceLevelBossOnFarMap()
+    public void ResetBossForNewLevel()
     {
         //If enemy Boss is being placed via this function, then it has to be alive, even if previously killed.
-        instance.currentEnemyState = EnemyStates.isStanding;
+        instance.currentEnemyState = instance.defaultEnemyState;//if previously dead, change its state
 
+        //restore Boss to current Max Health, after buff is applied.
+        instance.currentEnemyHealth = instance.EnemyProperties.maxEnemyHealth;
+        PlaceLevelBossOnFarMap();//move boss to far end of the map
+    }
+
+    private void PlaceLevelBossOnFarMap()
+    {
         //To Spawn - Find a mazeCell that is in a dead-end for spawning
         //We don't want to see the butt of the Boss, to the cell should have 1 opening except the top one.
         //Dead-end cell should be at the very edge of the level

@@ -64,9 +64,11 @@ public class LevelBuilder : MonoBehaviour
         instance.currentLevelType = levelType;
 
         //Make Maze array before drawing
-        Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
+        //Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
         gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
         SetupStartingCell();//needed before Player Start is called.
+
+        PrintMazeForDebugging();//For Debugging only
 
         //Setup Level Maze reference for PlayerTwo Traverser.
         RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
@@ -83,16 +85,61 @@ public class LevelBuilder : MonoBehaviour
         //Show Level HUD
         LevelHUDStatsManager.Instance.ShowHUD();
 
-        //Place Players
-        PlayerTwoController.Instance.PlacePlayerTwoOnLevelStart();
-        PlayerOneController.Instance.PlacePlayerOneOnLevelStart();
 
         //Place Level Boss
-        EnemyBossController.Instance.PlaceLevelBossOnFarMap();
+        EnemyBossController.Instance.ResetBossForNewLevel();
 
         //Start Enemy spawn on map
         EnemySpawnHandler.Instance.StartEnemySpawn();
 
+        //Place Players
+        PlayerTwoController.Instance.PlacePlayerTwoOnLevelStart();
+        PlayerOneController.Instance.PlacePlayerOneOnLevelStart();
+
+    }
+
+    //this will print the maze in debug log for debugging purpose only.
+    private void PrintMazeForDebugging()
+    {
+        string FinalMazePrint = " _ _ _ _ _ \n";//5 underscores to mark the top of the maze
+        for(uint i = 0; i <numCellsOnSide; i++)//traverse from L to R
+        {
+            string mazeRow = "";
+            for (uint j = 0;j<numCellsOnSide; j++)//traverse from top to bottom
+            {
+                //Debug.Log("Trying Index:" + i + "," + j);
+                cellWallState wallState = gameMaze[j, numCellsOnSide - 1 - i].cellWallState; //Note - 0,0 is the bottom left point
+                /*
+                 *This has to start appending at (0,4) and end at (4,0)
+                 (0,4)     (4,4)
+
+                 (0,0)     (4,0) 
+                 */
+                //ignore top wall because that will be written by upper cell's bottom wall
+                //ignor right wall because that will by next cell's left wall
+                if (wallState.HasFlag(cellWallState.Left))
+                {
+                    mazeRow = mazeRow + "|";
+                }
+                else
+                {
+                    mazeRow = mazeRow + " ";
+                }
+
+                if (wallState.HasFlag(cellWallState.Bottom))
+                {
+                    mazeRow = mazeRow + "_";
+                }
+                else
+                {
+                    mazeRow = mazeRow + " ";
+                }
+            }
+            //write rightmost wall and write the row
+            mazeRow = mazeRow + "|\n";
+            FinalMazePrint += mazeRow;
+        }
+        Debug.Log(FinalMazePrint);
     }
 
     private void SetupStartingCell()

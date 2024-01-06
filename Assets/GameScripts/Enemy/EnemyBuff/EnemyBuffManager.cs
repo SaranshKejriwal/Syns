@@ -186,10 +186,10 @@ public class EnemyBuffManager : MonoBehaviour
         }
 
 
-        //if buff is applied successfully, disable the Buff buttons.
-        LeftSideBuffButton.enabled = false;
-        MiddleBuffButton.enabled = false;
-        RightSideBuffButton.enabled = false;
+        //if buff is applied successfully, no need to disable the Buff buttons because the entire panel will disappear.
+        //LeftSideBuffButton.enabled = false;
+        //MiddleBuffButton.enabled = false;
+        //RightSideBuffButton.enabled = false;
 
         //Continue to Next level only when a buff is selected.
         GameProgressManager.Instance.LoadHighestLevelOnCurrentPath();

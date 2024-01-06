@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +30,11 @@ public class LevelTransitionManager : MonoBehaviour
 
     //Level Completion Canvas will remain separate because it has a different Button Set.
 
+    //We need this separate public event which will be subscribed by all enemy grunts. 
+    //When restart is clicked, all enemy grunts from previous attempts will be destroyed, dead or alive.
+    //We cannot have Enemy Grunts Die on P2 death because their animation events would still be firing and the object would be destroyed.
+    //public event EventHandler OnLevelRestartButtonClick;
+
     private void Awake()
     {
         if (instance == null)
@@ -52,8 +58,10 @@ public class LevelTransitionManager : MonoBehaviour
         //Add functions for buttons
         ContinueLevelButton.onClick.AddListener(ResumeGame);
         RestartLevelButton.onClick.AddListener(RestartLevel);
+
         MainMenuButton.onClick.AddListener(GoToMainMenu);
     }
+
 
     public void ShowLevelCompletionCanvas()
     {
@@ -107,7 +115,7 @@ public class LevelTransitionManager : MonoBehaviour
         ContinueLevelButton.transform.localScale = Vector3.zero;
 
         LevelPathNavigationCanvas.enabled = true;
-        LevelPathNavigCanvasBackground.color = new Color(0, 50, 150);
+        LevelPathNavigCanvasBackground.color = new Color(150, 0, 50);
     }
 
     public void HideAllTransitionCanvases()

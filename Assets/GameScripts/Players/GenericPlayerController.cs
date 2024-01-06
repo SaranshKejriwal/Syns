@@ -23,6 +23,21 @@ public enum PlayerState
     isStanding
 }
 
+//this Enum will be used to hold/save the combination of Runes that each player has, including Store and Sack
+//we don't need to create a separate object for Runes. Just a class needed for RuneLevel Management, when upgraded by gold.
+public enum Runes
+{
+    None = 0, //for initialization
+    GreedRune_Glimmer = 1, //increase gold value by 15%
+    SlothRune_Haste = 2, //15% probability of ignoring enemy damage
+    EnvyRune_Direction = 4, //creates a permanent compass to show direction of Player
+    GluttonyRune_Resolve = 8, //0.5% heal damage every second - increase based on Rune Level
+    LustRune_Apathy = 16, //invisible for 2 seconds when detected. 5 second cooldown
+    PrideRune_Humility = 32,//chance of enemy getting stunned when hunting
+    WrathRune_Vengeance = 64,//reflect 10% of damage taken back at enemy
+
+}
+
 
 //This Generic Controller PlayerClass will be the Parent of P1 and P2
 //It can be used to apply generic buff items, health setters etc.
@@ -59,6 +74,7 @@ public abstract class GenericPlayerController : MonoBehaviour
         public float currentPlayerArmour = 0f;
         public uint currentPlayerLevel = 1; //starting level of Player
         public float totalPlayerXP = 1f;//initialize at 1f because both players will start at Level 1
+        public Runes currentPlayerRunes = Runes.None;//this will track which runes are tagged to the player.
 
         //PlayerOne XP increases based on damage done to enemies, Bonus XP for Boss damage 
         //PlayerTwo XP increases based on time spent away from PlayerOne
@@ -87,6 +103,9 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     public virtual void CollectGold(float goldCoinValue)
     {
+        bool hasGreedRuin = this.PlayerControllerProperties.currentPlayerRunes.HasFlag(Runes.GreedRune_Glimmer);
+        //if player has the greed rune, increase gold coin value.
+        float goldCoinValueWithRune = goldCoinValue * RuneEffectManager.Instance.GetGreedRuinEffect(hasGreedRuin);
         goldCollectedByPlayerInLevel+= goldCoinValue;//separate counters for PlayerOne and PlayerTwo Instances.
         GameMaster.Instance.AddTotalCollectedGold(goldCoinValue);
         LevelHUDStatsManager.Instance.AddToGoldCounterOnHUD(goldCoinValue);

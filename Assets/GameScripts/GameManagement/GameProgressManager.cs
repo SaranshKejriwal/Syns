@@ -29,6 +29,10 @@ public class GameProgressManager
     private LevelType currentlyPlayedLevelType = LevelType.None;
     //This will track the level path that is to be updated. 
 
+    private bool isReplayingLevelOne = true;
+    //this will track whether user is loading first level or max level -
+    //if first level is replayed, then highest reachable level should not be incremented
+
     //Destination file
     public String SavePointLocation = Application.persistentDataPath + "/SavePoint.json";
     public string SaveTimestamp = "";
@@ -189,8 +193,19 @@ public class GameProgressManager
 
     public void IncreaseAccessibleLevelOfCurrentPath()
     {
+
         //if path is completed, it will be captured here.
-        instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IncrementLevelReachedIndex();
+        if(!isReplayingLevelOne)
+        {
+            //user is not replaying Level 1 - meaning that we can increment the highest level accessible
+            instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IncrementLevelReachedIndex();
+        }
+        else
+        {
+            //should we lock previously completed levels and start with Level 2?
+
+        }
+
 
         //in case the base path is completed, then unlock all the other levels.
         if(currentlyPlayedLevelType == LevelType.Base && instance.GamePathProgressArray[(int)currentlyPlayedLevelType].IsPathCompleted())
@@ -210,6 +225,19 @@ public class GameProgressManager
 
     public void LoadFirstLevelOfType(LevelType levelType)
     {
+        //check if user is replaying Level 1 - if yes, do not blindly increment
+        if(GamePathProgressArray[(int)(levelType)].levelReachedIndex > 0)
+        {
+            //we are loading First Level, when user has already completed a higher level
+            isReplayingLevelOne = true;
+        }
+        else
+        {
+            //we are loading first level, but user never completed a higher level
+            isReplayingLevelOne = false;
+        }
+
+
         currentlyPlayedLevelType = levelType;//this is the path that will be updated after level completion
 
         //Update Latest PlayerOne and PlayerTwo properties from Save, even when restarting a level
@@ -236,6 +264,8 @@ public class GameProgressManager
     public void LoadHighestSavedLevelOfType(LevelType levelType)
     {
         currentlyPlayedLevelType = levelType;//this is the path that will be updated after level completion
+
+        isReplayingLevelOne = false;//We're loading the highest level, meaning that user is not replaying Level 1 right now
 
         //Build the Level and Spawn objects on the GameFloor
         LevelBuilder.Instance.ConstructLevel(levelType);

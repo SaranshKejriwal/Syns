@@ -86,11 +86,11 @@ Unique "Runes" at completion of the 7 Syns levels for each Syn.
 
 Greed -OK- Glimmer: Coins collected BY ANY 1 PLAYER become more valuable, whoever holds the item - Gold % value Can be Increased by gold. <needs economy of scale>
 Sloth - OK - Haste: Probability of ignoring damage. - Chance Can be Increased by Gold.
-Wrath - OK - Vengeance: Reflect 50% of own damage back at enemy. Chance - Can be Increased by Gold.
+Wrath - OK - Vengeance: Reflect 30% of own damage sustained back at enemy. % damage - Can be Increased by Gold.
 Gluttony - OK - Resolve: Constant Heal over time. Heal rate be Increased by Gold.
 Envy - OK - Direction: Compass which points to PlayerTwo location at close distance - Has the same effect, regardless of which player holds it. Distance Can be increased by Gold
 Lust - OK - Apathy: When activated, Invisible for 10 seconds. 30 second cooldown. OR Chance of not being detected..-  Duration/Chance Can be Increased by Gold.
-Pride - OK -  Humility: Enemies have a change to be stunned for sometime while chasing Player. Chance can be increased by gold
+Pride - OK -  Humility: Enemies have a chance to be stunned for sometime while chasing Player. Chance can be increased by gold
 
 
 IMP - Don't have a separate tutorial level? Integrate it with the initial gameplay

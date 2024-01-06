@@ -1,13 +1,10 @@
 ________________________________________________________________________________________
 Must Haves___________________________________________________________________________
 
-MAJOR BUG - Maze renderer sometimes creates closed boxes on new level. Cause unknown
+
+BUG - If boss killed in prev level, it stays dead in next level - Boss Animator had No transition from Death to Alive. And Boss Current HP was not getting updated after Buff.
 
 BUG - interaction between P2 and boss is weird. Possible issue in Boss animator and P2 traversal logic..
-
-PlayerOne attack range to be limited. Currently punch event is killing the approachedEnemy Object at any distance.
-
-Create a healthbar component on all - grunts + boss + players, such that its length varies with indiv health. 
 
 PlayerTwo Evasive Maze traversal when it runs into Enemy. - IN PROGRESS
 
@@ -19,31 +16,34 @@ Add Level Failed and Level Completed screens inside GameScene, with logic for se
 
 Addition of PLayer Hit and Death animations.
 
-Addition of Player XP mechanisms. Increase player stats.
+Addition of Player XP mechanisms. Increase player stats and Upgrade Runes in Shop.
 
 ________________________________________________________________________________________
 Must Haves Phase 2_________________________________________________________________
 
 Have Variants and buffs for each enemy of each syn.
 
-Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
+Shop to spend Gold to upgrade Runes and buy special items
 
-Shop to spend Gold and buy special items
+Create shop items & Runes to be exchanged between P1 and P2 -
 
-Shared Bag to hold items between P1 and P2.
-
-Create shop items & Runes to be exchanged between P1 and P2 - eg. cloak etc?
-
-Adding Runes to the game - 
+Adding Runes to the game - same logic as the Maze cell enum
 
 Adding 2 item slots per player
 
-Composing & Adding Music to the game.
+Shared Bag to hold items between P1 and P2.
 
-Fix the P2 Exit Door entry logic using Events.
+BUG - P1 is able to move through wall edges. Currently using this for testing.
+
+Replacing PLayerTwo visual with PlayerOne Blink version to add more animations.
+
+Composing & Adding Music to the game.
 
 Make P1 and P2 icons for HUD, 7 sins, gold coin, P2 speed
 
+Create a healthbar component on all - grunts + boss , such that its length varies with indiv health. 
+
+PlayerOne attack range to be limited. Currently punch event is killing the approachedEnemy Object at any distance.
 
 ___________________________________________________________________________________
 Nice to Haves Phase 3 - Additions___________________________________________________________________________
@@ -58,7 +58,7 @@ Reduce dependency on Update() for all classes. Add more event driven actions rat
 
 Fix source not found warning - https://forum.unity.com/threads/vs-22-throws-cs8032-after-updating-to-tech-stream-2022-2-0f1.1372701/
 
-Difficulty selection - Easy Med Hard
+Difficulty selection - Easy Med Hard - PARK
 
 Enable the code that increases the wall height based on PlayerOne position...After everything else.
 
@@ -161,3 +161,13 @@ Can merge the screens for Level Pause, Level Fail and Path Complete. Change back
 
 
 Fix PlayerTwo exit etry using events. Level should only end when P2 is entering the exit. Ideally all actions on Level Win (like grunt death), should be based on an event fired by Edit door open. DONE
+
+BUG - If P2 dies while enemy is attacking, the grunt object is destroyed. FIXED by ensuring that Grunts are only destroyed on Restart click
+
+SHOWSTOPPER BUG - Maze renderer sometimes creates closed boxes on new level. Maze design is fine. FIXED - old maze was superimposing on a new one because old walls aren't explicitly being destroyed. DONE
+
+NewMazeRender should also destroy previous coins and Healths and previous grunts. DONE
+
+BUG - Enemy Buff selection buttons need to be enabled again after completing 1 Level. FIXED
+
+BUG - Level Num update should not be incremented if I'm starting a new level from scratch. DONE
