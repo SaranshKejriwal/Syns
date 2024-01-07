@@ -417,6 +417,13 @@ public class GenericEnemyController : MonoBehaviour
         if (currentPlayerDistance <= attackRadius)
         {
             targetPlayer.DamagePlayer(attackDamage);
+
+            //If player has Wrath rune, then enemy also takes damage
+            bool playerHasWrathRune = targetPlayer.GetPlayerControllerProperties().currentPlayerRunes.HasFlag(Runes.WrathRune_Vengeance);
+            if(playerHasWrathRune)
+            {
+                DamageEnemy(attackDamage * RuneEffectManager.Instance.GetWrathRuneEffect(playerHasWrathRune));
+            }
         }
         else
         {

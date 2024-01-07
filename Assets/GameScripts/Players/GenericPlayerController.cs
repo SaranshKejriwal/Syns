@@ -23,20 +23,7 @@ public enum PlayerState
     isStanding
 }
 
-//this Enum will be used to hold/save the combination of Runes that each player has, including Store and Sack
-//we don't need to create a separate object for Runes. Just a class needed for RuneLevel Management, when upgraded by gold.
-public enum Runes
-{
-    None = 0, //for initialization
-    GreedRune_Glimmer = 1, //increase gold value by 15%
-    SlothRune_Haste = 2, //15% probability of ignoring enemy damage
-    EnvyRune_Direction = 4, //creates a permanent compass to show direction of Player
-    GluttonyRune_Resolve = 8, //0.5% heal damage every second - increase based on Rune Level
-    LustRune_Apathy = 16, //invisible for 2 seconds when detected. 5 second cooldown
-    PrideRune_Humility = 32,//chance of enemy getting stunned when hunting
-    WrathRune_Vengeance = 64,//reflect 10% of damage taken back at enemy
 
-}
 
 
 //This Generic Controller PlayerClass will be the Parent of P1 and P2
@@ -82,13 +69,9 @@ public abstract class GenericPlayerController : MonoBehaviour
 
         public float playerOnePunchAttackDamage = 30f;//increased to instakill for test only.
 
-        public void setAllPlayerProperties()//as good as a constructor.
-        {
-
-        }
     }
     //this object will be saved into Progress Manager and into the final json.
-    protected GenericPlayerControllerProperties PlayerControllerProperties = new GenericPlayerController.GenericPlayerControllerProperties();
+    protected GenericPlayerControllerProperties playerControllerProperties = new GenericPlayerController.GenericPlayerControllerProperties();
     
     void Start()
     {
@@ -103,12 +86,15 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     public virtual void CollectGold(float goldCoinValue)
     {
-        bool hasGreedRuin = this.PlayerControllerProperties.currentPlayerRunes.HasFlag(Runes.GreedRune_Glimmer);
+        bool playerHasGreenRune = this.playerControllerProperties.currentPlayerRunes.HasFlag(Runes.GreedRune_Glimmer);
         //if player has the greed rune, increase gold coin value.
-        float goldCoinValueWithRune = goldCoinValue * RuneEffectManager.Instance.GetGreedRuinEffect(hasGreedRuin);
-        goldCollectedByPlayerInLevel+= goldCoinValue;//separate counters for PlayerOne and PlayerTwo Instances.
-        GameMaster.Instance.AddTotalCollectedGold(goldCoinValue);
-        LevelHUDStatsManager.Instance.AddToGoldCounterOnHUD(goldCoinValue);
+        float goldCoinValueWithRune = goldCoinValue * RuneEffectManager.Instance.GetGreedRuneEffect(playerHasGreenRune);
+        goldCollectedByPlayerInLevel+= goldCoinValueWithRune;//separate counters for PlayerOne and PlayerTwo Instances.
+        
+        //Note - this means that if level is failed, coins collected are still added.
+        GameProgressManager.Instance.AddTotalCollectedGold(goldCoinValueWithRune);
+
+        LevelHUDStatsManager.Instance.AddToGoldCounterOnHUD(goldCoinValueWithRune);
         //Note - A separate Gold Counter makes sense for HUD because we don't want to run Update() method to read the count from GameMaster
     }
 
@@ -120,20 +106,20 @@ public abstract class GenericPlayerController : MonoBehaviour
     //This function will increase PlayerXP on different occasions
     public void IncreasePlayerXP(float additionalXP)
     {
-        float xpSurpassedAtPresentLevel = (float)Math.Pow((PlayerControllerProperties.currentPlayerLevel), 3);//Get cube of current Player Level to see XP threshold passed
+        float xpSurpassedAtPresentLevel = (float)Math.Pow((playerControllerProperties.currentPlayerLevel), 3);//Get cube of current Player Level to see XP threshold passed
 
-        PlayerControllerProperties.totalPlayerXP += additionalXP;
+        playerControllerProperties.totalPlayerXP += additionalXP;
 
         double cubeRootExponent = 1f / 3f;
 
         //update level to the round value of cube root of the Total Xp
-        PlayerControllerProperties.currentPlayerLevel = (uint)Math.Pow(PlayerControllerProperties.totalPlayerXP, cubeRootExponent);//this tactic is used in case Player jumps several levels at once
+        playerControllerProperties.currentPlayerLevel = (uint)Math.Pow(playerControllerProperties.totalPlayerXP, cubeRootExponent);//this tactic is used in case Player jumps several levels at once
 
-        float xpNeededToLevelUp = (float)Math.Pow((PlayerControllerProperties.currentPlayerLevel + 1), 3);//Get cube of next Player Level
+        float xpNeededToLevelUp = (float)Math.Pow((playerControllerProperties.currentPlayerLevel + 1), 3);//Get cube of next Player Level
 
         //For HUD, show all values after calibrating xpSurpassedAtPresentLevel at the 0-line
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerCurrentXPBar(this, PlayerControllerProperties.totalPlayerXP - xpSurpassedAtPresentLevel, (xpNeededToLevelUp - xpSurpassedAtPresentLevel));
-        LevelHUDStatsManager.Instance.SetPlayerLevelOnHUD(this, PlayerControllerProperties.currentPlayerLevel);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerCurrentXPBar(this, playerControllerProperties.totalPlayerXP - xpSurpassedAtPresentLevel, (xpNeededToLevelUp - xpSurpassedAtPresentLevel));
+        LevelHUDStatsManager.Instance.SetPlayerLevelOnHUD(this, playerControllerProperties.currentPlayerLevel);
     }
 
 
@@ -154,26 +140,33 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     public GenericPlayerControllerProperties GetPlayerControllerProperties()
     {
-        return PlayerControllerProperties;
+        return playerControllerProperties;
     }
 
     public void SetPlayerPropertiesFromSave(GenericPlayerControllerProperties newProperties)
     {
 
-        this.PlayerControllerProperties = newProperties;
+        this.playerControllerProperties = newProperties;
         //Set each field individually rather than just as an object, to be absolutely sure
-        this.PlayerControllerProperties.maxPlayerHealth = newProperties.maxPlayerHealth;
-        this.PlayerControllerProperties.maxPlayerMovementSpeed = newProperties.maxPlayerMovementSpeed;
-        this.PlayerControllerProperties.currentPlayerArmour = newProperties.currentPlayerArmour;
-        this.PlayerControllerProperties.currentPlayerLevel = newProperties.currentPlayerLevel;
-        this.PlayerControllerProperties.totalPlayerXP = newProperties.totalPlayerXP;
+        this.playerControllerProperties.maxPlayerHealth = newProperties.maxPlayerHealth;
+        this.playerControllerProperties.maxPlayerMovementSpeed = newProperties.maxPlayerMovementSpeed;
+        this.playerControllerProperties.currentPlayerArmour = newProperties.currentPlayerArmour;
+        this.playerControllerProperties.currentPlayerLevel = newProperties.currentPlayerLevel;
+        this.playerControllerProperties.totalPlayerXP = newProperties.totalPlayerXP;
 
     }
 
     public void DamagePlayer(float attackDamage)
     {
+        //check if player's sloth rune has returned true.
+        bool playerHasSlothRune = this.playerControllerProperties.currentPlayerRunes.HasFlag(Runes.SlothRune_Haste);
+        if (playerHasSlothRune && RuneEffectManager.Instance.GetSlothRuneEffect(playerHasSlothRune))
+        {
+            return;//ignore enemy damage altogether
+        }
+
         //reduce damage based on Armour of player - Max Damage reduction capped at 50%, hence 2*
-        this.currentPlayerHealth -= attackDamage * (1 - (PlayerControllerProperties.currentPlayerArmour/(2*maxPossiblePlayerArmour)));
+        this.currentPlayerHealth -= attackDamage * (1 - (playerControllerProperties.currentPlayerArmour/(2*maxPossiblePlayerArmour)));
 
         if (this.currentPlayerHealth <= 0)
         {
@@ -182,8 +175,20 @@ public abstract class GenericPlayerController : MonoBehaviour
         }
 
         Debug.Log(this + " has remaining health: " + this.currentPlayerHealth);
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.currentPlayerHealth, this.PlayerControllerProperties.maxPlayerHealth);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.currentPlayerHealth, this.playerControllerProperties.maxPlayerHealth);
+    }
 
+    protected void ApplyGluttonyRuneEffect()
+    {
+        bool playerHasGluttonyRune = this.playerControllerProperties.currentPlayerRunes.HasFlag(Runes.GluttonyRune_Resolve);
+        if (!playerHasGluttonyRune)
+        {
+            return;
+        }
+        else
+        {
+            this.currentPlayerHealth += RuneEffectManager.Instance.GetGluttonyRuneEffect(playerHasGluttonyRune, this.playerControllerProperties.maxPlayerHealth);
+        }
     }
 
     protected virtual void KillPlayer()
@@ -194,12 +199,12 @@ public abstract class GenericPlayerController : MonoBehaviour
 
     public bool IsAtMaxHealth()
     {
-        return this.currentPlayerHealth == this.PlayerControllerProperties.maxPlayerHealth;
+        return this.currentPlayerHealth == this.playerControllerProperties.maxPlayerHealth;
     }
 
     public void HealPlayer(float healPercent)
     {
-        if(this.currentPlayerHealth >= this.PlayerControllerProperties.maxPlayerHealth)
+        if(this.currentPlayerHealth >= this.playerControllerProperties.maxPlayerHealth)
         {
             return; //can't allow a condition where playerHealth exceeds MaxHealth.
         }
@@ -209,10 +214,10 @@ public abstract class GenericPlayerController : MonoBehaviour
             this.currentPlayerHealth = 0;//health cannot be negative.
         }
         //heal is not constant. The more damaged the player, the more effective the heal.
-        this.currentPlayerHealth += healPercent*(this.PlayerControllerProperties.maxPlayerHealth - this.currentPlayerHealth);
+        this.currentPlayerHealth += healPercent*(this.playerControllerProperties.maxPlayerHealth - this.currentPlayerHealth);
         Debug.Log("Player Health Healed to - " + this.currentPlayerHealth);
 
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.currentPlayerHealth, this.PlayerControllerProperties.maxPlayerHealth);    
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerHealthBar(this, this.currentPlayerHealth, this.playerControllerProperties.maxPlayerHealth);    
     }
 
     //fire health change event to update HUD

@@ -66,7 +66,7 @@ public class PlayerTwoController : GenericPlayerController
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerTwo");
         }
         instance.currentPlayerHealth = 15;
-        instance.PlayerControllerProperties.maxPlayerHealth = 15;
+        instance.playerControllerProperties.maxPlayerHealth = 15;
         instance.isActive = true;
         instance.playerType = PlayerType.PlayerTwo;
         instance.playerState = PlayerState.isMoving;
@@ -107,7 +107,6 @@ public class PlayerTwoController : GenericPlayerController
         }
 
         CheckVicinityToOpenExitDoor();
-        //CheckPlayerTwoExitToFireEvent();
 
         MovePlayerTwo();//returns same vector unless obstructed.
 
@@ -122,12 +121,16 @@ public class PlayerTwoController : GenericPlayerController
 
 
         //display starting speed in HUD
-        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
 
         //reset all flags of PlayerTwo and ExitDoor coordination
         isPlayerTwoMoving = true;
         isEnteringExitDoorInVicinity = false;
         canBeAttacked = true;
+
+        //reset player current health to max health
+        this.currentPlayerHealth = this.playerControllerProperties.maxPlayerHealth;
+
         DefineNextPlayerTwoDestination();
 
     }
@@ -152,27 +155,6 @@ public class PlayerTwoController : GenericPlayerController
         currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
     }
 
-
-    //this method is currently useless. Should be removed.
-    /*private void HandleAllInteractions()
-    {
-
-        
-        if (Physics.Raycast(transform.position, currentPlayerTwoDirectionVector, out RaycastHit rayCastHit, playerTwoInteractionDistance))
-        //tells us if something is in front and returns its object parameter in rayCastHit object
-        {
-            //Debug.Log(rayCastHit.transform);//returns the name of the object that was hit.
-
-            //tries to confirm if interacted component is of a specific type.
-            if (rayCastHit.transform.TryGetComponent(out EnemyController approachingEnemy))
-            {
-                Debug.Log(approachingEnemy);
-                //approachingEnemy.RespondToPlayerTwoInteraction();
-            }
-
-        }
-
-    }*/
 
     //moves the PlayerTwo object to the next cell center.
     private void MovePlayerTwo()
@@ -200,59 +182,6 @@ public class PlayerTwoController : GenericPlayerController
         Time.deltaTime ensures that perceived change in position is independent of system framerate.
         Time.deltaTime returns the timelapse between 2 frames. Very small number.*/
     }
-
-    //This function should stop PlayerTwo when it reaches Exit.
-    /*private void CheckStopOnEnteringOpenExit()
-    {
-        if (!isPlayerTwoMoving) 
-        {
-            return;//if PlayerTwo has already entered Exit, need not check.
-        }
-
-        MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
-
-        if (exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
-        {            
-            return;//do nothing if PlayerTwo hasn't stepped into Exit Door container cell.
-        }
-        if(!hasCollectedExitKey && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
-        {
-            //this means that PlayerTwo reached Exit Door cell before getting the Key; retraversal will be required
-            return;//do nothing if Player hasn't collected the key                   
-        }
-        Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1.5f);//this offset is for making PlayerTwo disappear inside Exit door
-        Vector3 exitDoorEntryLocation = ExitDoorController.Instance.GetExitDoorPosition() + new Vector3(0, 0, -1f);//to make it look like P2 entered the door and didn't go from the side.
-        Vector3 disappearanceLocationAfterEntry = exitDoorEntryLocation + disappearanceOffsetAfterEntry; 
-
-        if (!canEnterExitDoorInVicinity && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
-        {
-            canEnterExitDoorInVicinity = true;
-            //ExitDoorController.Instance.OpenExitDoor(null, null);
-            //Go towards Exit if it is in the same Cell.
-            currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(exitDoorEntryLocation, transform.position);
-            Debug.Log("0");
-
-        }
-
-        //move player inside door, such that it starts to disappear
-        if (canEnterExitDoorInVicinity)
-        {
-            currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(disappearanceLocationAfterEntry, transform.position);
-            canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
-            LevelBuilder.Instance.RecordLevelVictory(null, null);//Close Level
-            Debug.Log("1");
-
-        }
-        //these 2 if conditions are added to show smooth transition between door open and exit.
-        if (Vector3.Distance(disappearanceLocationAfterEntry, transform.position) <= mazeCellCenterErrorMargin)
-        {
-            //ExitDoorController.Instance.CheckExitDoorCollectedStatus();
-            isPlayerTwoMoving = false;
-            currentPlayerTwoMovementSpeed = 0;//stop Player Two animation.
-            //LevelBuilder.Instance.LevelVictory();//Close Level
-            Debug.Log("2");
-        }
-    }*/
 
     //check exit door availability only when PlayerTwo is in Exit Door cell and door is open, and move PlayerTwo towards door
     private void CheckVicinityToOpenExitDoor()
@@ -288,42 +217,13 @@ public class PlayerTwoController : GenericPlayerController
 
     }
 
-    //This method will fire the event corresponding to PlayerTwoExit 
-    private void CheckPlayerTwoExitToFireEvent()
-    {
-
-        if (!isEnteringExitDoorInVicinity || !isPlayerTwoMoving)
-        {
-            return;//Player two isn't entering the exit yet. Can't fire the event.
-            //OR PlayerTwo has already entered the exit. Nothing to check
-        }
-
-        //This includes the disappearance vector
-        Vector3 exitDoorEntryVector = ExitDoorController.Instance.GetExitDoorPosition() + new Vector3(0, 0, 2f);
-
-        //if PlayerTwo is within range of disappearing within Exit Door, fire the event, else return.
-        if (Vector3.Distance(exitDoorEntryVector, transform.position) > mazeCellCenterErrorMargin)
-        {
-            return;//PlayerTwo is still too far to fire the event.
-        }
-
-        canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
-        isPlayerTwoMoving = false;//Stop Player Two
-
-        //Fire an event here - listeners will open Exit Door, Publish victory, stop all grunts.
-        if (OnPlayerTwoExit != null)
-        {
-            OnPlayerTwoExit(this, EventArgs.Empty);
-        }
-    }
-
     //this will subscribe to inputHandler Faster pressed event and increase PlayerTwo speed.
     public void IncreasePlayerTwoSpeedOnFasterInputPress(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(currentPlayerTwoMovementSpeed < PlayerControllerProperties.maxPlayerMovementSpeed)
+        if(currentPlayerTwoMovementSpeed < playerControllerProperties.maxPlayerMovementSpeed)
         {
             currentPlayerTwoMovementSpeed+=1;
-            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
         }
     }
 
@@ -334,7 +234,7 @@ public class PlayerTwoController : GenericPlayerController
         if (currentPlayerTwoMovementSpeed > minPlayerTwoMovementSpeed)
         {
             currentPlayerTwoMovementSpeed-=1;
-            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, playerControllerProperties.maxPlayerMovementSpeed);
         }
     }
 

@@ -171,6 +171,7 @@ public class LevelBuilder : MonoBehaviour
         //increment Max level on Game Progress manager
         GameProgressManager.Instance.IncreaseAccessibleLevelOfCurrentPath();
 
+        GameProgressManager.Instance.UpdateProgressAfterLevelCompletion();
 
         //if Path is not complete, show next buffs to select, else show the rune that is won.
         if (GameProgressManager.Instance.IsCurrentPathCompleted(currentLevelType))

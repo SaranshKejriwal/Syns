@@ -44,9 +44,6 @@ public class GameMaster : MonoBehaviour
 
     private float levelStartCountdownTimer = 4f;//this may be needed if we want to introduce a counter later.
 
-    private float totalUnspentGold = 0f;//This will increase as gold is collected.
-    //This is a Game level property, not a single level property.
-
     private void Awake()
     {
         if (instance == null)
@@ -104,12 +101,6 @@ public class GameMaster : MonoBehaviour
     public void StartGamePlay()
     {
         instance.gameState = GameStates.onLevelPlay;
-    }
-
-    public void AddTotalCollectedGold(float goldValue)
-    {
-        //Game Master will maintain a tally of total gold across all levels
-        totalUnspentGold += goldValue;
     }
 
 }

@@ -14,6 +14,7 @@ public static class MathFunctions
         return CoinToss == 1 ? option1 : option2; //shorthand if-else
     }
 
+    //return 1 value between option1 and option2
     public static int GetCoinToss(uint option1, uint option2)
     {
         //CoinToss to Return >1 or <1 randomly - there is equal probability of getting either >1 or <1
@@ -44,6 +45,12 @@ public static class MathFunctions
         return Random.Range(minValueInclusive, maxValueExclusive);
     }
 
+    //this function returns true with the probability specified in the args
+    public static bool GetTrueWithProbability(float probability)
+    {
+        //say probability = 0.1; Get a random float between 0 and 1. There is a 10% chance that this random number is less than 0.1
+        return probability >= GetRandomFloatInRange(0, 1f);
+    }
 
     //Spawn handlers___________________________________________
     //return a spawn point that is away from the origin.

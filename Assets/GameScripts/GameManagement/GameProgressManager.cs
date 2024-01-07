@@ -40,7 +40,7 @@ public class GameProgressManager
 
 
     //Create Global Game Level Properties
-    public float TotalCoinsCollectedSoFar = 0f;
+    public float totalUnspentGoldSoFar = 0f;
 
 
 
@@ -54,10 +54,12 @@ public class GameProgressManager
     //we are creating array rather than a Dictionary, for easier JSON serialization. Enum can be used for array index
     public PathProgressObject[] GamePathProgressArray = new PathProgressObject[GAME_PATH_COUNT];//Array will always have 8 members only
 
+    //store levels of Runes
+    public RuneEffectManager.RuneEffectProperties runeProperties = new RuneEffectManager.RuneEffectProperties();
 
     private void UpdatePlayerPropertiesInMemory()
     {
-        //this will be called at each level completion to update the save file
+        //this will be called at each level completion to update the save file, and when player is buffed in store
         instance.playerOneProperties = PlayerOneController.Instance.GetPlayerControllerProperties();
         instance.playerTwoProperties = PlayerTwoController.Instance.GetPlayerControllerProperties();
 
@@ -79,6 +81,13 @@ public class GameProgressManager
 
         //Update SaveFile
         instance.WriteProgressToJSON();
+    }
+
+    public void UpdateProgressAfterLevelCompletion()
+    {
+        UpdatePlayerPropertiesInMemory();
+
+        WriteProgressToJSON();
     }
 
 
@@ -114,7 +123,7 @@ public class GameProgressManager
 
         //load json into class.
         instance = JsonUtility.FromJson<GameProgressManager>(jsonFromSaveFile);
-        Debug.Log("Save Point Loaded successfully. Total Coins Loaded: " + instance.TotalCoinsCollectedSoFar);
+        Debug.Log("Save Point Loaded successfully. Total Coins Loaded: " + instance.totalUnspentGoldSoFar);
 
     }
 
@@ -248,6 +257,11 @@ public class GameProgressManager
         EnemySpawnHandler.Instance.SetCurrentGruntProperties(GenericEnemyController.GetFirstLevelEnemyGruntPropertiesForLevelType(levelType));
         EnemyBossController.Instance.SetEnemyPropertiesFromSave(GenericEnemyController.GetFirstLevelBossPropertiesForLevelType(levelType));
 
+
+        //Set Rune Levels
+        RuneEffectManager.Instance.UpdateRuneLevels(instance.runeProperties);
+
+
         //Build the Level and Spawn objects on the GameFloor
         LevelBuilder.Instance.ConstructLevel(levelType);
 
@@ -317,5 +331,11 @@ public class GameProgressManager
 
         //Save Progress
         instance.WriteProgressToJSON();
+    }
+
+    public void AddTotalCollectedGold(float goldValue)
+    {
+        //Game Master will maintain a tally of total gold across all levels
+        totalUnspentGoldSoFar += goldValue;
     }
 }

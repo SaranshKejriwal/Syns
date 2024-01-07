@@ -72,8 +72,8 @@ Though that need not be spelled out loud.
 
 The game can have themes of the 7 sins without spelling it out loud. Player chooses any 1 of the 7 themes to start with, and enemies/bosses will have traits in accordance.
 
-Greed - enemies tend to pick up gold and leave less for you. - Bosses disable (some weapons and coin-based tools, including bullets) but can disable other Runes
-Sloth - enemies are slower but do more damage. - Bosses stun P1 when they lose a certain % of health. <Similar to Pride>
+Greed - enemies tend to pick up gold and leave less for you. - Bosses disable coin-based tools, including bullets, and can disable other Runes
+Sloth - enemies are slower but do more damage. - Bosses stun P1 when they lose a certain % of health. 
 Wrath - enemies can potentially move through walls - Agile bosses with rapid low-damage attacks. Boss has range attacks 
 Gluttony - enemies have more HP and tend to pickup nearby heals when damaged. - Boss attacks have life-steal and can pickup nearby heals. <May eat nearby grunts to absorb their health>
 Envy - enemies are mimics and may replicate P2 <start game with 1 enemy that looks like P2> <Have no detection radius for P1, so they ignore him to blend in> - bosses are weak, but damage may transfer to P2 with a %probability.
@@ -89,7 +89,7 @@ Sloth - OK - Haste: Probability of ignoring damage. - Chance Can be Increased by
 Wrath - OK - Vengeance: Reflect 30% of own damage sustained back at enemy. % damage - Can be Increased by Gold.
 Gluttony - OK - Resolve: Constant Heal over time. Heal rate be Increased by Gold.
 Envy - OK - Direction: Compass which points to PlayerTwo location at close distance - Has the same effect, regardless of which player holds it. Distance Can be increased by Gold
-Lust - OK - Apathy: When activated, Invisible for 10 seconds. 30 second cooldown. OR Chance of not being detected..-  Duration/Chance Can be Increased by Gold.
+Lust - OK - Apathy: When hunted, Invisible for 3 seconds. 5 second cooldown. -  Duration Can be Increased by Gold.
 Pride - OK -  Humility: Enemies have a chance to be stunned for sometime while chasing Player. Chance can be increased by gold
 
 
