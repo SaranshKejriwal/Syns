@@ -258,10 +258,6 @@ public class GameProgressManager
         EnemyBossController.Instance.SetEnemyPropertiesFromSave(GenericEnemyController.GetFirstLevelBossPropertiesForLevelType(levelType));
 
 
-        //Set Rune Levels
-        RuneEffectManager.Instance.UpdateRuneLevels(instance.runeProperties);
-
-
         //Build the Level and Spawn objects on the GameFloor
         LevelBuilder.Instance.ConstructLevel(levelType);
 

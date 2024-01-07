@@ -132,7 +132,8 @@ public class RuneEffectManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //get updated rune levels from Save JSON at start
+        this.runeEffectProperties.RuneLevelBySynType = GameProgressManager.Instance.runeProperties.RuneLevelBySynType;
     }
 
     // Update is called once per frame
@@ -143,6 +144,9 @@ public class RuneEffectManager : MonoBehaviour
 
     public void UpdateRuneLevels(RuneEffectProperties newProperties)
     {
-        this.runeEffectProperties.RuneLevelBySynType = newProperties.RuneLevelBySynType;
+        if (newProperties != null)
+        {
+            this.runeEffectProperties.RuneLevelBySynType = newProperties.RuneLevelBySynType;
+        }
     }
 }
