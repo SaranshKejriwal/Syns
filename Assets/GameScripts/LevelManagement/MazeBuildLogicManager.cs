@@ -193,6 +193,7 @@ public static class MazeBuildLogicManager
         }
 
         Debug.Log("Maze generation completed in " + debugLoopIteratorCount + " iterations");
+
         return finalMaze;
     }
 

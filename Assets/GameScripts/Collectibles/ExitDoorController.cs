@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using System; //for EventHandler
 
 public class ExitDoorController : GenericCollectibleItem
 {
@@ -12,10 +14,9 @@ public class ExitDoorController : GenericCollectibleItem
         private set { instance = value; }
     }
 
-    //ExitDoor specific objects
-    private bool isExitDoorOpen = false;
-
     private MazeCell containerCell;//this stored the cell in which Exit Door is spawned
+
+    public event EventHandler OnExitDoorOpen;
 
     private void Awake()
     {
@@ -33,11 +34,13 @@ public class ExitDoorController : GenericCollectibleItem
         instance.correctCollectingPlayer = isCollectableBy.NoPlayer;
         //Door needs to be activated first.
 
+        Debug.Log("Exit Door instance instantiated");
+
     }
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -46,32 +49,29 @@ public class ExitDoorController : GenericCollectibleItem
 
     }
 
-    public void CheckExitDoorCollectedStatus()
+    public void OpenExitDoorForBothPlayers()
     {
-        if (!PlayerTwoController.Instance.HasCollectedExitKey() || !PlayerTwoController.Instance.CanEnterExitDoorInVicinity())
+        if (!PlayerTwoController.Instance.HasCollectedExitKey())
         {
             return;//collected in this case means that PlayerTwo reached the door with the key.
             //Exit Door will not be marked Collected without key, since its status updates from NoPlayer only after Key Collection.
         }
         //if PlayerTwo has reached ExitDoor with Key, then it should be open and accessible to PlayerOne also.
-        instance.isExitDoorOpen = true;
         instance.correctCollectingPlayer = isCollectableBy.BothActivePlayers;//Allow PlayerOne to Enter
-        Debug.Log("Exit Door can now be entered");
-        //PlayerTwoController.Instance.EnterOpenExit();
-
-        //fire an event here for victory.
+        instance.isObjectCollected = true;
     }
 
     public bool IsExitDoorOpen() 
         {  
-            return isExitDoorOpen; 
+            return instance.IsCollected(); 
         }
 
-    public void EnableExitDoorForPlayerTwo()
+
+    public void EnableExitDoorForPlayerTwoOnExitKeyCollectEvent(object key, EventArgs e)
     {
-        Debug.Log("PlayerTwo has collected Exit Key. Can open Exit Door");
+        //Debug.Log("ExitDoor is Listening to Exit Key Collection Event. PlayerTwo can Open Exit door");
         instance.correctCollectingPlayer = isCollectableBy.playerTwoOnly;
-        //this will be called when playerTwo collects the Key.
+        //this will be called when OnExitKeyCollect event is fired.
         //Only PlayerTwo can access it until he reaches the door.
     }
 
@@ -80,10 +80,17 @@ public class ExitDoorController : GenericCollectibleItem
         return instance.transform.position;
     }
 
-    public void RevealExitDoor()
+    public void SetExitDoorPosition(Vector3 newPosition)
     {
-        //this method can be used to show the visual for Exit Door once PlayerTwo has collected the Key.
-        //hiding exit door until exit key is retrieved, warrants PlayerTwo to retraverse the Maze.
+        ResetExitDoorForNextLevel();//if position is being set explicitly, then it is not collected.
+        instance.transform.position = newPosition;
+        
+    }
+
+    public void ResetExitDoorForNextLevel()
+    {
+        instance.isObjectCollected = false;//if position is being set explicitly, then it is not collected.
+        instance.correctCollectingPlayer = isCollectableBy.NoPlayer;//needs the key to be collected.
     }
 
     public MazeCell GetExitDoorContainerCell()

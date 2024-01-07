@@ -26,5 +26,9 @@ public class ExitDoorClosedVisualHandler : MonoBehaviour
 
             //later, we can also play with the EulerAngles to show an ajar door.
         }
+        else
+        {
+            transform.localScale = Vector3.one;
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class EnemyBossController : GenericEnemyController
         private set { instance = value; }
     }
 
-    private bool isSpawning = true;//Boss will spawn while alive.
+    public event EventHandler OnBossDeath;
 
     private void Awake()
     {
@@ -24,30 +25,58 @@ public class EnemyBossController : GenericEnemyController
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of Enemy Boss");
         }
-        instance.currentEnemyState = enemyStates.isStanding;//Boss should not be moving
-        instance.defaultEnemyState = enemyStates.isStanding;
-        instance.enemyWalkingMovementSpeed = 0;
-        instance.enemyHuntingMovementSpeed = 0;
-        instance.enemyHealth = 75;
-        instance.attackRadius = 5f;
-        instance.IncreaseAttackDamageByMultiplier(2.5f);//2.5x damage for boss as a start.
-        currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
-    }
-    public override void UpdateEnemyRadii()
-    {
-        //this function will update both the radius-lookup dictionaries for each Enemy object.
-        enemyDetectionRadiusReference = new Dictionary<GenericPlayerController, float>()
-        {
-            { PlayerOneController.Instance, 9f }, //boss can detect both players
-            { PlayerTwoController.Instance, 9f } //detection radius is equal to attack radius deliberately.
-        };
+        instance.enemyType = EnemyType.Boss;
+        instance.currentEnemyState = EnemyStates.isStanding;//Boss should not be moving on spawn
+        instance.defaultEnemyState = EnemyStates.isStanding;
+        //instance.enemyWalkingMovementSpeed = 0;
+        //instance.enemyHuntingMovementSpeed = 0;
 
-        //All values will be 0 for generic class
+        //this is hard coded based on the GameObject Sizes, and cannot be configured anyway.
+        instance.attackRadius = 5f;
+
+        instance.currentEnemyMovementDirection = Vector3.zero; //because Boss doesn't move
+        
+        //Get enemies properties from static method instead of hard-coding each property
+        instance.SetEnemyPropertiesFromSave(GenericEnemyController.GetFirstLevelBossPropertiesForLevelType(LevelType.Base));
+
+        //start at Max Health
+        instance.currentEnemyHealth = instance.EnemyProperties.maxEnemyHealth;
+
     }
+
     // Start is called before the first frame update
     void Start()
     {
-        instance.UpdateEnemyRadii();
+        //Add subscriptions to OnBossDeath event on Start
+        OnBossDeath += EnemySpawnHandler.Instance.StopEnemySpawnOnBossDeathEvent;
+        OnBossDeath += LevelHUDStatsManager.Instance.UpdateHUDBossIconOnBossDeathEvent;
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
+        //Get Nearest Player and react to it
+        base.ReactToPlayer(base.GetNearestPlayer());
+    }
+
+    public void ResetBossForNewLevel()
+    {
+        //If enemy Boss is being placed via this function, then it has to be alive, even if previously killed.
+        instance.currentEnemyState = instance.defaultEnemyState;//if previously dead, change its state
+
+        //restore Boss to current Max Health, after buff is applied.
+        instance.currentEnemyHealth = instance.EnemyProperties.maxEnemyHealth;
+        PlaceLevelBossOnFarMap();//move boss to far end of the map
+    }
+
+    private void PlaceLevelBossOnFarMap()
+    {
         //To Spawn - Find a mazeCell that is in a dead-end for spawning
         //We don't want to see the butt of the Boss, to the cell should have 1 opening except the top one.
         //Dead-end cell should be at the very edge of the level
@@ -56,17 +85,6 @@ public class EnemyBossController : GenericEnemyController
 
         //Face the opening of the cell only
         transform.eulerAngles = new Vector3(0, GetRotationAngleInCell(containerCell), 0);
-
-        //scale down to not overflow from the cell.
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //Get Nearest Player and react to it
-        base.ReactToPlayer(base.GetNearestPlayer());
-        CheckStopSpawnOnDeath();
     }
 
     private int GetRotationAngleInCell(MazeCell cell)
@@ -92,18 +110,18 @@ public class EnemyBossController : GenericEnemyController
         return 0;
     }
 
-    private void CheckStopSpawnOnDeath()
+    public void FireOnBossDeathEvent()
     {
-        if (currentEnemyState != enemyStates.isDead || isSpawning)
+        if(OnBossDeath != null)
         {
-            return;//Enemies should spawn as long as boss is alive.
+            OnBossDeath(this, EventArgs.Empty);//fire event if not null
         }
-        //isSpawning flag ensures that this function is not called infinitely.
 
-        isSpawning = false;
-        Debug.Log("Level Boss Defeated. Stopping Enemy Spawn");
-        EnemySpawnHandler.Instance.StopEnemySpawnTimer();
-        
+    }
+
+    public void SetEnemyBossPropertiesByBuffObject(EnemyBuffObject buffObj)
+    {
+        instance.EnemyProperties.BuffEnemyPropertiesByBuffObject(buffObj);
     }
 
 }

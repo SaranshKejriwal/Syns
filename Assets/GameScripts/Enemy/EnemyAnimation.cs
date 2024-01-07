@@ -12,7 +12,7 @@ public class EnemyAnimation : MonoBehaviour
     private const string IS_MOVING_PARAM_NAME = "isEnemyMoving";//create const to avoid string case match errors
     private const string IS_HUNTING_PARAM_NAME = "isEnemyHunting";
     private const string IS_HIT_PARAM_NAME = "isEnemyHit";
-    private const string IS_ATTACKING_PARAM_NAME = "isEnemyAttacking";
+    private const string IS_ATTACKING_TRIGGER_NAME = "isEnemyAttacking";
     private const string IS_STANDING_PARAM_NAME = "isEnemyStanding";
     private const string IS_DEAD_PARAM_NAME = "isEnemyDead";
 
@@ -49,11 +49,15 @@ public class EnemyAnimation : MonoBehaviour
     {   //read from Enemy logic component if it is moving - refer PlayerOneControl.cs
         enemyAnimator.SetBool(IS_MOVING_PARAM_NAME, enemyLogicObject.IsEnemyMoving());//pickup the "isMoving"  parameter from the Animator component of the player
         enemyAnimator.SetBool(IS_HUNTING_PARAM_NAME, enemyLogicObject.IsEnemyHunting());//pickup the "isMoving"  parameter from the Animator component of the player
-        enemyAnimator.SetBool(IS_ATTACKING_PARAM_NAME, enemyLogicObject.IsEnemyAttacking());//pickup the "isMoving"  parameter from the Animator component of the player
         enemyAnimator.SetBool(IS_HIT_PARAM_NAME, enemyLogicObject.IsEnemyHit());
-        enemyAnimator.SetBool(IS_STANDING_PARAM_NAME, enemyLogicObject.isEnemyStanding());
+        enemyAnimator.SetBool(IS_STANDING_PARAM_NAME, enemyLogicObject.IsEnemyStanding());
         enemyAnimator.SetBool(IS_DEAD_PARAM_NAME, enemyLogicObject.IsEnemyDead());
-        
+
+        if (enemyLogicObject.IsEnemyAttacking())
+        {
+            enemyAnimator.SetTrigger(IS_ATTACKING_TRIGGER_NAME);
+        }
+
         //this will set a random attack 
         enemyAnimator.SetInteger(ENEMY_ATTACK_NUMBER_PARAM_NAME, MathFunctions.GetRandomIntInRange(MIN_INCLUDED_ENEMY_ATTACK_NUMBER, MAX_EXCLUDED_ENEMY_ATTACK_NUMBER));
     }
@@ -71,14 +75,18 @@ public class EnemyAnimation : MonoBehaviour
     public void EnemyRightClawAttackAnimationCompletion()
     {
         Debug.Log("Enemy Right Claw attack completion called only once?");
+
+        enemyLogicObject.HandleRightClawAnimationCompletionEvent();
     }
     public void EnemyLeftClawAttackAnimationCompletion()
     {
         Debug.Log("Enemy Left Claw attack completion called only once?");
+        enemyLogicObject.HandleLeftClawAnimationCompletionEvent();
     }
 
     public void EnemyBiteAttackAnimationCompletion()
     {
         Debug.Log("Enemy Bite attack completion called only once?");
+        enemyLogicObject.HandleBiteAnimationCompletionEvent();
     }
 }

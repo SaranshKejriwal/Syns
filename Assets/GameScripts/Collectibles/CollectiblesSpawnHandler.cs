@@ -6,6 +6,12 @@ using UnityEngine;
 //need to ensure that exit door is close to a top wall and objects are not spawned inside walls
 public class CollectiblesSpawnHandler : MonoBehaviour
 {
+    private static CollectiblesSpawnHandler instance;
+    public static CollectiblesSpawnHandler Instance
+    {
+        get { return instance; }//not very different from getters and setters
+        private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
+    }
 
     //Exit Key spawn
     [SerializeField] private Transform ExitKeyPrefab;//make sure to link the prefab in the inspector
@@ -25,13 +31,27 @@ public class CollectiblesSpawnHandler : MonoBehaviour
     //this needs to spawn multiple times
     private int numHealsOnLevel = 10;//at least 5 MedKits on the level 
 
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;//start by setting the Singleton instance 
+        }
+        else
+        {
+            Debug.LogError("Fatal Error: Cannot have a predefined instance of Collectibles Spawn Handler");
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        /*
         numCoinsOnLevel = MathFunctions.GetRandomIntInRange(40, 50);
         numHealsOnLevel = MathFunctions.GetRandomIntInRange(5, 8);
         // will spawn once on Start Only. No Update() required
         Debug.Log("Spawning Collectibles...");
+
 
         //spawn Exit Door.Ensure that ExitDoor is spawned close to a TopWall
         MazeCell exitDoorContainerCell = MathFunctions.GetRandomMazeCellWithTopWall();
@@ -50,20 +70,44 @@ public class CollectiblesSpawnHandler : MonoBehaviour
         //spawn Coins and Heals
         SpawnMultipleObjectsByCount(GoldCoinPrefab, numCoinsOnLevel);
         SpawnMultipleObjectsByCount(HealPrefab, numHealsOnLevel);
-
+        */
     }    
 
+    public void SpawnLevelCollectibles()
+    {
+        numCoinsOnLevel = MathFunctions.GetRandomIntInRange(40, 50);
+        numHealsOnLevel = MathFunctions.GetRandomIntInRange(5, 8);
+        // will spawn once on Start Only. No Update() required
+        //Debug.Log("Spawning Collectibles...");
+
+        //spawn Exit Door.Ensure that ExitDoor is spawned close to a TopWall
+        MazeCell exitDoorContainerCell = MathFunctions.GetRandomMazeCellWithTopWall();
+        Vector3 randomExitDoorPosition = exitDoorContainerCell.cellPositionOnMap + new Vector3(0, 0, LevelBuilder.Instance.GetCellSideLength() / 1.9f);
+        ExitDoorController.Instance.SetExitDoorContainerCell(exitDoorContainerCell);
+        ExitDoorController.Instance.SetExitDoorPosition(randomExitDoorPosition);
+
+        //spawn Exit Key. Ensure that ExitKey is spawned on a cell at the edges only
+        Vector3 randomExitKeyPosition = MathFunctions.GetRandomMazeEdgeCellCenterSpawnWithOffset(0, LevelBuilder.Instance.GetCellSideLength() / 4f);
+        ExitKeyController.Instance.SetExitKeyPosition(randomExitKeyPosition);
+
+        //spawn Coins and Heals
+        SpawnMultipleObjectsByCount(GoldCoinPrefab, numCoinsOnLevel);
+        SpawnMultipleObjectsByCount(HealPrefab, numHealsOnLevel);
+    }
+
+    /*
     private void SpawnSingleObject(Transform objectPrefab, bool isAlreadySpawned, Vector3 preferredPosition)
     {
         if (isAlreadySpawned)
         {
+            //how to move the position of the singleton object from here??
             return;//don't want 2 instances of singular object.
         }
 
         Transform singleObject = Instantiate(objectPrefab);
         singleObject.localPosition = preferredPosition;
         //Ensure that ExitDoor is spawned close to a TopWall
-    }
+    }*/
 
     private void SpawnMultipleObjectsByCount(Transform objectPrefab, int objectCount)
     {

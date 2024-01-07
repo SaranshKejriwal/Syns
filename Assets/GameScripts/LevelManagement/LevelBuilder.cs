@@ -13,7 +13,6 @@ public class LevelBuilder : MonoBehaviour
 
     private static LevelBuilder instance;
     public static LevelBuilder Instance
-    //this instance "Property" will be tracked by ALL enemies, while keeping actual PlayerTwo object private
     {
         get { return instance; }//not very different from getters and setters
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
@@ -29,6 +28,8 @@ public class LevelBuilder : MonoBehaviour
 
     private bool isLevelCompleted = false;
 
+    private LevelType currentLevelType;//determines the levelType being played so that GameProgress can be updated on the right track.
+
     private void Awake()
     {
         //define Gamefloor area, node size based on difficulty level
@@ -42,19 +43,103 @@ public class LevelBuilder : MonoBehaviour
         }
 
         singleCellSideLength = (float)totalMazeSideLength / numCellsOnSide;
-        Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
+        /*Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
         gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
-        SetupStartingCell();//needed before Player Start is called.
+        SetupStartingCell();//needed before Player Start is called.*/
 
     }
     // Start is called before the first frame update
     void Start()
     {
+        /*
         RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
         //Always put external GameObject references in Start(), not Awake
         MazeRenderer.Instance.DrawMazeOnGame(gameMaze, totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+        */
+
+    }
+
+    public void ConstructLevel(LevelType levelType)
+    {
+        instance.currentLevelType = levelType;
+
+        //Make Maze array before drawing
+        //Debug.Log("Initating MazeBuilder with " + numCellsOnSide * numCellsOnSide + " cells. Cell Length = " + singleCellSideLength);
+        gameMaze = MazeBuildLogicManager.ApplyRecursiveBacktrackerToMakeMaze(totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+        SetupStartingCell();//needed before Player Start is called.
+
+        PrintMazeForDebugging();//For Debugging only
+
+        //Setup Level Maze reference for PlayerTwo Traverser.
+        RecursiveMazeTraverser.Instance.SetLevelMazeReference(gameMaze);
+
+        //Draw constructed maze
+        MazeRenderer.Instance.DrawMazeOnGame(levelType, gameMaze, totalMazeSideLength, numCellsOnSide, singleCellSideLength);
+
+        //Note - LevelType will eventually play a role in the Material selection for visuals.
+
+        //Spawn Collectibles
+        CollectiblesSpawnHandler.Instance.SpawnLevelCollectibles();
 
 
+        //Show Level HUD
+        LevelHUDStatsManager.Instance.ShowHUD();
+
+
+        //Place Level Boss
+        EnemyBossController.Instance.ResetBossForNewLevel();
+
+        //Start Enemy spawn on map
+        EnemySpawnHandler.Instance.StartEnemySpawn();
+
+        //Place Players
+        PlayerTwoController.Instance.PlacePlayerTwoOnLevelStart();
+        PlayerOneController.Instance.PlacePlayerOneOnLevelStart();
+
+    }
+
+    //this will print the maze in debug log for debugging purpose only.
+    private void PrintMazeForDebugging()
+    {
+        string FinalMazePrint = " _ _ _ _ _ \n";//5 underscores to mark the top of the maze
+        for(uint i = 0; i <numCellsOnSide; i++)//traverse from L to R
+        {
+            string mazeRow = "";
+            for (uint j = 0;j<numCellsOnSide; j++)//traverse from top to bottom
+            {
+                //Debug.Log("Trying Index:" + i + "," + j);
+                cellWallState wallState = gameMaze[j, numCellsOnSide - 1 - i].cellWallState; //Note - 0,0 is the bottom left point
+                /*
+                 *This has to start appending at (0,4) and end at (4,0)
+                 (0,4)     (4,4)
+
+                 (0,0)     (4,0) 
+                 */
+                //ignore top wall because that will be written by upper cell's bottom wall
+                //ignor right wall because that will by next cell's left wall
+                if (wallState.HasFlag(cellWallState.Left))
+                {
+                    mazeRow = mazeRow + "|";
+                }
+                else
+                {
+                    mazeRow = mazeRow + " ";
+                }
+
+                if (wallState.HasFlag(cellWallState.Bottom))
+                {
+                    mazeRow = mazeRow + "_";
+                }
+                else
+                {
+                    mazeRow = mazeRow + " ";
+                }
+            }
+            //write rightmost wall and write the row
+            mazeRow = mazeRow + "|\n";
+            FinalMazePrint += mazeRow;
+        }
+        Debug.Log(FinalMazePrint);
     }
 
     private void SetupStartingCell()
@@ -69,16 +154,52 @@ public class LevelBuilder : MonoBehaviour
         return startingCell;
     }
 
-    public void LevelVictory()
+    public void RecordLevelVictory(object obj, EventArgs e)
     {
         Debug.Log("Level Won!");
         isLevelCompleted = true;
+
+
+
+        //If Boss is alive at the end, increase the spawn rate of the next level via ProgressManager
+        if (!EnemyBossController.Instance.IsEnemyDead())
+        {
+            Debug.Log("Boss Left alive. Increasing Spawn Rate...");
+            GameProgressManager.Instance.IncreaseNextLevelSpawnRateForAliveBoss(currentLevelType);
+        }
+
+        //increment Max level on Game Progress manager
+        GameProgressManager.Instance.IncreaseAccessibleLevelOfCurrentPath();
+
+
+        //if Path is not complete, show next buffs to select, else show the rune that is won.
+        if (GameProgressManager.Instance.IsCurrentPathCompleted(currentLevelType))
+            //completion will be recorded when we increment the accessible level number
+        {
+            LevelTransitionManager.Instance.ShowPathCompletionCanvas();
+        }
+        else
+        {
+            //allocate 3 buffs
+            EnemyBuffManager.Instance.AllocateThreeRandomEnemyBuffs();
+            //Show Level Transition canvas after buffs are allocated
+            LevelTransitionManager.Instance.ShowLevelCompletionCanvas();
+        }
+
+
+
+
+
+
     }
 
-    public void LevelDefeat()
+    //If PlayerTwo Dies, level is lost.
+    public void LevelDefeat(object obj, EventArgs e)
     {
         Debug.Log("Level Lost! :(");
         isLevelCompleted = false;
+
+        LevelTransitionManager.Instance.ShowLevelFailure();
     }
 
     //this will be used to spawn collectible items away from, or at walls.

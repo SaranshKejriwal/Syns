@@ -59,18 +59,23 @@
     <Analyzer Include="D:\Unity\2022.3.4f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GameScripts\ScriptableObjects\AudioObjects.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\GameMaster.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\HealController.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyBoss\EnemyBossController.cs" />
-    <Compile Include="Assets\GameScripts\Enemy\EnemyScriptableObject.cs" />
     <Compile Include="Assets\GameScripts\Players\PlayerTwoController.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\PathProgressObject.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyDetectionRadiusVisual.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyBoss\EnemySpawnHandler.cs" />
-    <Compile Include="Assets\GameScripts\Enemy\EnemyController.cs" />
+    <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\EnemyBuffManager.cs" />
     <Compile Include="Assets\GameScripts\Players\GenericPlayerController.cs" />
     <Compile Include="Assets\GameScripts\Enemy\EnemyAnimation.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeWallLengthHandler.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeRenderer.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitDoorController.cs" />
+    <Compile Include="Assets\GameScripts\Enemy\EnemyBuff\EnemyBuffObject.cs" />
+    <Compile Include="Assets\GameScripts\Players\RuneEffectManager.cs" />
+    <Compile Include="Assets\GameScripts\LevelManagement\LevelTransitionManager.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitDoorClosedVisualHandler.cs" />
     <Compile Include="Assets\Blink\Art\Animals\Stylized\Demo_Animals\DemoData\AnimationDemo.cs" />
     <Compile Include="Assets\GameScripts\Players\PlayerOneAnimation.cs" />
@@ -83,14 +88,43 @@
     <Compile Include="Assets\GameScripts\Players\InputHandler.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\CollectiblesSpawnHandler.cs" />
     <Compile Include="Assets\GameScripts\LevelManagement\MazeBuildLogicManager.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\GameProgressManager.cs" />
+    <Compile Include="Assets\GameScripts\Enemy\EnemyGruntController.cs" />
+    <Compile Include="Assets\GameScripts\LevelManagement\LevelHUDStatsManager.cs" />
     <Compile Include="Assets\GameScripts\General\MathFunctions.cs" />
     <Compile Include="Assets\GameScripts\Players\PlayerTwoAnimation.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\ExitKeyController.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\GameSoundsManager.cs" />
     <Compile Include="Assets\GameScripts\Collectibles\GenericCollectibleItem.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\LevelSelectionManager.cs" />
+    <Compile Include="Assets\GameScripts\GameManagement\MainMenuUIManager.cs" />
     <Compile Include="Assets\GameScripts\General\AutoMovementHandler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
+    <None Include="Assets\Jewel Pack\Shaders\Gem.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
+    <None Include="Assets\GameMaterials\UITextShader.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+    <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\Stylized NPC - Peasant Nolant\README.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

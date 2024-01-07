@@ -15,21 +15,20 @@ public class PlayerOneController : GenericPlayerController
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
-    [SerializeField] private int moveSpeed = 5;//this private field is accessible on Inspector only, not anywhere else outside class
     private int rotationSpeed = 10;
     private bool isMoving = false; //used by animator to render movement animation if player is moving
     [SerializeField] private InputHandler inputHandler;
     [SerializeField] private float playerOneInteractionSize = 0.5f; //needed for collision handling in Raycast function.
-    //private int playerHeightOffset = 2;//needed for collision handling in CapsuleCast function.
 
-    private float playerOnePunchAttackRange = 8f;//determined emperically.
-    private float playerOncePunchAttachDamage = 60f;//instakill for test only.
+
+    private const float playerOnePunchAttackRange = 8f;//determined emperically.
 
     //this is used to dictate the direction of playerOne before it stopped moving
     private Vector3 lastInteractionDirectionVector = Vector3.zero;
     // Start is called before the first frame update
 
-    private GenericEnemyController approachedEnemy;//to be replaced by Enemy logic object later
+    private GenericEnemyController approachedEnemy;
+   
 
     private void Awake()
     {
@@ -41,21 +40,23 @@ public class PlayerOneController : GenericPlayerController
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerOne");
         }
-        instance.playerHealth = 35;//Much higher than PlayerTwo
-        instance.playerMaxHealth = 35;
+        instance.PlayerControllerProperties.maxPlayerMovementSpeed = 5; //it is assumed that PlayerOne will always move at Max speed.
+        instance.currentPlayerHealth = 35;//Much higher than PlayerTwo
+        instance.PlayerControllerProperties.maxPlayerHealth = 35;
         instance.isActive = true;//player is Active.
         instance.canBeAttacked = true;
         instance.playerType = PlayerType.PlayerOne;//set PlayerType of its parent class member
-        instance.playerState = PlayerState.isActiveNormal;
+        instance.playerState = PlayerState.isMoving;
     }
 
     void Start()
     {
+        /*
         //Move PlayerOne slightly left of starting Cell
         float cellLength = LevelBuilder.Instance.GetCellSideLength();
         Vector3 startingSpawnOffset = new Vector3(-cellLength / 5f, 0, 0);
-        transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter() +startingSpawnOffset ;
-
+        transform.localPosition = PlayerTwoController.Instance.GetPlayerPosition() +startingSpawnOffset ;
+        */
 
         //listen to events on Start(), not Awake()
         inputHandler.OnPunchAction += InputHandler_OnPunchAction;
@@ -66,13 +67,14 @@ public class PlayerOneController : GenericPlayerController
     {
         //What will this object do when PunchAction is pressed?
 
-        Debug.Log(approachedEnemy);
+       
         //if Raycast hits Enemy in HandleInteractions(), approachedEnemy is updated. When PlayerOne punches, Enemy reaction is called
-        if (approachedEnemy != null)
+        if (approachedEnemy != null && !approachedEnemy.IsEnemyDead())
         {
+            Debug.Log(approachedEnemy);
             //only nearest enemy responds, ONLY when Player One Punches
-            approachedEnemy.RespondToPlayerOnePunch(playerOncePunchAttachDamage);//straightforward non-singleton approach.
-
+            approachedEnemy.RespondToPlayerOnePunch(PlayerControllerProperties.playerOnePunchAttackDamage);//straightforward non-singleton approach.
+            IncreasePlayerOneXP(PlayerControllerProperties.playerOnePunchAttackDamage, approachedEnemy.IsEnemyTypeBoss());
         }
         
     }
@@ -80,12 +82,26 @@ public class PlayerOneController : GenericPlayerController
     // Update is called once per frame
     private void Update()
     {        //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
+
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         HandleMovementWithCollision();
-        HandleInteractions();
-        //HandleAttackAction();
+        //HandleInteractions();
+    }
+
+    public void PlacePlayerOneOnLevelStart()
+    {
+        //Move PlayerOne slightly left of starting Cell
+        float cellLength = LevelBuilder.Instance.GetCellSideLength();
+        Vector3 startingSpawnOffset = new Vector3(-cellLength / 5f, 0, 0);
+        transform.localPosition = PlayerTwoController.Instance.GetPlayerPosition() + startingSpawnOffset;
     }
     
-
+    //this method is useless. Can consider removing
+    /*
     private void HandleInteractions()
     {
         //Get separate direction vector, to not interfere with occlusion handling vector
@@ -110,7 +126,7 @@ public class PlayerOneController : GenericPlayerController
             //tries to confirm if interacted component is of a specific type.
             if (rayCastHit.transform.TryGetComponent(out GenericEnemyController interactedEnemy))
             {               
-                approachedEnemy = interactedEnemy;//assign this nearest Enemy to interacted Enemy objecct for P1.
+                approachedEnemy = interactedEnemy;//assign this nearest Enemy to interacted Enemy object for P1.
             }
             else
             {
@@ -126,22 +142,19 @@ public class PlayerOneController : GenericPlayerController
             approachedEnemy = null;
         }
         //Debug.Log(approachedTestInteractObject);
-    }
+    }*/
 
-    public override void RespondToEnemyHunt(Vector3 enemyPosition)
-    {
-        //PlayerOne cennot do anything by itself since it is Human-controlled.
-        return;
-    }
-
-    public override void RespondToEnemyAttack(Vector3 enemyPosition)
-    {
-        //Debug.Log("Enemy is attacking Player One");
-    }
 
     public bool IsPlayerOnePunching()
     {
        return inputHandler.IsPlayerOnePunchPressed();
+    }
+
+    private void IncreasePlayerOneXP(float attackDamage, bool isAttackingEnemyBoss)
+    {
+        //XP growth is 5x if PlayerOne attacked a boss
+        float xpIncrease = isAttackingEnemyBoss ? 5*attackDamage : attackDamage;
+        IncreasePlayerXP(xpIncrease);
     }
 
     private void HandleMovementWithCollision()
@@ -165,7 +178,7 @@ public class PlayerOneController : GenericPlayerController
             //Note - transform.forward is called before collision handling to ensure direction is always based on key input only.
 
             //move the object position in the direction 
-            transform.position += directionVector * Time.deltaTime * moveSpeed;
+            transform.position += directionVector * Time.deltaTime * PlayerControllerProperties.maxPlayerMovementSpeed;
             /*transform holds the position of the GameObj, apparently
             transform.position is a 3D vector.
             Time.deltaTime ensures that perceived change in position is independent of system framerate.
@@ -216,4 +229,8 @@ public class PlayerOneController : GenericPlayerController
         return isMoving;
     }
 
+    public override void SetEnemyInFocus(GenericEnemyController enemy)
+    {
+        approachedEnemy = enemy;
+    }
 }

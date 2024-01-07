@@ -249,13 +249,13 @@ Also useful for creating spawning object, like enemies, after a set duration.
 
 such Prefabs can be used as "Transform"s or "GameObject"s - Don't know the difference.
 
-Scriptable Objects are useful for creating multiple instances of one type - like weapons, enemies;
+Scriptable Objects are useful for creating multiple instances of one type - like weapons, enemies, event sounds;
 
 This will be useful to define the 7 types of enemies and bosses, I guess.
 
 Scriptable objects extend ScriptableObject, not MonoBehaviour. These need CreateAssetMenu() for creating an object - this would allow you to create an object of this type from within the Project window itself.
 
-Not sure if we need them for our use-case - EnemyBuff can be applied consistently. This would be useful if you had a variable set of objects at once.
+Not sure if we need them for our use-case - EnemyBuff can be applied consistently and singularly. This would be useful if you had a variable set of objects at once.
 <Skipping this...>
 
 
@@ -269,6 +269,8 @@ Player Tools can have 4 parents - Shop, Sack, P1, P2.
 Key can have 2 parent - spawn location (meh) and P2.
 
 No rocket science - just getters and setters -> setParentOfChildObject(this);
+
+Note - One must not add constant checkers in Update script, especially for events that'll rarely occur.
 
 Interfaces___________________________________________________________
 
@@ -295,9 +297,94 @@ This one is at 4:46:30
 Inside a prefab, create a UI > Canvas
 In the Inspector, make it a "World Space" in the Render Mode, to not occupy the entire screen's space.
 
-This is not very different from creating a physical component within each of the players/enemies.
+This approach is better than creating a rectangle and increasing its localScale - check 4:53:00
+Set the Sprite as "Filled"
 
 Can also be used to add Icons on top of players - useful for shop objects.
+
+
+Game Manager UI_______________________________
+
+Need a Heads-up Display (HUD) on play screen to show coin collection, health, enemy count, boss dead/alive?
+
+Inside a prefab, create a UI > Canvas
+In the Inspector, make it a "Screen-Space Overlay", since this will be there regularly.
+Take 1920x1080 as reference, and select match mode as "Match Width or Height".
+
+With the Canvas now setup, you can create widgets INSIDE the canvas GameObject to render them on the screen. All child objects will have a "Rect Transform" Component where you can specify the position and size of the child game object.
+
+You can Use UI > TextMeshPro to add text to the Panel. In the Inspector, you can enable/disable wrapping as required.
+You should use
+
+
+To stack panels in a canvas in one order, you can use "Vertical Layout Group" - not much use for us.
+
+Tip - Avoid using "Find()" method - it's the equivalent of GoTo
+
+https://www.youtube.com/watch?v=Xw506Rfd9Q4
+
+To use TextMeshProUGUI correctly, you need to create 1 Component and 1 script which will hold ALL the numbers that you want to show on your HUD - like Player Gold, Enemy Count etc. 
+
+Then create a separate UI > Text - TextMeshPro GameObject for each number that you want to display on the HUD so that you can position them independently. The reference for all these TextMeshPro objects will be sent to the SerializeField of the single script that you have.
+
+A similar approach can be done for the Healthbars and spawn timers as well.
+
+
+Adding Music_________________________________________________
+
+Create a new game object - add Component 'Audio Source' and specify the .wav file in the AudioClip
+Enable "Play on Awake" and "Loop" for Background music only.
+
+Unity prioritizes how many sounds play simultaneously. Music should be on Max priority.
+
+"Spatial Blend" should be 2D for music because it has to play the same way across the landscape.
+
+Ensure that Main Camera gameObj should have the 'AudioListener' component in it.
+
+You can also experiment with creating an 'Audio Mixer' in the Project files - this can help create new 'groups' in the mixer - and you can trigger specific soundtracks for specific groups.
+
+
+Adding Sounds on characters and interactions_________________________
+
+These will be event driven, not constant sounds.
+
+Therefore, best to trigger them in code - use AudioSource.PlayClipAtPoint(clip, SoundLocationVector, volume); function - 
+This function is 3D sound by default and will calibrate to Camera position and distance.
+
+Recommendation is to fire an event from the Logic class, which will be listened to, by the visuals class and the sounds class.
+
+Best to avoid SerializeField for Every Single sound that can be played - Use ScriptableObject to refer to, and play all Sounds
+
+Creating an object of a certain array of sounds will allow you to drag and drop soundbit references into the AudioClip[] objects created in the Audio Objects SO class directly.\
+You need to create a new Game Object of the SO type, and the AudioObjects C# class AudioClip[] references will be visible therein.
+
+Adding a Start Menu__________________________________
+
+
+If you name a script "GameManager", unity will give it a different icon - best to give your own names to even game master manager scripts.
+
+First we created a GameMaster, which can govern the state of the game and stop all interactions if Game level is not in playing mode - paused/stopped.
+
+
+Note - Use the SortOrder in Canvas options to reorder stuff.
+
+Adding a Game Over Screen_____________________________________________
+
+UI sorting is based on heirarchy. Bottom-most one is visible first.
+
+
+Adding a Main Menu__________________________________
+
+Unlike Game Over scrren, Main Menu is created as a separate Scene in the game. You'll need to drag the new Scene into File > Build Settings, and move it to the top of list to have it load as the first scene. Index of the scene is visible on the right side of the Build Settings menu.
+
+The initial load may be frozen for a bit if there was a lot of asset to load. Best to test this, or create a loading... Scene in the middle;
+You can have loading scene in Solid color by simply  Going to main camera Game Object and switching to Solid Color in 'Environment'.
+
+In the new Scene, create a UI Canvas with Overlay that scales with Screen Size.
+
+Skipping Loading Scene, assuming that game is light enough.
+
+
 
 
 
@@ -319,8 +406,21 @@ Open Prefab and check "Animation" tab next to console.
 
 Note - if you rename a function, Animation Event will not automatically rename it in Unity Inspector. Will need manual change.
 
+______________________________________________________________________________
+https://www.youtube.com/watch?v=OuZrhykVytg
 
-_____________________________________________________
-https://www.youtube.com/watch?v=8rTK68omQow
+Using this to limit my Update() method checks and use events instead to trigger functionalities.
 
-Explore RigidBody Components for more Physics responses to Player/Enemy attacks.
+Multiple "subscribers" can subscribe to one event hosted by a publisher, fired off by publisher in a certain situation. Publisher does not have to know who the subscribers of the event are (hence the code-cleanliness), thus the 2 logics can be decoupled entirely.. example of logic working independently, regardless of whether a visual exists or not.
+
+
+https://www.youtube.com/watch?v=PVOVIxNxxeQ
+Do Not use a Monobehaviour if something is not going to be linked to a GameObj. It is memory heavy.
+
+
+https://stackoverflow.com/questions/32306704/how-to-pass-data-and-references-between-scenes-in-unity
+
+
+
+https://stackoverflow.com/questions/58485085/how-to-change-the-name-of-my-company-that-gets-auto-logged-for-games
+Change Company Name in the AppData folder

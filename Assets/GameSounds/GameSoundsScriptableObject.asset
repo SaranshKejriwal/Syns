@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deddd4d1c5e487946ac97f641eafe26c, type: 3}
+  m_Name: GameSoundsScriptableObject
+  m_EditorClassIdentifier: 
+  enemySounds:
+  - {fileID: 8300000, guid: 9c8ae23a6fa78ac44aca917ce0835fb9, type: 3}
+  - {fileID: 8300000, guid: 07e3a15849f01fd4181bf25d6a73222c, type: 3}
+  enemyBossSounds:
+  - {fileID: 8300000, guid: a34f7ad0d2be25240920986218116e2c, type: 3}
+  ambientSounds: []
+  playerMovementSounds: []
+  playerAttackSounds: []
+  collectiblesSounds: []
+  gameplaySounds: []

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -17,28 +18,42 @@ public class PlayerTwoController : GenericPlayerController
         private set { instance = value; }//we do not want any other object to modify PlayerTwo entirely.
     }
 
-    [SerializeField][Range(1,8)] private int currentPlayerTwoMovementSpeed = 3;//this private field is accessible on Inspector only, not anywhere else outside class
-    [SerializeField] private int maxPlayerTwoMovementSpeed = 10;
-    [SerializeField] private int minPlayerTwoMovementSpeed = 1;
+    private int currentPlayerTwoMovementSpeed = 3;//maintained as separate Class property because it can be controlled by user.
+    private float minPlayerTwoMovementSpeed = 1f;//these speeds are maintained as float to allow HUD to compute ratio
+    //max
 
     private int rotationSpeed = 10;
     private bool isPlayerTwoMoving = true; //used by animator to render movement animation if player is moving. Will always be true anyway
-    private bool isEvadingEnemy = false; //can be used in future to create smart reaction to enemy
-
+    
     
     [SerializeField] private InputHandler inputHandler;
 
-    private float playerTwoInteractionDistance = 2f;
-    private readonly float mazeCellCenterErrorMargin = 1f;
+    //private float playerTwoInteractionDistance = 2f;
+    private readonly float mazeCellCenterErrorMargin = 1.5f;
     //this is the distance that PlayerTwo has to reach from cell center, for maze traverser to trigger next cell in Stack
     
     private Vector3 currentPlayerTwoDirectionVector = Vector3.zero;//direction where it is heading
     
     //ExitKey and Door related objects
-    private bool hasCollectedExitKey = false;//will be set in the ExitKeyController.
-    private bool canEnterExitDoorInVicinity = false;//this will be true when PlayerTwo is in the same cell as 
-    private bool retraversalRequiredAfterKeyCollect = false;//this will be true in case Player Two reaches Exit before the Key
-    
+    private bool isEnteringExitDoorInVicinity = false;//this will be true when PlayerTwo is in the same cell as Exit Door
+
+    protected Vector3 nextIntendedDestination = Vector3.zero;
+    //this will be used to dictate the target for PlayerTwo only, not Applicable for PlayerOne
+
+    private GenericEnemyController enemyToEvade;
+    //this object will be populated by the last enemy which is hunting/attacking P2.
+    //if this is not null, andt hunting/attacking P2, then P2 should be in evasive mode.
+    //Risk - multiple enemies can set themselves as the enemyToEvade.
+
+
+    //Player Two XP growth is based on distance from PlayerOne in each frame.
+    private float minPlayerOneDistanceForXP = 20f;
+
+    //This event will be fired when PlayerTwo enters the open Exit door.
+    public event EventHandler OnPlayerTwoExit;
+
+    public event EventHandler OnPlayerTwoDeath;
+
     //Awake will be called before Start()
     private void Awake()
     {
@@ -50,72 +65,96 @@ public class PlayerTwoController : GenericPlayerController
         {
             Debug.LogError("Fatal Error: Cannot have a predefined instance of PlayerTwo");
         }
-        instance.playerHealth = 15;
-        instance.playerMaxHealth = 15;
+        instance.currentPlayerHealth = 15;
+        instance.PlayerControllerProperties.maxPlayerHealth = 15;
         instance.isActive = true;
         instance.playerType = PlayerType.PlayerTwo;
-        instance.playerState = PlayerState.isActiveNormal;
+        instance.playerState = PlayerState.isMoving;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        //choose a random starting direction to start moving
-        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetRandomDirectionVector();
+        //Add subscribers to OnPlayerTwoEvent
+        OnPlayerTwoExit += LevelBuilder.Instance.RecordLevelVictory;
+        OnPlayerTwoDeath += LevelBuilder.Instance.LevelDefeat;
 
-        /*Player Two movement should not be random. It should mmap out all the maze cells on the map
-         and then spawn at the nearest one.*/
-        transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
-        MoveToNextCell();
-        
+        //OnPlayerTwoExit += EnemyGruntController.StopGruntMovement;
+        //Grunts subscribe to this event in their own class.
     }
 
     // Update is called once per frame
     private void Update()
     {   //Update() is inherited from MonoBehaviour. Called on each frame. Always specify the access modifier
 
+        if (!GameMaster.Instance.IsLevelPlaying())
+        {
+            return;//do nothing if game is paused or level has ended.
+        }
+
         if (!isPlayerTwoMoving)
         {
             return;//this will only happen if PlayerTwo Wins.
         }
 
-        //Update speed if Faster or Slower key binding is pressed.
-        currentPlayerTwoMovementSpeed = inputHandler.GetCurrentPlayerTwoMovementSpeed(currentPlayerTwoMovementSpeed, maxPlayerTwoMovementSpeed, minPlayerTwoMovementSpeed);
+        //Update speed if Faster or Slower key binding is pressed - this is handled by Event now
 
         //using Vector3.Distance to ensure some margin of error.
         if(Vector3.Distance(nextIntendedDestination, transform.position) <= mazeCellCenterErrorMargin)
-        {
-            //only if Player has already reached that destination
-            MoveToNextCell();            
+        {         
+            DefineNextPlayerTwoDestination();           
+                       
         }
-        CheckStopOnEnteringOpenExit();
-        HandleMovementWithCollision();//returns same vector unless obstructed.
-        //HandleAllInteractions();
+
+        CheckVicinityToOpenExitDoor();
+        //CheckPlayerTwoExitToFireEvent();
+
+        MovePlayerTwo();//returns same vector unless obstructed.
+
+        IncreasePlayerTwoXP();
 
     }
 
-    private void MoveToNextCell(bool isEvading = false)
+    public void PlacePlayerTwoOnLevelStart()
     {
-        //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
-        nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit(transform.position);
+        //this will only be called at the start of a level
+        transform.localPosition = RecursiveMazeTraverser.Instance.GetStartingCellCenter();
+
+
+        //display starting speed in HUD
+        LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
+
+        //reset all flags of PlayerTwo and ExitDoor coordination
+        isPlayerTwoMoving = true;
+        isEnteringExitDoorInVicinity = false;
+        canBeAttacked = true;
+        DefineNextPlayerTwoDestination();
+
+    }
+
+    private void DefineNextPlayerTwoDestination()
+    {
+        if (ShouldBeEvadingEnemy())
+        {
+            //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour to avoid enemy.
+            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToEvadeEnemy(enemyToEvade.GetEnemyPosition());
+        }
+        else
+        {
+            //if player has reached the intended maze cell, update the maze cell to the next accessible, unvisited neighbour.
+            nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit();
+        }
+
+        //nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToVisit();
+
 
         //move Player Two to next destination
         currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
-
     }
 
-    private void MoveToNextCellToEvade(Vector3 enemyPosition)
-    {
-        //if player has reached the intended maze cell, update the maze cell to the next accessible neighbour.
-        nextIntendedDestination = RecursiveMazeTraverser.Instance.GetNextCellCenterToEvadeEnemy(transform.position, enemyPosition);
-
-        //move Player Two to next destination
-        currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(nextIntendedDestination, transform.position);
-
-    }
 
     //this method is currently useless. Should be removed.
-    private void HandleAllInteractions()
+    /*private void HandleAllInteractions()
     {
 
         
@@ -133,15 +172,13 @@ public class PlayerTwoController : GenericPlayerController
 
         }
 
-    }
+    }*/
 
-
-    private void HandleMovementWithCollision()
+    //moves the PlayerTwo object to the next cell center.
+    private void MovePlayerTwo()
     {               
 
-        //needed for collision handling - if player movement is obstructed, try x or z axis movement only
-        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetMovementReflectionDirectionAfterCollision(currentPlayerTwoDirectionVector, transform.position, playerTwoInteractionSize);
-        //removing this since PlayerTwo will never be colliding with any obstacles, and will move in cell centers only.
+        //PlayerTwo will never be colliding with any obstacles, and will move in cell centers only.
 
         //rotate the object to face the updated direction of movement
         transform.forward = Vector3.Slerp(transform.forward, currentPlayerTwoDirectionVector, Time.deltaTime * rotationSpeed);
@@ -165,12 +202,13 @@ public class PlayerTwoController : GenericPlayerController
     }
 
     //This function should stop PlayerTwo when it reaches Exit.
-    private void CheckStopOnEnteringOpenExit()
+    /*private void CheckStopOnEnteringOpenExit()
     {
         if (!isPlayerTwoMoving) 
         {
             return;//if PlayerTwo has already entered Exit, need not check.
         }
+
         MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
 
         if (exitDoorContainerCell.cellPositionOnMap != nextIntendedDestination)
@@ -180,7 +218,6 @@ public class PlayerTwoController : GenericPlayerController
         if(!hasCollectedExitKey && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
             //this means that PlayerTwo reached Exit Door cell before getting the Key; retraversal will be required
-            retraversalRequiredAfterKeyCollect = true;
             return;//do nothing if Player hasn't collected the key                   
         }
         Vector3 disappearanceOffsetAfterEntry = new Vector3(0, 0, 1.5f);//this offset is for making PlayerTwo disappear inside Exit door
@@ -190,18 +227,19 @@ public class PlayerTwoController : GenericPlayerController
         if (!canEnterExitDoorInVicinity && exitDoorContainerCell.cellPositionOnMap == nextIntendedDestination)
         {
             canEnterExitDoorInVicinity = true;
-            ExitDoorController.Instance.CheckExitDoorCollectedStatus();
+            //ExitDoorController.Instance.OpenExitDoor(null, null);
             //Go towards Exit if it is in the same Cell.
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(exitDoorEntryLocation, transform.position);
             Debug.Log("0");
 
         }
 
-        if (canEnterExitDoorInVicinity && Vector3.Distance(exitDoorEntryLocation, transform.position) <= mazeCellCenterErrorMargin)
+        //move player inside door, such that it starts to disappear
+        if (canEnterExitDoorInVicinity)
         {
             currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(disappearanceLocationAfterEntry, transform.position);
             canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
-            LevelBuilder.Instance.LevelVictory();//Close Level
+            LevelBuilder.Instance.RecordLevelVictory(null, null);//Close Level
             Debug.Log("1");
 
         }
@@ -210,31 +248,107 @@ public class PlayerTwoController : GenericPlayerController
         {
             //ExitDoorController.Instance.CheckExitDoorCollectedStatus();
             isPlayerTwoMoving = false;
-            currentPlayerTwoMovementSpeed = 0;//stop Player Two.
+            currentPlayerTwoMovementSpeed = 0;//stop Player Two animation.
             //LevelBuilder.Instance.LevelVictory();//Close Level
             Debug.Log("2");
         }
+    }*/
+
+    //check exit door availability only when PlayerTwo is in Exit Door cell and door is open, and move PlayerTwo towards door
+    private void CheckVicinityToOpenExitDoor()
+    {
+        if (!isPlayerTwoMoving || isEnteringExitDoorInVicinity)
+        {
+            return;//if PlayerTwo already entered/entering Exit, need not check.
+        }
+
+        if (!HasCollectedExitKey())
+        {
+            return;//do nothing if Player hasn't collected the key                   
+        }
+
+        MazeCell exitDoorContainerCell = ExitDoorController.Instance.GetExitDoorContainerCell();
+        if (Vector3.Distance(transform.position,exitDoorContainerCell.cellPositionOnMap) > mazeCellCenterErrorMargin)
+        {
+            return; //Do nothing if PlayerTwo is far away from door cell, even if door is open
+        }
+
+        //it is assumed that P2 will still be mobile and flickering when it enters the door, but the victory screen will cover that.
+        //TEST Only
+        //currentPlayerTwoDirectionVector = AutoMovementHandler.GetDirectionTowardsUnobstructedDestination(ExitDoorController.Instance.GetExitDoorPosition(), transform.position);
+        isEnteringExitDoorInVicinity = true;
+
+        //show Exit Door open visual.
+        ExitDoorController.Instance.OpenExitDoorForBothPlayers();
+
+        if (OnPlayerTwoExit != null)
+        {
+            OnPlayerTwoExit(this, EventArgs.Empty);
+        }
+
     }
 
-    //public void RespondToEnemyHunt(object sender, System.EventArgs e)
-    //{
-        //Debug.Log("PlayerTwo responding to Enemy Event.");
-    //}
-
-    public override void RespondToEnemyHunt(Vector3 enemyPosition)
+    //This method will fire the event corresponding to PlayerTwoExit 
+    private void CheckPlayerTwoExitToFireEvent()
     {
-        //PlayerTwo will automatically evade Enemy position.
-        isEvadingEnemy = true;
-        MoveToNextCellToEvade(enemyPosition);
-        //change nextIntendedDestination if Enemy is hunting, based on farthest accessible cell from the enemy
+
+        if (!isEnteringExitDoorInVicinity || !isPlayerTwoMoving)
+        {
+            return;//Player two isn't entering the exit yet. Can't fire the event.
+            //OR PlayerTwo has already entered the exit. Nothing to check
+        }
+
+        //This includes the disappearance vector
+        Vector3 exitDoorEntryVector = ExitDoorController.Instance.GetExitDoorPosition() + new Vector3(0, 0, 2f);
+
+        //if PlayerTwo is within range of disappearing within Exit Door, fire the event, else return.
+        if (Vector3.Distance(exitDoorEntryVector, transform.position) > mazeCellCenterErrorMargin)
+        {
+            return;//PlayerTwo is still too far to fire the event.
+        }
+
+        canBeAttacked = false;//PlayerTwo cannot be attacked by enemies while approaching exit.
+        isPlayerTwoMoving = false;//Stop Player Two
+
+        //Fire an event here - listeners will open Exit Door, Publish victory, stop all grunts.
+        if (OnPlayerTwoExit != null)
+        {
+            OnPlayerTwoExit(this, EventArgs.Empty);
+        }
     }
 
-    public override void RespondToEnemyAttack(Vector3 enemyPosition)
+    //this will subscribe to inputHandler Faster pressed event and increase PlayerTwo speed.
+    public void IncreasePlayerTwoSpeedOnFasterInputPress(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if(currentPlayerTwoMovementSpeed < PlayerControllerProperties.maxPlayerMovementSpeed)
+        {
+            currentPlayerTwoMovementSpeed+=1;
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
+        }
+    }
+
+    //this will subscribe to inputHandler Faster pressed event and decrease PlayerTwo speed.
+    public void DecreasePlayerTwoSpeedOnSlowerInputPress(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
 
-       // Debug.Log("Enemy is attacking Player Two");
+        if (currentPlayerTwoMovementSpeed > minPlayerTwoMovementSpeed)
+        {
+            currentPlayerTwoMovementSpeed-=1;
+            LevelHUDStatsManager.Instance.UpdateHUDPlayerTwoSpeedbar(currentPlayerTwoMovementSpeed, PlayerControllerProperties.maxPlayerMovementSpeed);
+        }
+    }
 
-        //Add Health drop here AFTER perfecting the Animation Event.
+    private void IncreasePlayerTwoXP()
+    {
+        float distanceFromPlayerOne = Vector3.Distance(transform.position, PlayerOneController.Instance.GetPlayerPosition());
+
+        if(distanceFromPlayerOne <= minPlayerOneDistanceForXP)
+        {
+            return;//no XP gain if Player Two is near Player One.
+        }
+
+        IncreasePlayerXP(Time.deltaTime);//1xp for each second away from P1
+
     }
 
     public bool IsPlayerTwoMoving()
@@ -249,28 +363,60 @@ public class PlayerTwoController : GenericPlayerController
 
     public bool HasCollectedExitKey()
     {
-        return instance.hasCollectedExitKey;
+        return ExitKeyController.Instance.IsCollected();
     }
 
     public bool CanEnterExitDoorInVicinity()
     {
-        return canEnterExitDoorInVicinity;
+        return isEnteringExitDoorInVicinity;
     }
 
-    public void SetHasCollectedExitKey(bool hasCollectedExitKey)
-    {
-        instance.hasCollectedExitKey = hasCollectedExitKey;
-        ExitDoorController.Instance.EnableExitDoorForPlayerTwo();
-        //update ExitDoor status to be correctly collectable by PlayerTwo.
-    }
 
     protected override void KillPlayer()
     {
         Debug.Log(this + " is dead.");
-        this.playerState = PlayerState.isDead;
+        instance.playerState = PlayerState.isDead;
 
-        //If PlayerTwo Dies, level is lost.
-        LevelBuilder.Instance.LevelDefeat();
+        instance.canBeAttacked = false; //no point in attacking if player is already dead.
+
+        if(OnPlayerTwoDeath != null)
+        {
+            OnPlayerTwoDeath(this, EventArgs.Empty);
+        }
+
+    }
+
+    public override void SetEnemyInFocus(GenericEnemyController enemy)
+    {
+        //PlayerTwo will evade only 1 enemy at a time.
+        instance.enemyToEvade = enemy;
+    }
+
+    private bool ShouldBeEvadingEnemy()
+    {
+
+        if(enemyToEvade == null)
+        {
+            //no enemy has approached P2 yet. Nothing to evade
+            return false;
+        }
+        if (enemyToEvade.IsEnemyDead() || enemyToEvade.IsEnemyMoving())
+        {
+            return false;//enemy is already dead or has stopped chasing PlayerTwo
+        }
+        if(enemyToEvade.IsEnemyHunting() || enemyToEvade.IsEnemyAttacking())
+        {
+            if (enemyToEvade.IsTargetingPlayerTwo())//needs revision
+            {
+                //evade only if Enemy is targeting PlayerTwo. Else not
+                Debug.Log("PlayerTwo Should be Evading enemy");
+                return true;
+            }
+
+        }
+
+
+        return false;
     }
 
 }
