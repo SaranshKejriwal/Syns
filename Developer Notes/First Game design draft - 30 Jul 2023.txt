@@ -75,10 +75,10 @@ The game can have themes of the 7 sins without spelling it out loud. Player choo
 Greed - enemies tend to pick up gold and leave less for you. - Bosses disable coin-based tools, including bullets, and can disable other Runes
 Sloth - enemies are slower but do more damage. - Bosses stun P1 when they lose a certain % of health. 
 Wrath - enemies can potentially move through walls - Agile bosses with rapid low-damage attacks. Boss has range attacks 
-Gluttony - enemies have more HP and tend to pickup nearby heals when damaged. - Boss attacks have life-steal and can pickup nearby heals. <May eat nearby grunts to absorb their health>
-Envy - enemies are mimics and may replicate P2 <start game with 1 enemy that looks like P2> <Have no detection radius for P1, so they ignore him to blend in> - bosses are weak, but damage may transfer to P2 with a %probability.
+Gluttony - enemies have more HP and tend to pickup nearby heals when damaged. - Boss attacks have life-steal to heal boss and can pickup nearby heals. <May eat nearby grunts to absorb their health>
 Lust - enemies have higher detection radius; Boss chases P1/P2 outside its spawn point, so speed is important.
-Pride - Enemies raise an alarm upon detecting P1/P2, attracting more enemies; 6 grunts spawn where boss dies. 
+Pride - Enemies raise an alarm upon detecting P1/P2, attracting more enemies; 6 grunts spawn where boss dies. GYPSY - The lesser they are, the harder they hit.
+Envy - enemies are mimics and may replicate P2 <start game with 1 enemy that looks like P2> <Have no detection radius for P1, so they ignore him to blend in> - bosses are weak, but damage may transfer to P2 with a %probability.
 
 Can start each phase (collection of levels) with a poetic riddle.
 
